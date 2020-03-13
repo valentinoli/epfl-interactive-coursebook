@@ -1,7 +1,11 @@
 import './style.scss'
 import { select } from 'd3-selection'
 
-select('body').style('background-color', 'black')
+setInterval(() => {
+  select('body').style('background-color', `rgb(${
+    [...Array(3).keys()].map(() => Math.floor(Math.random() * 256)).join(', ')
+  })`)
+}, 500)
 
 const result = Object.entries({ w: 20, i: 30, n: 50 })
   .reduce((acc, [k, v]) => {
