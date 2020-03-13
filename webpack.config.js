@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 
 module.exports = {
-	mode: 'development',
+  mode: 'development',
   devtool: 'inline-source-map',
 
   devServer: {
@@ -18,8 +18,8 @@ module.exports = {
     mainFields: ['browser', 'module', 'main']
   },
 
-	plugins: [
-		new webpack.ProgressPlugin(),
+  plugins: [
+    new webpack.ProgressPlugin(),
     new BrowserSyncPlugin(
       // BrowserSync options
       {
@@ -37,18 +37,19 @@ module.exports = {
         reload: false
       }
     ),
-	],
+  ],
 
-	module: {
-		rules: [
-			{
-				test: /.js$/,
-				exclude: /node_modules/,
-        use: [
-          {
+  module: {
+    rules: [{
+        test: /.js$/,
+        exclude: /node_modules/,
+        use: [{
             loader: 'babel-loader',
             options: {
-              presets: ['@babel/preset-env']
+              presets: ['@babel/preset-env'],
+              plugins: [
+                '@babel/plugin-proposal-object-rest-spread'
+              ]
             }
           },
           {
@@ -61,29 +62,28 @@ module.exports = {
           },
         ],
       },
-			{
-				test: /.s[ac]ss$/,
+      {
+        test: /.s[ac]ss$/,
 
-				use: [
-					{
-						loader: 'style-loader'
-					},
-					{
-						loader: 'css-loader',
+        use: [{
+            loader: 'style-loader'
+          },
+          {
+            loader: 'css-loader',
 
-						options: {
-							sourceMap: true
-						}
-					},
-					{
-						loader: 'sass-loader',
+            options: {
+              sourceMap: true
+            }
+          },
+          {
+            loader: 'sass-loader',
 
-						options: {
-							sourceMap: true
-						}
-					}
-				]
-			}
-		]
-	},
+            options: {
+              sourceMap: true
+            }
+          }
+        ]
+      }
+    ]
+  },
 };
