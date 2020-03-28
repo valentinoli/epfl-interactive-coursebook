@@ -22,6 +22,21 @@ Dataset
 Hint: some good pointers for finding quality publicly available datasets (Google dataset search, Kaggle, OpenSwissData, SNAP and FiveThirtyEight)
 Problematic
 
+Mika:
+1 ) https://www.kaggle.com/tunguz/big-five-personality-test
+2 ) https://www.kaggle.com/gregorut/videogamesales
+3) https://files.pushshift.io/reddit/comments/
+ (4 ) https://www.kaggle.com/austinreese/trump-tweets)
+
+Michal:
+
+
+Valentin:
+1) Epfl
+2) Death and suicides in Swiss prisons
+3) Spotify
+
+
 **Frame the general topic of your visualization and the main axis that you want to develop.**
 
     What am I trying to show with my visualization?
