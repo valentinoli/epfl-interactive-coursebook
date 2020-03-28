@@ -15,31 +15,14 @@
  This is a preliminary milestone to let you set up goals for your final project and assess the feasibility of your ideas. Please, fill the following sections about your project.
 
 (max. 2000 characters per section)
-Dataset
+**Dataset**
 
-**Find a dataset** (or multiple) that you will explore. Assess the quality of the data it contains and how much preprocessing / data-cleaning it will require before tackling visualization. We recommend using a standard dataset as this course is not about scraping nor data processing.
+ Dataset from EPFL that we- graph of all the courses, the edges are the pre-requis
+Creation of a dataset of EPFL courses with a web crawler that scrapes the data.
+Creation of a graph where the nodes would be the courses and the connections, the pre-requisites
 
-Hint: some good pointers for finding quality publicly available datasets (Google dataset search, Kaggle, OpenSwissData, SNAP and FiveThirtyEight)
-Problematic
 
-Mika:
 
-1 ) https://www.kaggle.com/tunguz/big-five-personality-test
-
-2 ) https://www.kaggle.com/gregorut/videogamesales
-
-3 ) https://files.pushshift.io/reddit/comments/
-
-4 ) https://www.kaggle.com/austinreese/trump-tweets)
-
-Michal:
-
-https://www.rijksmuseum.nl/en/data/overview
-
-Valentin:
-1) Epfl
-2) Death and suicides in Swiss prisons
-3) Spotify
 
 
 **Frame the general topic of your visualization and the main axis that you want to develop.**
