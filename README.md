@@ -24,8 +24,11 @@ Problematic
 
 Mika:
 1 ) https://www.kaggle.com/tunguz/big-five-personality-test
+
 2 ) https://www.kaggle.com/gregorut/videogamesales
+
 3) https://files.pushshift.io/reddit/comments/
+
  (4 ) https://www.kaggle.com/austinreese/trump-tweets)
 
 Michal:
