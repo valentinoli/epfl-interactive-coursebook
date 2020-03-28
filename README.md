@@ -23,13 +23,14 @@ Hint: some good pointers for finding quality publicly available datasets (Google
 Problematic
 
 Mika:
+
 1 ) https://www.kaggle.com/tunguz/big-five-personality-test
 
 2 ) https://www.kaggle.com/gregorut/videogamesales
 
-3) https://files.pushshift.io/reddit/comments/
+3 ) https://files.pushshift.io/reddit/comments/
 
- (4 ) https://www.kaggle.com/austinreese/trump-tweets)
+4 ) https://www.kaggle.com/austinreese/trump-tweets)
 
 Michal:
 
