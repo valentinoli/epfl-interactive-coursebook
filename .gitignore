@@ -1,4 +1,6 @@
-.ipynb_checkpoints/
 node_modules/
-.env
 data/
+.ipynb_checkpoints/
+.env
+python/is-academia.ipynb
+python/studyplans.ipynb
