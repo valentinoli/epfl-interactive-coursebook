@@ -15,33 +15,27 @@
  This is a preliminary milestone to let you set up goals for your final project and assess the feasibility of your ideas. Please, fill the following sections about your project.
 
 (max. 2000 characters per section)
-**Dataset**
 
- Dataset from EPFL that we- graph of all the courses, the edges are the pre-requis
+### Dataset
+Dataset from EPFL that we- graph of all the courses, the edges are the pre-requis
 Creation of a dataset of EPFL courses with a web crawler that scrapes the data.
 Creation of a graph where the nodes would be the courses and the connections, the pre-requisites
 
+### Problematic
+Frame the general topic of your visualization and the main axis that you want to develop
+* What am I trying to show with my visualization?
+* Think of an overview for the project, your motivation, and the target audience.
 
+### Exploratory Data Analysis
 
+Pre-processing of the data set you chose:
+* Show some basic statistics and get insights about the data
 
-
-**Frame the general topic of your visualization and the main axis that you want to develop.**
-
-    What am I trying to show with my visualization?
-    Think of an overview for the project, your motivation, and the target audience.
-
-**Exploratory Data Analysis**
-
-**Pre-processing of the data set you chose:**
-
-    Show some basic statistics and get insights about the data
-
-**Related work**
-
-    What others have already done with the data?
-    Why is your approach original?
-    What source of inspiration do you take? Visualizations that you found on other websites or magazines (might be unrelated to your data).
-    In case you are using a dataset that you have already explored in another context (ML or ADA course, semester project...), you are required to share the report of that work to outline the differences with the submission for this class.
+### Related work
+* What others have already done with the data?
+* Why is your approach original?
+* What source of inspiration do you take? Visualizations that you found on other websites or magazines (might be unrelated to your data).
+* In case you are using a dataset that you have already explored in another context (ML or ADA course, semester project...), you are required to share the report of that work to outline the differences with the submission for this class.
 
 ## Milestone 2 (Friday 1st May, 5pm)
 
