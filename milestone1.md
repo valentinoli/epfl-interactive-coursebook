@@ -8,9 +8,9 @@ After some pre-processing steps, the raw data has been thoughtfully transformed 
 
 [View preview examples](preview.md)
 
-[`epfl_courses.json`](preview.md#courses) contains detailed information about every course, with course codes as keys.
-[`epfl_programs.json`](preview.md#programs) contains all programs at EPFL and the list of course codes for each program.
-[`epfl_master_specs.json`](preview.md#specializations) contains information about specializations of master's programs which offer them. For each program, it lists the specializations for each course and vice versa.
+* [`epfl_courses.json`](preview.md#courses) contains detailed information about every course, with course codes as keys.
+* [`epfl_programs.json`](preview.md#programs) contains all programs at EPFL and the list of course codes for each program.
+* [`epfl_master_specs.json`](preview.md#specializations) contains information about specializations of master's programs which offer them. For each program, it lists the specializations for each course and vice versa.
 
 The goal for the next couple of weeks is to process the fields `required`, `recommended`, `concepts` and `prerequisite_for` in `epfl_courses.json` to discover dependencies between courses and create an adjacency list. This list will be stored in a separate `.json` file.
 
@@ -20,7 +20,7 @@ If you are a student at EPFL, you know that sometimes it can be hard to pick sui
 
 In this project, we aim to visualize the courses currently taught at EPFL and the relationships between them. The data will be represented on a graph. The courses themselves will be represented by the nodes of the graph and dependencies between courses as (directed) edges. Different node colors, shapes and sizes will be used to distinguish nodes. We envision both an impressive visualization and a rich interactive tool with options for searching and filtering. The user should be able to filter by level, section, program, specialization, course name or code. This can come in handy in many instances, for example when students want to see only the courses of their own program. When filters are applied, connected nodes that don't fulfill the filter condition are displayed in a neutral color. When hovering over or selecting a node, information is displayed about the course.
 
-We also aim to provide a complementary data summary on a separate page in the form of a data story, with graphs and textual descriptions.
+We also aim to provide a complementary data analysis summary on a separate page in the form of a data story, with graphs and textual descriptions.
 
 ### Exploratory Data Analysis
 

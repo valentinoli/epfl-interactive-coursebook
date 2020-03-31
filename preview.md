@@ -1,10 +1,12 @@
+# Data previews
+
 ## Courses
 
 `epfl_courses.json` contains detailed information about every course, with course codes as keys
 
 Preview example:
 
-```json
+```
 "COM-480": {
   "name": "Data visualization",
   "section": "SC",
@@ -55,7 +57,7 @@ Preview example:
 
 Preview example:
 
-```json
+```
 {
 	"propedeutics": { ... },
 	"bachelor": { ... },
@@ -69,6 +71,7 @@ Preview example:
 		...
 	},
 	"doctoral_school": { ... }
+}
 ```
 
 ## Specializations
@@ -77,7 +80,7 @@ Preview example:
 
 Preview example:
 
-```json
+```
 {
 	"Civil Engineering": { ... },
 	...
