@@ -1,8 +1,7 @@
 {
-  "name": "com-480-project-vizcachas",
+  "name": "EPFL Interactive Coursebook",
   "version": "1.0.0",
-  "description": "My webpack project",
-  "main": "index.js",
+  "description": "Project in Data Visualization, 2020",
   "scripts": {
     "start": "npm-run-all --parallel watch:webpack watch:server",
     "watch:webpack": "webpack --watch --progress --config webpack.dev.js",
