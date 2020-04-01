@@ -6,7 +6,7 @@ We have at our disposal the set of all EPFL programs, courses and course registr
 
 After some pre-processing steps, the raw data has been thoughtfully transformed into _three_ `.json` files.
 
-[View preview examples](preview.md)
+[View preview examples](preview.md#data-previews)
 
 * [`epfl_courses.json`](preview.md#courses) contains detailed information about every course, with course codes as keys.
 * [`epfl_programs.json`](preview.md#programs) contains all programs at EPFL and the list of course codes for each program.

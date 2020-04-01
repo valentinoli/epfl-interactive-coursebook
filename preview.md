@@ -47,7 +47,20 @@ Preview example:
       "semester": "Master semester 4"
     },
     ...
-  ]
+  ],
+  "registrations": {
+    "2019-2020": {
+      "Digital Humanities": {
+        "count": "6",
+        "level": "master"
+      },
+      "Electrical and Electronics Engineering": { ... },
+      "Computer Science": { ... },
+      ...
+    },
+     "2018-2019": { ... },
+     "2017-2018": { ... }
+  }
 }
 ```
 
