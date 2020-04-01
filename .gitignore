@@ -1,6 +1,18 @@
+# npm modules
 node_modules/
+
+# don't track the data
 data/
+
+# ipython notebook checkpoints
 .ipynb_checkpoints/
+
+# environment variables
 .env
+
+# various notebooks
 python/is-academia.ipynb
 python/studyplans.ipynb
+
+# folder for build code
+dist/

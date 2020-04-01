@@ -1,15 +1,46 @@
 const path = require('path');
 const webpack = require('webpack');
 
-const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+const cssLoaders = [
+  {
+    loader: 'css-loader',
+
+    options: {
+      sourceMap: true
+    }
+  },
+  {
+    loader: 'sass-loader',
+
+    options: {
+      sourceMap: true
+    }
+  }
+]
+
+// fallback to style-loader in development
+if (process.env.NODE_ENV === 'production') {
+  cssLoaders.unshift(
+      'file-loader',
+      MiniCssExtractPlugin.loader
+  )
+} else {
+  cssLoaders.unshift('style-loader')
+}
 
 module.exports = {
-  mode: 'development',
-  devtool: 'inline-source-map',
-
-  devServer: {
-    contentBase: './dist',
+  entry: {
+    main: './src/main.js',
   },
+  output: {
+    publicPath: 'dist/'
+  },
+
+  // devServer: {
+  //   contentBase: './dist',
+  // },
 
   // If you are using a bundler, make sure your bundler is configured to consume
   // the modules entry point in the package.json. See webpack’s resolve.mainFields, for example.
@@ -20,27 +51,22 @@ module.exports = {
 
   plugins: [
     new webpack.ProgressPlugin(),
-    new BrowserSyncPlugin(
-      // BrowserSync options
-      {
-        // browse to http://localhost:3000/ during development
-        host: 'localhost',
-        port: 3000,
-        // proxy the Webpack Dev Server endpoint
-        // through BrowserSync
-        proxy: 'http://localhost:8080/',
-      },
-      // plugin options
-      {
-        // prevent BrowserSync from reloading the page
-        // and let Webpack Dev Server take care of this
-        reload: false
-      }
-    ),
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: '[name].css',
+      chunkFilename: '[id].css',
+    }),
   ],
 
   module: {
     rules: [{
+        test: /\.html$/i,
+        use: [
+          'file-loader?name=[name].[ext]',
+        ],  // simple file loading
+      },
+      {
         test: /.js$/,
         exclude: /node_modules/,
         use: [{
@@ -64,26 +90,8 @@ module.exports = {
       },
       {
         test: /.s[ac]ss$/,
-
-        use: [{
-            loader: 'style-loader'
-          },
-          {
-            loader: 'css-loader',
-
-            options: {
-              sourceMap: true
-            }
-          },
-          {
-            loader: 'sass-loader',
-
-            options: {
-              sourceMap: true
-            }
-          }
-        ]
-      }
+        use: cssLoaders
+      },
     ]
   },
 };

@@ -24,6 +24,7 @@ We also aim to provide a complementary data analysis summary on a separate page 
 
 ### Exploratory Data Analysis
 
+The pre-processing work can be viewed in [`python/wrangling.ipynb`] notebook.
 Pre-processing of the data set you chose:
 * Show some basic statistics and get insights about the data
 

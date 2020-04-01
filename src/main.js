@@ -1,3 +1,4 @@
+import './index.html'
 import './style.scss'
 import { select } from 'd3-selection'
 
