@@ -76,11 +76,8 @@ Preview example:
 	"bachelor": { ... },
 	"master": {
 		...
-    "Computational Science and Engineering": { ... },
-		"Computer Science": {
-			"path": "/studyplan/en/master/computer-science",
-			"courses": [..., "CS-454", "COM-480", "EE-559", "CS-472", ...]
-		},
+    "Computational Science and Engineering": [ ... ],
+		"Computer Science": [..., "CS-454", "COM-480", "EE-559", "CS-472", ...],
 		...
 	},
 	"doctoral_school": { ... }
