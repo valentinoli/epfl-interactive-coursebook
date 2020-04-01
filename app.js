@@ -10,7 +10,7 @@ server.use(express.static(__dirname + '/public'))
 
 server.get('/', (req, res) => res.sendfile('index.html'))
 
-const { PORT } = process.env || 8080
+const PORT = process.env.PORT || 8080
 
 server.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`)
