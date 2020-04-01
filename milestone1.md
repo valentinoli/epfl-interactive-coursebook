@@ -18,18 +18,19 @@ The goal for the next couple of weeks is to process the fields `required`, `reco
 ### Problematic
 If you are a student at EPFL, you know that sometimes it can be hard to pick suitable courses for the upcoming semester. If are a teacher at EPFL, you might be familiar with the challenge of understanding what other teachers are teaching your students and how it relates to the content in your course or which courses teach similar or related concepts. You might have browsed through the different study plans and course books and opened multiple tabs on your web browser in order to make sense of the highly interconnected system of knowledge that is being presented in a fragmented way.
 
-In this project, we aim to visualize the courses currently taught at EPFL and the relationships between them. The data will be represented on a graph. The courses themselves will be represented by the nodes of the graph and dependencies between courses as (directed) edges. Different node colors, shapes and sizes will be used to distinguish nodes. We envision both an impressive visualization and a rich interactive tool with options for searching and filtering. The user should be able to filter by level, section, program, specialization, course name or code. This can come in handy in many instances, for example when students want to see only the courses of their own program. When filters are applied, connected nodes that don't fulfill the filter condition are displayed in a neutral color. When hovering over or selecting a node, information is displayed about the course.
+In this project, we aim to visualize the courses currently taught at EPFL and the relationships between them. Since we want to visualize relationships, the data will be represented on a graph. The courses themselves will be represented by the nodes of the graph and dependencies between courses as (directed) edges. Different node colors, shapes and sizes will be used to distinguish nodes. For instance, the number of registered students could determine the node size. We envision both an impressive visualization and a rich interactive tool with options for searching and filtering. The user should be able to filter by level, section, program, specialization, course name or code. This can come in handy in many instances, for example when students want to see only the courses of their own program. When filters are applied, connected nodes that don't fulfill the filter condition are displayed in a neutral color. When hovering over or selecting a node, information is displayed about the course.
 
 We also aim to provide a complementary data analysis summary on a separate page in the form of a data story, with graphs and textual descriptions.
 
 ### Exploratory Data Analysis
 
-The pre-processing work can be viewed in [`python/wrangling.ipynb`] notebook.
-Pre-processing of the data set you chose:
+The pre-processing and data wrangling work can be viewed in [this notebook](python/wrangling.ipynb).
+
 * Show some basic statistics and get insights about the data
 
 ### Related work
-* What others have already done with the data?
-* Why is your approach original?
-* What source of inspiration do you take? Visualizations that you found on other websites or magazines (might be unrelated to your data).
-* In case you are using a dataset that you have already explored in another context (ML or ADA course, semester project...), you are required to share the report of that work to outline the differences with the submission for this class.
+With the originality of the data set aside, we have not found any work that attempts to visualize EPFL courses in any way. The data is original because we harvested the data from different sources, integrated the structures innovatively, and pre-processed and formatted them to suit the visualization task. We maintain that our approach to the visualization task is original, not only because we are the first to visualize this data, but also because we are attempting to enable a comprehensive understanding of the complete well of teaching expertise at EPFL. Of course, we are aware that the data is not complete and some links will be missing in the graph, since the edges will be based only on the stated course dependencies of course book authors. Our main goal is not to simply analyze the data and present insights in tables and graphs, rather we want to create a useful tool ─ _the ultimate interactive course book for EPFL_.
+
+These graph examples have provided us with inspiration:
+* [colored nodes, drag-and-drop](https://observablehq.com/@d3/force-directed-graph)
+* [disjoint graph](https://observablehq.com/@d3/disjoint-force-directed-graph)
