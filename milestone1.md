@@ -32,5 +32,6 @@ The pre-processing and data wrangling work can be viewed in [this notebook](pyth
 With the originality of the data set aside, we have not found any work that attempts to visualize EPFL courses in any way. The data is original because we harvested the data from different sources, integrated the structures innovatively, and pre-processed and formatted them to suit the visualization task. We maintain that our approach to the visualization task is original, not only because we are the first to visualize this data, but also because we are attempting to enable a comprehensive understanding of the complete well of teaching expertise at EPFL. Of course, we are aware that the data is not complete and some links will be missing in the graph, since the edges will be based only on the stated course dependencies of course book authors. Our main goal is not to simply analyze the data and present insights in tables and graphs, rather we want to create a useful tool ─ _the ultimate interactive course book for EPFL_.
 
 These graph examples have provided us with inspiration:
-* [colored nodes, drag-and-drop](https://observablehq.com/@d3/force-directed-graph)
+* [distinct colors, drag-around graph](https://observablehq.com/@d3/force-directed-graph)
 * [disjoint graph](https://observablehq.com/@d3/disjoint-force-directed-graph)
+* [drag & zoom](https://observablehq.com/@d3/drag-zoom?collection=@d3/d3-drag)
