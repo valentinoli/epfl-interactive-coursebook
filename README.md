@@ -6,6 +6,13 @@
 | [Michaël Spierer](michael.spierer@epfl.ch) | 236503 |
 | [Michal Piotr Pleskowicz](michal.pleskowicz@epfl.ch) | 251034 |
 
+## Repo structure
+
+    ├── dist                    # Main html and js files for the visualization
+    ├── python                  # Data wrangling and preprocessing
+    ├── source                  # ??
+
+
 [Milestone 1](#milestone-1-friday-3rd-april-5pm) • [Milestone 2](#milestone-2-friday-1st-may-5pm) • [Milestone 3](#milestone-3-thursday-28th-may-5pm)
 
 ## Milestone 1 (Friday 3rd April, 5pm)
