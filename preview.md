@@ -38,14 +38,8 @@ Preview example:
   ],
   "prereqisite_for": [],
   "in_the_programs": [
-    {
-      "program": "Communication Systems - master program",
-      "semester": "Master semester 2"
-    },
-    {
-      "program": "Communication Systems - master program",
-      "semester": "Master semester 4"
-    },
+    ["Communication Systems - master program", "Master semester 2"],
+    ["Communication Systems - master program", "Master semester 4"],
     ...
   ],
   "registrations": {

@@ -12,8 +12,6 @@ After some pre-processing steps, the raw data has been thoughtfully transformed 
 * [`epfl_programs.json`](preview.md#programs) contains all programs at EPFL and the list of course codes for each program.
 * [`epfl_master_specs.json`](preview.md#specializations) contains information about specializations of master's programs which offer them. For each program, it lists the specializations for each course and vice versa.
 
-The goal for the next couple of weeks is to process the fields `required`, `recommended`, `concepts` and `prerequisite_for` in `epfl_courses.json` to discover dependencies between courses and create an adjacency list. This list will be stored in a separate `.json` file.
-
 
 ### Problematic
 If you are a student at EPFL, you know that sometimes it can be hard to pick suitable courses for the upcoming semester. If are a teacher at EPFL, you might be familiar with the challenge of understanding what other teachers are teaching your students and how it relates to the content in your course or which courses teach similar or related concepts. You might have browsed through the different study plans and course books and opened multiple tabs on your web browser in order to make sense of the highly interconnected system of knowledge that is being presented in a fragmented way.
@@ -26,10 +24,12 @@ We also aim to provide a complementary data analysis summary on a separate page 
 
 The pre-processing and data wrangling work can be viewed in [this notebook](python/wrangling.ipynb).
 
-* Show some basic statistics and get insights about the data
+Goals for next milestone:
+* Process the fields `required`, `recommended`, `concepts` and `prerequisite_for` in `epfl_courses.json` to discover dependencies between courses and create an adjacency list. This list will be stored in a separate `.json` file.
+* Integrate registration data into `epfl_courses.json`
 
 ### Related work
-With the originality of the data set aside, we have not found any work that attempts to visualize EPFL courses in any way. The data is original because we harvested the data from different sources, integrated the structures innovatively, and pre-processed and formatted them to suit the visualization task. We maintain that our approach to the visualization task is original, not only because we are the first to visualize this data, but also because we are attempting to enable a comprehensive understanding of the complete well of teaching expertise at EPFL. Of course, we are aware that the data is not complete and some links will be missing in the graph, since the edges will be based only on the stated course dependencies of course book authors. Our main goal is not to simply analyze the data and present insights in tables and graphs, rather we want to create a useful tool ─ _the ultimate interactive course book for EPFL_.
+ In this project we attempt to provide a visual overview of the deep well of teaching expertise at EPFL. With the originality of the data set aside, we have not found any work that attempts to visualize EPFL courses in any way. The data is original because we harvested the data from different sources, integrated the structures innovatively, and pre-processed and formatted them to suit the visualization task. Of course, we are aware that the data is not complete and some links will be missing in the graph, since the edges will be based only on the stated course dependencies of course book authors. Our main goal is not to simply analyze the data and present insights in tables and graphs, rather we want to create a useful tool ─ _the ultimate interactive course book for EPFL_.
 
 These graph examples have provided us with inspiration:
 * [distinct colors, drag-around graph](https://observablehq.com/@d3/force-directed-graph)
