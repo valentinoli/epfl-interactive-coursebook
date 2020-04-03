@@ -2,7 +2,7 @@
 The purpose of this milestone is to set up goals for our final project and assess the feasibility of our ideas. We begin by introducing the dataset we will be working with, the data source, format and features. Next, we frame the general topic of our visualization and discuss the motivation behind the project and its significance to the target audience. We discuss the data pre-processing steps required and display some basic statistics. Finally, we discuss related work, originality and sources of inspiration.
 
 ### Dataset
-We have at our disposal the set of all EPFL programs, courses and course registrations. We harvested course data from EPFL [studyplans](https://edu.epfl.ch/studyplan/en) and [coursebooks](https://edu.epfl.ch/coursebook/en/data-visualization-COM-480), and course registrations were gathered from the [IS-Academia Reporting portal](https://isa.epfl.ch/imoniteur_ISAP/!gedreports.htm). You are free to [contact us](README.md#project-of-data-visualization-com-480) about any questions and enquiries about the data and the methods used in gathering it.
+We have at our disposal the set of all EPFL programs, courses and course registrations. We harvested course data from EPFL [studyplans](https://edu.epfl.ch/studyplan/en) and [coursebooks](https://edu.epfl.ch/coursebook/en/data-visualization-COM-480), and course registrations were gathered from the [IS-Academia Reporting portal](https://isa.epfl.ch/imoniteur_ISAP/!gedreports.htm). Hence, we can assume that the data collected are of good quality since they have been scraped from the official EPFL website. You are free to [contact us](README.md#project-of-data-visualization-com-480) about any questions and enquiries about the data and the methods used in gathering it.
 
 After some pre-processing steps, the raw data has been thoughtfully transformed into _three_ `.json` files.
 
@@ -12,6 +12,7 @@ After some pre-processing steps, the raw data has been thoughtfully transformed 
 * [`epfl_programs.json`](preview.md#programs) contains all programs at EPFL and the list of course codes for each program.
 * [`epfl_master_specs.json`](preview.md#specializations) contains information about specializations of master's programs which offer them. For each program, it lists the specializations for each course and vice versa.
 
+We are still going to need to do some cleaning to fix some discrepancies discovered in epfl_courses and other processing you can find in our goals for the next milestone.
 
 ### Problematic
 If you are a student at EPFL, you know that sometimes it can be hard to pick suitable courses for the upcoming semester. If are a teacher at EPFL, you might be familiar with the challenge of understanding what other teachers are teaching your students and how it relates to the content in your course or which courses teach similar or related concepts. You might have browsed through the different study plans and course books and opened multiple tabs on your web browser in order to make sense of the highly interconnected system of knowledge that is being presented in a fragmented way.
