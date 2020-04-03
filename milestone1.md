@@ -12,7 +12,7 @@ After some pre-processing steps, the raw data has been thoughtfully transformed 
 * [`epfl_programs.json`](preview.md#programs) contains all programs at EPFL and the list of course codes for each program.
 * [`epfl_master_specs.json`](preview.md#specializations) contains information about specializations of master's programs which offer them. For each program, it lists the specializations for each course and vice versa.
 
-We are still going to need to do some cleaning to fix a few discrepancies discovered in `epfl_courses.json`. Also, we have not yet processed data for course registrations and course dependencies. This and other processing left-overs you can find about in our [goals for the next milestone](#goals-for-next-milestone).
+We are still going to need to do some cleaning to fix a few inconsistencies discovered in `epfl_courses.json`. Also, we have not yet processed data for course registrations and course dependencies. This and other processing left-overs you can find out about in our [goals for the next milestone](#goals-for-next-milestone).
 
 ### Problematic
 If you are a student at EPFL, you know that sometimes it can be hard to pick suitable courses for the upcoming semester. If you are a teacher at EPFL, you might be familiar with the challenge of understanding what other teachers are teaching your students and how it relates to the content in your course or which courses teach similar or related concepts. You might have browsed through the different study plans and course books and opened multiple tabs on your web browser in order to make sense of the highly interconnected system of knowledge that is being presented in a fragmented way.
@@ -91,6 +91,6 @@ These graph examples have provided us with inspiration:
 ### Goals for next milestone
 * Process and integrate course registration data into `epfl_courses.json`.
 * Process the fields `required`, `recommended`, `concepts` and `prerequisite_for` in `epfl_courses.json` to discover dependencies between courses and create an adjacency list. This list will be stored in a separate `.json` file(s).
-* Fix the few discrepancies discovered when processing `epfl_courses`. There are very few exceptions that will require manual overview, and we will handle them before the next milestone.
+* Fix the few inconsistencies discovered when processing `epfl_courses`. There are very few exceptions that will require manual overview, and we will handle them before the next milestone.
 * Make sketches and design core visualization.
 * Create an API to query the data.
