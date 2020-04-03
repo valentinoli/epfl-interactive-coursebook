@@ -2,7 +2,7 @@
 The purpose of this milestone is to set up goals for our final project and assess the feasibility of our ideas. We begin by introducing the dataset we will be working with, the data source, format and features. Next, we frame the general topic of our visualization and discuss the motivation behind the project and its significance to the target audience. We share the data pre-processing steps required and display some basic results and statistics. Finally, we discuss related work, originality and sources of inspiration.
 
 ### Dataset
-We have at our disposal the set of all EPFL programs, courses and course registrations. We harvested course data from EPFL [studyplans](https://edu.epfl.ch/studyplan/en) and [coursebooks](https://edu.epfl.ch/coursebook/en/data-visualization-COM-480), and course registrations were gathered from the [IS-Academia Reporting portal](https://isa.epfl.ch/imoniteur_ISAP/!gedreports.htm). You are free to [contact us](README.md#project-of-data-visualization-com-480) if you have any questions about the data and the methods used in gathering it.
+We have at our disposal the set of all EPFL programs, courses and course registrations. We harvested course data from EPFL [studyplans](https://edu.epfl.ch/studyplan/en) and [coursebooks](https://edu.epfl.ch/coursebook/en/data-visualization-COM-480), and course registrations were gathered from the [IS-Academia Reporting portal](https://isa.epfl.ch/imoniteur_ISAP/!gedreports.htm). You are free to [contact us](mailto:valentin.loftsson@epfl.ch;michael.spierer@epfl.ch;michal.pleskowicz@epfl.ch) if you have any questions about the data and the methods used in gathering it.
 
 After some pre-processing steps, the raw data has been thoughtfully transformed and organized into _three_ `.json` files (see [Exploratory Data Analysis](#exploratory-data-analysis) section below).
 
@@ -22,11 +22,11 @@ We also aim to provide a complementary data analysis summary on a separate page 
 
 ### Exploratory Data Analysis
 
-Pre-processing and data wrangling work can be viewed in [python/wrangling.ipynb](python/wrangling.ipynb)
-Exploratory analysis and basic statistics can be viewed in [python/analysis.ipynb](python/analysis.ipynb)
+* Pre-processing and data wrangling work can be viewed in [python/wrangling.ipynb](python/wrangling.ipynb)
+* Exploratory analysis and basic statistics can be viewed in [python/analysis.ipynb](python/analysis.ipynb)
 
 ### Related work
- In this project we attempt to provide a visual overview of the deep well of teaching expertise at EPFL. With the originality of the data set aside, we have not found any work that attempts to visualize EPFL courses in any way. The data is original because we harvested the data from different sources, integrated the structures innovatively, and pre-processed and formatted them to suit the visualization task. Of course, we are aware that the data is not complete and some links will be missing in the graph, since the edges will be based only on the stated course dependencies of course book authors. Our main goal is not to simply analyze the data and present insights in tables and graphs, rather we want to create a useful tool ─ _the ultimate interactive course book for EPFL_.
+In this project we attempt to provide a visual overview of the deep well of teaching expertise at EPFL. With the originality of the data set aside, we have not found any work that attempts to visualize EPFL courses in any way. The data is original because we harvested the data from different sources, integrated the structures innovatively, and pre-processed and formatted them to suit the visualization task. Of course, we are aware that the data is not complete and some links will be missing in the graph, since the edges will be based only on the stated course dependencies of course book authors. Our main goal is not to simply analyze the data and present insights in tables and graphs, rather we want to create a useful tool ─ _the ultimate interactive course book for EPFL_.
 
 These graph examples have provided us with inspiration:
 * [Force-Directed Graph](https://observablehq.com/@d3/force-directed-graph) (inspiration: distinct colors, drag-around graph)
