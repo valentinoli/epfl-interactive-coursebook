@@ -35,8 +35,8 @@ These graph examples have provided us with inspiration:
 * [HiTech Companies Graph](https://www.anychart.com/products/anychart/gallery/Network_Graph/Knowledge_Graph.php) (inspiration: drag without moving other nodes, node and edge hover state)
 
 ### Goals for next milestone
-* Process and integrate [course registration data](python/wrangling.ipynb#isa-registrations) into `epfl_courses.json`.
+* Process and integrate course registration data into `epfl_courses.json`.
 * Process the fields `required`, `recommended`, `concepts` and `prerequisite_for` in `epfl_courses.json` to discover dependencies between courses and create an adjacency list. This list will be stored in a separate `.json` file(s).
-* Fix the few [discrepancies](python/wrangling.ipynb#epfl-courses-discrepancies) discovered when processing `epfl_courses`. There are very few exceptions that will require manual overview, and we will handle them before the next milestone.
-* Make sketches and design core visualization
-* Create an API to query the data
+* Fix the few discrepancies discovered when processing `epfl_courses`. There are very few exceptions that will require manual overview, and we will handle them before the next milestone.
+* Make sketches and design core visualization.
+* Create an API to query the data.
