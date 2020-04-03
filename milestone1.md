@@ -27,11 +27,13 @@ We also aim to provide a complementary data analysis summary on a separate page 
 
 **Statistical summary:**
 
+
 _Number of programs per academic level_
 
 | level        |   propedeutics |   bachelor |   master |   minor |   doctoral_school |
 |:-------------|---------------:|-----------:|---------:|--------:|------------------:|
 | num_programs |             14 |         15 |       26 |      20 |                22 |
+
 
 
 _Credit number distribution of courses_
@@ -41,8 +43,10 @@ _Credit number distribution of courses_
 | num_courses |  18 | 117 | 373 | 420 | 464 | 199 | 126 |  22 |  34 |   4 |   36 |    9 |   20 |    2 |   10 |    2 |   29 |
 
 
+
 _Distribution of the number of courses per academic program: Histogram for each education level_
 ![Course count distribution](python/plots/course_count_distribution.png)
+
 
 
 _Exam form distribution of courses_
@@ -51,11 +55,15 @@ _Exam form distribution of courses_
 |:------------|----------------------:|----------:|-------:|-----------:|--------------------:|-----------------:|-------------:|-----------------:|-------:|------------------:|
 | num_courses |                   691 |       625 |    325 |         65 |                  64 |               54 |           38 |               18 |      4 |                 1 |
 
+
+
 _Number of lecturers distribution of courses_
 
 | num_lecturers |   0 |    1 |   2 |   3 |   4 |   5 |   6 |   7 |   8 |   9 |
 |:--------------|----:|-----:|----:|----:|----:|----:|----:|----:|----:|----:|
 | num_courses   | 234 | 1117 | 331 | 137 |  43 |  15 |   4 |   1 |   2 |   1 |
+
+
 
 _Language distribution of courses_
 
@@ -64,9 +72,11 @@ _Language distribution of courses_
 | num_courses |      1177 |      648 |                   58 |        2 |
 
 
+
 _Number of courses per EPFL section_
 
-![Course section distribution](plots/course_section_distribution.png)
+![Course section distribution](python/plots/course_section_distribution.png)
+
 
 ### Related work
 In this project we attempt to provide a visual overview of the deep well of teaching expertise at EPFL. With the originality of the data set aside, we have not found any work that attempts to visualize EPFL courses in any way. The data is original because we harvested the data from different sources, integrated the structures innovatively, and pre-processed and formatted them to suit the visualization task. Of course, we are aware that the data is not complete and some links will be missing in the graph, since the edges will be based only on the stated course dependencies of course book authors. Our main goal is not to simply analyze the data and present insights in tables and graphs, rather we want to create a useful tool ─ _the ultimate interactive course book for EPFL_.
