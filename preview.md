@@ -66,15 +66,15 @@ Preview example:
 
 ```
 {
-	"propedeutics": { ... },
-	"bachelor": { ... },
-	"master": {
-		...
+  "propedeutics": { ... },
+  "bachelor": { ... },
+  "master": {
+    ...
     "Computational Science and Engineering": [ ... ],
-		"Computer Science": [..., "CS-454", "COM-480", "EE-559", "CS-472", ...],
-		...
-	},
-	"doctoral_school": { ... }
+    "Computer Science": [..., "CS-454", "COM-480", "EE-559", "CS-472", ...],
+    ...
+  },
+  "doctoral_school": { ... }
 }
 ```
 
@@ -86,35 +86,35 @@ Preview example:
 
 ```
 {
-	"Civil Engineering": { ... },
-	...
-	"Computer Science": {
-		"spec_key": {
-			"a": "Computer Engineering-SP",
-			"b": "Data Analytics",
-			"c": "Foundations of software",
-			"d": "Information Security-SP",
-			"e": "Networking and Mobility",
-			"f": "Signals, Images and Interfaces",
-			"g": "Software Systems",
-			"h": "Wireless Communications",
-			"i": "Computer Science Theory",
-			"j": "Internet Information Systems"
-		},
-		"courses": {
-			...
-			"CS-423": ["b", "e", "j"],
-			"ENG-466": ["a"],
-			"COM-502": [],
-			"CS-473": ["a"],
-			...
-		},
-		"specs": {
-			"a": [..., "ENG-466", "CS-473", ...],
-			"b": [..., "CS-423", ...],
-			...
-		}
-	},
-	...
+  "Civil Engineering": { ... },
+  ...
+  "Computer Science": {
+    "spec_key": {
+      "a": "Computer Engineering-SP",
+      "b": "Data Analytics",
+      "c": "Foundations of software",
+      "d": "Information Security-SP",
+      "e": "Networking and Mobility",
+      "f": "Signals, Images and Interfaces",
+      "g": "Software Systems",
+      "h": "Wireless Communications",
+      "i": "Computer Science Theory",
+      "j": "Internet Information Systems"
+    },
+    "courses": {
+      ...
+      "CS-423": ["b", "e", "j"],
+      "ENG-466": ["a"],
+      "COM-502": [],
+      "CS-473": ["a"],
+      ...
+    },
+    "specs": {
+      "a": [..., "ENG-466", "CS-473", ...],
+      "b": [..., "CS-423", ...],
+      ...
+    }
+  },
+  ...
 }
 ```
