@@ -6,7 +6,7 @@
 | [Michaël Spierer](michael.spierer@epfl.ch) | 236503 |
 | [Michal Piotr Pleskowicz](michal.pleskowicz@epfl.ch) | 251034 |
 
-[**View project site**](https://epfl.space)
+[**View project site**](http://epfl.space)
 
 ## Repo structure
 
