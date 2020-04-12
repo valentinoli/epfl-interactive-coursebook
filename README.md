@@ -1,4 +1,4 @@
-﻿# Project of Data Visualization (COM-480)
+# Project of Data Visualization (COM-480)
 
 | Student's name | SCIPER |
 | -------------- | ------ |
@@ -8,15 +8,14 @@
 
 [**View project site**](http://epfl.space)
 
+[Milestone 1](#milestone-1-friday-3rd-april-5pm) • [Milestone 2](#milestone-2-friday-1st-may-5pm) • [Milestone 3](#milestone-3-thursday-28th-may-5pm)
+
 ## Repo structure
 
     ├── public              # static files for web app
         ├── img                 # images
     ├── python              # python notebooks for data pre-processing, wrangling and analysis
     ├── src                 # source code for web app
-
-
-[Milestone 1](#milestone-1-friday-3rd-april-5pm) • [Milestone 2](#milestone-2-friday-1st-may-5pm) • [Milestone 3](#milestone-3-thursday-28th-may-5pm)
 
 ## Milestone 1 (Friday 3rd April, 5pm)
 [Read here](milestone1.md)
