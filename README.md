@@ -13,9 +13,29 @@
 ## Repo structure
 
     ├── public              # static files for web app
-        ├── img                 # images
     ├── python              # python notebooks for data pre-processing, wrangling and analysis
     ├── src                 # source code for web app
+
+
+## Local project setup
+```
+npm install
+```
+
+Compiles and hot-reloads for development
+```
+npm run serve
+```
+
+Compiles and minifies for production
+```
+npm run build
+```
+
+Lints and fixes files
+```
+npm run lint
+```
 
 ## Milestone 1 (Friday 3rd April, 5pm)
 [Read here](milestone1.md)

@@ -1,18 +1,34 @@
 # npm modules
 node_modules/
-
 # don't track the data
 data/
 
 # ipython notebook checkpoints
 .ipynb_checkpoints/
 
-# environment variables
-.env
-
 # various notebooks
 python/is-academia.ipynb
 python/studyplans.ipynb
 
-# folder for build code
-dist/
+.DS_Store
+node_modules
+/dist
+
+# local env files
+.env
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
