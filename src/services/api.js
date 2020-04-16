@@ -5,12 +5,7 @@ import {
   getItem,
   specIconPrefix,
   specIconExt
-} from './util';
-
-/**
- * All master's programs with specializations
- */
-const masterProgramsWithSpecs = Object.keys(getItem("masterspecs"));
+} from "./util";
 
 /**
  * Fetch data from AWS and load it into browser's local storage
@@ -89,7 +84,7 @@ const getCoursesByIds = ids => {
     // All courses if ids is not provided
     return Object.entries(coursesItem);
   }
-  return Object.entries(coursesItem).filter(c => ids.includes(c[0]))
+  return Object.entries(coursesItem).filter(c => ids.includes(c[0]));
 };
 
 /**
@@ -101,8 +96,13 @@ const getCoursesByIds = ids => {
  */
 function getCourses(level = "", program = "", masterspec = "") {
   if (masterspec && level !== "master") {
-    throw new Error("The academic level needs to be master when selecting a specialization");
+    throw new Error(`
+      The academic level needs to be master when selecting a specialization
+    `);
   }
+
+  // All master's programs with specializations
+  const masterProgramsWithSpecs = Object.keys(getItem("masterspecs"));
 
   if (!level) {
     // All courses
@@ -162,7 +162,7 @@ function getCourses(level = "", program = "", masterspec = "") {
     // but we only want to keep those for the selected specialization
     const coursesWithSpecInfo = courses.map(([k, v]) => [
       k,
-      { ...v, ...specsPerCourseWithInfo[k] }  // add specs property
+      { ...v, ...specsPerCourseWithInfo[k] } // add specs property
     ]);
 
     return coursesWithSpecInfo;

@@ -1,4 +1,5 @@
-export const specIconPrefix = "https://isa.epfl.ch/images/gestacplus/etu/plan_fiche/ic-orientation-";
+export const specIconPrefix =
+  "https://isa.epfl.ch/images/gestacplus/etu/plan_fiche/ic-orientation-";
 export const specIconExt = ".gif";
 
 /**
@@ -33,7 +34,9 @@ export function getItem(key) {
   const val = item(key);
 
   if (!val) {
-    window.alert("This site relies on your browser's local storage and needs to be refreshed")
+    window.alert(
+      "This site relies on your browser's local storage and needs to be refreshed"
+    );
     window.location.reload();
   }
 

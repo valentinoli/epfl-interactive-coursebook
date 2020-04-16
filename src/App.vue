@@ -26,12 +26,12 @@
         </v-btn>
 
         <v-btn
-        href="https://github.com/com-480-data-visualization/com-480-project-vizcachas"
-        target="_blank"
-        text
+          href="https://github.com/com-480-data-visualization/com-480-project-vizcachas"
+          target="_blank"
+          text
         >
           <span class="mr-2">View on GitHub</span>
-          <img src="./assets/GitHub-Mark-32px.png" alt="Github Logo">
+          <img src="./assets/GitHub-Mark-32px.png" alt="Github Logo" />
         </v-btn>
       </div>
     </v-app-bar>
@@ -62,11 +62,13 @@ export default {
   opacity: 0 !important;
 }
 
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .5s;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
 }
 
-.fade-enter, .fade-leave-to {
+.fade-enter,
+.fade-leave-to {
   opacity: 0;
 }
 </style>

@@ -1,10 +1,7 @@
 <template>
   <v-col cols="4" md="3" align="center">
     <v-avatar color="grey" size="140">
-      <v-img
-        :src="src"
-        :alt="name"
-      ></v-img>
+      <v-img :src="src" :alt="name"></v-img>
     </v-avatar>
 
     <v-list-item>
@@ -20,5 +17,5 @@
 export default {
   name: "Avatar",
   props: ["src", "name", "email"]
-}
+};
 </script>

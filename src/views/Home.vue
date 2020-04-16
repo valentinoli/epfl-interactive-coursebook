@@ -40,7 +40,7 @@
           >
             <template v-slot:item="{ item }">
               <v-list-item-icon>
-                <img :src="item.iconUrl">
+                <img :src="item.iconUrl" />
               </v-list-item-icon>
               <v-list-item-content>
                 <v-list-item-title v-html="item.text"></v-list-item-title>
@@ -69,14 +69,26 @@
       <!-- class="d-flex align-center flex-column flex-sm-row flex-sm-wrap sm3" -->
       <v-list v-else dense rounded two-line>
         <v-row>
-          <v-col cols="12" sm="6" md="4" lg="3" v-for="[k, v] in courses" :key="k">
+          <v-col
+            cols="12"
+            sm="6"
+            md="4"
+            lg="3"
+            v-for="[k, v] in courses"
+            :key="k"
+          >
             <v-list-item @click="onCourseClicked($event, k, v)" :title="v.name">
               <v-list-item-content>
                 <v-list-item-title v-text="k"></v-list-item-title>
                 <v-list-item-subtitle v-text="v.name"></v-list-item-subtitle>
               </v-list-item-content>
               <template v-if="v.specs">
-                <img v-for="{id, name, iconUrl} in v.specs" :key="id" :src="iconUrl" :title="name">
+                <img
+                  v-for="{ id, name, iconUrl } in v.specs"
+                  :key="id"
+                  :src="iconUrl"
+                  :title="name"
+                />
               </template>
             </v-list-item>
           </v-col>
