@@ -1,6 +1,5 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-const DEFAULT_TITLE = "EPFL Coursebook";
 
 Vue.use(VueRouter);
 
@@ -22,13 +21,6 @@ const routes = [
 
 const router = new VueRouter({
   routes
-});
-
-router.afterEach(to => {
-  Vue.nextTick(() => {
-    document.title =
-      to.path === "/" ? DEFAULT_TITLE : `${DEFAULT_TITLE} - ${to.name}`;
-  });
 });
 
 export default router;

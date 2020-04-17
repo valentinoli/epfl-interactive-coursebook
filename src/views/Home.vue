@@ -51,50 +51,12 @@
       </template>
     </v-row>
 
-    <v-row v-if="selectedCourse">
-      <v-col>
-        <dl class="course-info" id="selected-course">
-          <div v-for="(val, key) in selectedCourse" :key="key">
-            <dt>{{ capitalize(replaceUnderscore(key)) }}</dt>
-            <dd>{{ val }}</dd>
-          </div>
-        </dl>
-      </v-col>
-    </v-row>
-
-    <v-row align="center">
+    <v-container fluid class="data">
       <div v-if="loadingCourses">
         Loading...
       </div>
-      <!-- class="d-flex align-center flex-column flex-sm-row flex-sm-wrap sm3" -->
-      <v-list v-else dense rounded two-line>
-        <v-row>
-          <v-col
-            cols="12"
-            sm="6"
-            md="4"
-            lg="3"
-            v-for="[k, v] in courses"
-            :key="k"
-          >
-            <v-list-item @click="onCourseClicked($event, k, v)" :title="v.name">
-              <v-list-item-content>
-                <v-list-item-title v-text="k"></v-list-item-title>
-                <v-list-item-subtitle v-text="v.name"></v-list-item-subtitle>
-              </v-list-item-content>
-              <template v-if="v.specs">
-                <img
-                  v-for="{ id, name, iconUrl } in v.specs"
-                  :key="id"
-                  :src="iconUrl"
-                  :title="name"
-                />
-              </template>
-            </v-list-item>
-          </v-col>
-        </v-row>
-      </v-list>
-    </v-row>
+      <CourseList v-else :courses="courses" />
+    </v-container>
   </v-container>
 </template>
 
@@ -102,10 +64,13 @@
 // @ is an alias to /src
 /* eslint-disable */
 import api from "@/services/api";
-import { replaceUnderscore, capitalize } from "@/services/util";
+import CourseList from "@/components/CourseList"
 
 export default {
   name: "Home",
+  components: {
+    CourseList
+  },
   data () {
     return {
       loading: true,
@@ -117,12 +82,10 @@ export default {
       courses: {},  // object
       selectedLevel: "",
       selectedProgram: "",
-      selectedMasterspec: "",
-      selectedCourse: null
+      selectedMasterspec: ""
     };
   },
   async created () {
-    console.log("created");
     try {
       await api.loadAllData();
       this.levels = api.getAllLevels();
@@ -132,12 +95,6 @@ export default {
     } finally {
       this.loading = false;
     }
-  },
-  beforeUpdate () {
-    console.log("beforeUpdate");
-  },
-  updated () {
-    console.log("updated");
   },
   watch: {
     selectedLevel (newLevel) {
@@ -167,34 +124,8 @@ export default {
       window.setTimeout(() => {
         this.courses = api.getCourses(level, program, spec);
         this.loadingCourses = false;
-        this.selectedCourse = null;
       }, 50)
-    },
-    onCourseClicked (event, code, courseInfo) {
-      this.selectedCourse = {...{ code }, ...courseInfo};
-      window.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: 'smooth'
-      });
-    },
-    replaceUnderscore,
-    capitalize
+    }
   }
 };
 </script>
-
-<style scoped>
-.course-info dt {
-  font-weight: bold;
-  min-width: 150px;
-}
-
-.course-info dt::after {
-  content: ":";
-}
-
-.course-info > div {
-  display: flex;
-}
-</style>

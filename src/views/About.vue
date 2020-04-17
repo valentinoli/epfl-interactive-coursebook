@@ -28,7 +28,7 @@
         </p>
       </v-col>
     </v-row>
-    <v-row justify="center">
+    <v-row align="center" justify="center">
       <Avatar
         v-for="{ src, name, email } in $options.people"
         :key="src"
