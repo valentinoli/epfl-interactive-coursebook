@@ -87,19 +87,8 @@ const getCoursesByIds = ids => {
   return Object.entries(coursesItem).filter(c => ids.includes(c[0]));
 };
 
-/**
- * Gets course info for all given course ids
- * @param {string} level - academic level
- * @param {string} program - study program
- * @param {string} masterspec - specialization (level needs to be "master")
- * @returns {Array} matching courses, array of [id, value] pairs, where value is Object
- */
-function getCourses({
-  // selectedSection: section = "",
-  selectedLevel: level = "",
-  selectedProgram: program = "",
-  selectedMasterspec: masterspec = ""
-} = {}) {
+
+function getPrefilteredCourses(level, program, masterspec) {
   if (masterspec && level !== "master") {
     throw new Error(`
       The academic level needs to be master when selecting a specialization
@@ -174,10 +163,53 @@ function getCourses({
   }
 }
 
+/**
+ * Gets course info by given parameters
+ * @param {string} level - academic level
+ * @param {string} program - study program
+ * @param {string} masterspec - specialization (level needs to be "master")
+ * @param {string} section - EPFL section
+ * @param {string} credits - number of credits
+ * @param {string} semester -
+ * @returns {Array} matching courses, array of [id, value] pairs, where value is Object
+ */
+function getCourses({
+  selectedLevel: level = "",
+  selectedProgram: program = "",
+  selectedMasterspec: masterspec = "",
+  selectedSection: section = "",
+  selectedCredits: credits = "",
+  selectedSemester: semester = ""
+} = {}) {
+  const prefiltered = getPrefilteredCourses(level, program, masterspec);
+  const filtered = prefiltered.filter(entry => {
+    return (
+      (!section || entry[1].section === section) &&
+      (!credits || entry[1].credits === credits) &&
+      (!semester || entry[1].semester === semester)
+    );
+  });
+  return filtered;
+}
+
+/**
+ * Gets filtering options for independent course filtering dropdown lists
+ * @param {Array} courses - currently displayed courses, array of [id, value] pairs, where value is Object
+ * @returns {Object} object of arrays of distinct values for selected shared properties of all the courses
+ */
+function getCourseFilterOptions(courses) {
+  const values = courses.map(item => item[1]);
+  const sections = Array.from(new Set(values.map(v => v.section))).sort();
+  const credits = Array.from(new Set(values.map(v => v.credits))).sort((a, b) => a-b);
+  const semesters = Array.from(new Set(values.map(v => v.semester)));
+  return { sections, credits, semesters };
+}
+
 export default {
   loadAllData,
   getAllLevels,
   getProgramsByLevel,
   getMasterspecsByProgram,
-  getCourses
+  getCourses,
+  getCourseFilterOptions
 };

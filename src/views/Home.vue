@@ -3,56 +3,77 @@
     <v-row v-if="error">
       <v-col>{{ error }}</v-col>
     </v-row>
-    <v-row v-else-if="loading">
-      <v-col>Loading...</v-col>
-    </v-row>
 
-    <v-row v-else align="center" justify="center" justify-sm="start">
-      <Select
-        :value.sync="selectedLevel"
-        :items="$options.levels"
-        :autofocus="true"
-        label="Select level"
-      />
-      <Select
-        :enabled="programEnabled"
-        :value.sync="selectedProgram"
-        :items="programs"
-        :key="selectedLevel || `noprogram`"
-        label="Select program"
-      />
-      <Select
-        :enabled="masterspecsEnabled"
-        :value.sync="selectedMasterspec"
-        :items="masterspecs"
-        :key="selectedProgram || `nospec`"
-        label="Select specialization"
-      >
-        <template v-slot:item-data="{ item }">
-          <img class="spec-icon" :src="item.iconUrl" />
-          {{ item.text }}
-        </template>
-        <template v-slot:selection-data="{ item }">
-          <img class="spec-icon" :src="item.iconUrl" />
-          {{ item.text }}
-        </template>
-      </Select>
-    </v-row>
+    <v-sheet
+      v-else-if="loading"
+      :color="`grey ${theme.isDark ? 'darken-2' : 'lighten-4'}`"
+      class="px-3 pt-3 pb-3"
+    >
+      <v-skeleton-loader
+        class="mx-auto"
+        max-width="500"
+        type="card"
+      ></v-skeleton-loader>
+    </v-sheet>
 
-    <!-- <v-row align="center" justify="center">
+    <div v-else>
+      <v-row align="center" justify="center" justify-sm="start">
+        <Select
+          :value.sync="selectedLevel"
+          :items="$options.levels"
+          :autofocus="true"
+          label="Select level"
+        />
+        <Select
+          :enabled="programEnabled"
+          :value.sync="selectedProgram"
+          :items="programs"
+          :key="selectedLevel || `noprogram`"
+          label="Select program"
+        />
+        <Select
+          :enabled="masterspecsEnabled"
+          :value.sync="selectedMasterspec"
+          :items="masterspecs"
+          :key="selectedProgram || `nospec`"
+          label="Select specialization"
+        >
+          <template v-slot:item-data="{ item }">
+            <img class="spec-icon" :src="item.iconUrl" />
+            {{ item.text }}
+          </template>
+          <template v-slot:selection-data="{ item }">
+            <img class="spec-icon" :src="item.iconUrl" />
+            {{ item.text }}
+          </template>
+        </Select>
 
-    </v-row> -->
+        <Select
+          :value.sync="selectedSection"
+          :items="sections"
+          label="Select section"
+        />
 
-    <v-row v-if="loadingCourses">
-      <v-col>Loading...</v-col>
-    </v-row>
-    <CourseList v-else :courses="courses" />
+        <Select
+          :value.sync="selectedCredits"
+          :items="credits"
+          label="Select number of credits"
+        />
+
+        <Select
+          :value.sync="selectedSemester"
+          :items="semesters"
+          label="Select semester"
+        />
+      </v-row>
+
+      <CourseList :courses="courses" />
+    </div>
   </v-container>
 </template>
 
 <script>
 // @ is an alias to /src
-/* eslint-disable */
 import api from "@/services/api";
 import CourseList from "@/components/CourseList"
 import Select from "@/components/Select"
@@ -74,7 +95,10 @@ export default {
       courses: [],
       selectedLevel: "",
       selectedProgram: "",
-      selectedMasterspec: ""
+      selectedMasterspec: "",
+      selectedSection: "",
+      selectedCredits: "",
+      selectedSemester: ""
     };
   },
   async created () {
@@ -83,6 +107,8 @@ export default {
       // Don't need getters and setters for the levels
       this.$options.levels = api.getAllLevels();
       this.courses = api.getCourses();
+
+      this.updateCourseFilters();
     } catch (err) {
       this.error = err;
     } finally {
@@ -90,20 +116,14 @@ export default {
     }
   },
   watch: {
-    selectedSection () {
-      this.selectedLevel = "";
-      this.selectedProgram = "";
-      this.selectedMasterspec = "";
-
-      this.setCourses();
-    },
     selectedLevel () {
       this.programs = api.getProgramsByLevel(this.selectedLevel);
 
       this.selectedProgram = "";
       this.selectedMasterspec = "";
 
-      this.setCourses(/*newLevel*/);
+      this.updateCourses();
+      this.updateCourseFilters();
     },
     selectedProgram () {
       if (this.selectedLevel === "master") {
@@ -112,19 +132,33 @@ export default {
 
       this.selectedMasterspec = "";
 
-      this.setCourses();
+      this.updateCourses();
+      this.updateCourseFilters();
     },
     selectedMasterspec () {
-      this.setCourses();
+      this.updateCourses();
+      this.updateCourseFilters();
+    },
+    selectedSection () {
+      this.updateCourses();
+    },
+    selectedCredits () {
+      this.updateCourses();
+    },
+    selectedSemester () {
+      this.updateCourses();
     }
   },
   methods: {
-    setCourses () {
-      this.loadingCourses = true;
-      window.setTimeout(() => {
-        this.courses = api.getCourses(this);
-        this.loadingCourses = false;
-      }, 25)
+    updateCourses () {
+      this.courses = api.getCourses(this);
+    },
+    updateCourseFilters () {
+      // Call this method only after courses have been updated
+      const { sections, credits, semesters } = api.getCourseFilterOptions(this.courses);
+      this.sections = sections;
+      this.credits = credits;
+      this.semesters = semesters;
     }
   },
   computed: {
@@ -134,7 +168,8 @@ export default {
     masterspecsEnabled () {
       return this.selectedProgram !== `` && this.masterspecs.length > 0;
     }
-  }
+  },
+  inject: ['theme']
 };
 </script>
 
