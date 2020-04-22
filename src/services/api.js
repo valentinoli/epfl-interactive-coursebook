@@ -94,7 +94,12 @@ const getCoursesByIds = ids => {
  * @param {string} masterspec - specialization (level needs to be "master")
  * @returns {Array} matching courses, array of [id, value] pairs, where value is Object
  */
-function getCourses(level = "", program = "", masterspec = "") {
+function getCourses({
+  // selectedSection: section = "",
+  selectedLevel: level = "",
+  selectedProgram: program = "",
+  selectedMasterspec: masterspec = ""
+} = {}) {
   if (masterspec && level !== "master") {
     throw new Error(`
       The academic level needs to be master when selecting a specialization
