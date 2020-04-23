@@ -72,7 +72,12 @@
         />
       </v-row>
 
-      <CourseList :courses="courses" />
+      <v-tabs>
+        <v-tab @click="vizEnabled = true">Network</v-tab>
+        <v-tab @click="vizEnabled = false">List</v-tab>
+      </v-tabs>
+      <CourseViz v-if="vizEnabled" :courses="courses" />
+      <CourseList v-else :courses="courses" />
     </div>
   </v-container>
 </template>
@@ -80,13 +85,15 @@
 <script>
 // @ is an alias to /src
 import api from "@/services/api";
-import CourseList from "@/components/CourseList"
-import Select from "@/components/Select"
+import CourseList from "@/components/CourseList";
+import CourseViz from "@/components/CourseViz";
+import Select from "@/components/Select";
 
 export default {
   name: "Home",
   components: {
     CourseList,
+    CourseViz,
     Select
   },
   data () {
@@ -94,6 +101,7 @@ export default {
       loading: true,
       loadingCourses: false,
       error: false,
+      vizEnabled: true,
       programs: [],
       masterspecs: [],
       sections: [],
