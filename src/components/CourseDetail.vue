@@ -31,21 +31,15 @@
       </v-col>
       <v-col cols="12" sm="4" md="3" class="d-flex flex-column">
         <!-- Notes -->
-        <v-alert
-          v-if="note"
-          type="info"
-        >
+        <v-alert v-if="note" type="info">
           {{
-            note.startsWith('(') && note.endsWith(')')
-            ? note.slice(1, -1)
-            : note
+            note.startsWith("(") && note.endsWith(")")
+              ? note.slice(1, -1)
+              : note
           }}
         </v-alert>
 
-        <v-alert
-          v-if="number_of_places"
-          type="info"
-        >
+        <v-alert v-if="number_of_places" type="info">
           {{ `Limited number of places: ${number_of_places}` }}
         </v-alert>
 
@@ -54,7 +48,13 @@
           <v-card-title>Lecturers</v-card-title>
           <v-card-text>
             <div class="lecturer" v-for="[name, url] in lecturers" :key="url">
-              <v-btn class="ma-2" icon color="red lighten-2" :href="url" target="_blank">
+              <v-btn
+                class="ma-2"
+                icon
+                color="red lighten-2"
+                :href="url"
+                target="_blank"
+              >
                 <v-icon small>mdi-launch</v-icon>
               </v-btn>
               {{ name }}
@@ -65,8 +65,12 @@
         <v-card v-if="in_the_programs.length > 0">
           <v-card-title>Programs</v-card-title>
           <v-card-text>
-            <div class="text--primary" v-for="([name, semester], idx) in in_the_programs" :key="idx">
-              {{ `${name}${semester ? ', ' + semester : ''}` }}
+            <div
+              class="text--primary"
+              v-for="([name, semester], idx) in in_the_programs"
+              :key="idx"
+            >
+              {{ `${name}${semester ? ", " + semester : ""}` }}
             </div>
           </v-card-text>
         </v-card>
@@ -135,11 +139,11 @@ export default {
     },
     miscInfo() {
       const info = {
-        "Lecture": this.lecture,
-        "Exercises": this.exercises,
-        "Project": this.project,
+        Lecture: this.lecture,
+        Exercises: this.exercises,
+        Project: this.project,
         "Practical work": this.practical_work,
-        "Labs": this.labs
+        Labs: this.labs
       };
 
       const filtered = this.filterEmptyProps(info);
@@ -147,11 +151,12 @@ export default {
     }
   },
   methods: {
-    filterEmptyProps (obj) {
+    filterEmptyProps(obj) {
       return Object.fromEntries(
-        Object.entries(obj).filter(entry =>
-          Boolean(entry[1]) &&
-          (!Array.isArray(entry[1]) || entry[1].length > 0)
+        Object.entries(obj).filter(
+          entry =>
+            Boolean(entry[1]) &&
+            (!Array.isArray(entry[1]) || entry[1].length > 0)
         )
       );
     }

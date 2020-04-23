@@ -96,7 +96,7 @@ export default {
     CourseViz,
     Select
   },
-  data () {
+  data() {
     return {
       loading: true,
       loadingCourses: false,
@@ -114,7 +114,7 @@ export default {
       selectedSemester: ""
     };
   },
-  async created () {
+  async created() {
     try {
       await api.loadAllData();
       // Don't need getters and setters for the levels
@@ -129,7 +129,7 @@ export default {
     }
   },
   watch: {
-    selectedLevel () {
+    selectedLevel() {
       this.programs = api.getProgramsByLevel(this.selectedLevel);
 
       this.selectedProgram = "";
@@ -137,7 +137,7 @@ export default {
 
       this.setCourseFiltersAndUpdateCourses();
     },
-    selectedProgram () {
+    selectedProgram() {
       if (this.selectedLevel === "master") {
         this.masterspecs = api.getMasterspecsByProgram(this.selectedProgram);
       }
@@ -146,41 +146,39 @@ export default {
 
       this.setCourseFiltersAndUpdateCourses();
     },
-    selectedMasterspec () {
+    selectedMasterspec() {
       this.setCourseFiltersAndUpdateCourses();
     },
-    selectedSection () {
+    selectedSection() {
       this.updateCourses();
     },
-    selectedCredits () {
+    selectedCredits() {
       this.updateCourses();
     },
-    selectedSemester () {
+    selectedSemester() {
       this.updateCourses();
     }
   },
   methods: {
-    setCourseFiltersAndUpdateCourses () {
+    setCourseFiltersAndUpdateCourses() {
       // Needs to be done in this order
       this.setCourseFilterDefaults();
       this.updateCourses();
       this.updateCourseFilters();
     },
-    setCourseFilterDefaults () {
+    setCourseFilterDefaults() {
       this.selectedSection = "";
       this.selectedCredits = "";
       this.selectedSemester = "";
     },
-    updateCourses () {
+    updateCourses() {
       this.courses = api.getCourses(this);
     },
-    updateCourseFilters () {
+    updateCourseFilters() {
       // Call this method only after courses have been updated
-      const {
-        sections,
-        credits,
-        semesters
-      } = api.getCourseFilterOptions(this.courses);
+      const { sections, credits, semesters } = api.getCourseFilterOptions(
+        this.courses
+      );
 
       this.sections = sections;
       this.credits = credits;
@@ -188,14 +186,14 @@ export default {
     }
   },
   computed: {
-    programEnabled () {
+    programEnabled() {
       return this.selectedLevel !== `` && this.programs.length > 0;
     },
-    masterspecsEnabled () {
+    masterspecsEnabled() {
       return this.selectedProgram !== `` && this.masterspecs.length > 0;
     }
   },
-  inject: ['theme']
+  inject: ["theme"]
 };
 </script>
 

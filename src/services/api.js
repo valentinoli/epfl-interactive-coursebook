@@ -87,7 +87,6 @@ const getCoursesByIds = ids => {
   return Object.entries(coursesItem).filter(c => ids.includes(c[0]));
 };
 
-
 function getPrefilteredCourses(level, program, masterspec) {
   if (masterspec && level !== "master") {
     throw new Error(`
@@ -200,7 +199,9 @@ function getCourses({
 function getCourseFilterOptions(courses) {
   const values = courses.map(item => item[1]);
   const sections = Array.from(new Set(values.map(v => v.section))).sort();
-  const credits = Array.from(new Set(values.map(v => v.credits))).sort((a, b) => a-b);
+  const credits = Array.from(new Set(values.map(v => v.credits))).sort(
+    (a, b) => a - b
+  );
   const semesters = Array.from(new Set(values.map(v => v.semester)));
   return { sections, credits, semesters };
 }
