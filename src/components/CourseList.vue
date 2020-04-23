@@ -17,48 +17,54 @@
       </v-col>
 
       <!-- :key=page so new page doesn't inherit selected item highlighting -->
-      <v-list v-else dense rounded two-line width="100%" :key="page">
-        <v-pagination
-          v-model="page"
-          :length="pages"
-          circle
-          total-visible="10"
-          color="red"
-        />
+      <v-col v-else :key="page" align="center">
+        <v-list dense rounded two-line width="100%">
+          <v-pagination
+            v-model="page"
+            :length="pages"
+            circle
+            total-visible="10"
+            color="red"
+          />
 
-        <v-list-item-group color="red">
-          <v-row align="center">
-            <v-col
-              cols="12"
-              sm="4"
-              md="3"
-              lg="2"
-              xl="1"
-              v-for="[k, v] in coursesDisplayed"
-              :key="k"
-            >
-              <v-list-item
-                @click="onCourseClicked($event, k, v)"
-                :title="v.name"
-                v-ripple="{ class: `red--text` }"
+          <v-list-item-group color="red">
+            <v-row align="center">
+              <v-col
+                cols="12"
+                sm="4"
+                md="3"
+                lg="2"
+                xl="1"
+                v-for="[k, v] in coursesDisplayed"
+                :key="k"
               >
-                <v-list-item-content>
-                  <v-list-item-title v-text="k"></v-list-item-title>
-                  <v-list-item-subtitle v-text="v.name"></v-list-item-subtitle>
-                </v-list-item-content>
-                <template v-if="v.specs">
-                  <img
+                <v-list-item
+                  @click="onCourseClicked($event, k, v)"
+                  :title="v.name"
+                  v-ripple="{ class: `red--text` }"
+                >
+                  <v-list-item-content>
+                    <v-list-item-title v-text="k"></v-list-item-title>
+                    <v-list-item-subtitle v-text="v.name"></v-list-item-subtitle>
+                  </v-list-item-content>
+                  <template v-if="v.specs">
+                    <img
                     v-for="{ id, name, iconUrl } in v.specs"
                     :key="id"
                     :src="iconUrl"
                     :title="name"
-                  />
-                </template>
-              </v-list-item>
-            </v-col>
-          </v-row>
-        </v-list-item-group>
-      </v-list>
+                    />
+                  </template>
+                </v-list-item>
+              </v-col>
+            </v-row>
+          </v-list-item-group>
+        </v-list>
+        <div>
+          Showing
+          {{ recordFrom }}-{{ recordTo }} of {{ courses.length }}
+        </div>
+      </v-col>
     </v-slide-y-transition>
   </v-row>
 </template>
@@ -88,6 +94,12 @@ export default {
     pages () {
       return Math.ceil(this.courses.length / this.pagesize);
     },
+    recordFrom() {
+      return (this.page - 1) * this.pagesize + 1;
+    },
+    recordTo() {
+      return Math.min(this.recordFrom + this.pagesize - 1, this.courses.length);
+    },
     coursesDisplayed () {
       const index = this.page - 1;
       const { pagesize } = this;
@@ -112,6 +124,10 @@ export default {
 <style scoped>
 .nav-source-btn-group > .v-btn:not(:last-child) {
   margin-right: 10px;
+}
+
+.v-list-item {
+  border: 0.5px groove rgba(255, 0, 0, 0.5);
 }
 
 .v-list-item--link::before,

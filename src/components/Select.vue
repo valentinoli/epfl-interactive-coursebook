@@ -1,5 +1,5 @@
 <template>
-  <v-col class="d-flex" cols="12" sm="4">
+  <v-col class="d-flex" cols="12" :sm="sm" :md="md">
     <v-select
       v-model="mutableValue"
       @change="$emit('update:value', mutableValue)"
@@ -52,6 +52,14 @@ export default {
     label: {
       type: String,
       default: "Select an option"
+    },
+    sm: {
+      type: Number,
+      default: 6
+    },
+    md: {
+      type: Number,
+      default: 4
     }
   },
   data() {

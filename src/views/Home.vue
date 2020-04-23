@@ -24,6 +24,7 @@
           :autofocus="true"
           label="Select level"
         />
+
         <Select
           :enabled="programEnabled"
           :value.sync="selectedProgram"
@@ -31,6 +32,7 @@
           :key="selectedLevel || `noprogram`"
           label="Select program"
         />
+
         <Select
           :enabled="masterspecsEnabled"
           :value.sync="selectedMasterspec"
@@ -51,18 +53,21 @@
         <Select
           :value.sync="selectedSection"
           :items="sections"
+          :key="selectedSection || `nosection`"
           label="Select section"
         />
 
         <Select
           :value.sync="selectedCredits"
           :items="credits"
+          :key="selectedCredits || `nocredits`"
           label="Select number of credits"
         />
 
         <Select
           :value.sync="selectedSemester"
           :items="semesters"
+          :key="selectedSemester || `nosemester`"
           label="Select semester"
         />
       </v-row>
@@ -122,8 +127,7 @@ export default {
       this.selectedProgram = "";
       this.selectedMasterspec = "";
 
-      this.updateCourses();
-      this.updateCourseFilters();
+      this.setCourseFiltersAndUpdateCourses();
     },
     selectedProgram () {
       if (this.selectedLevel === "master") {
@@ -132,12 +136,10 @@ export default {
 
       this.selectedMasterspec = "";
 
-      this.updateCourses();
-      this.updateCourseFilters();
+      this.setCourseFiltersAndUpdateCourses();
     },
     selectedMasterspec () {
-      this.updateCourses();
-      this.updateCourseFilters();
+      this.setCourseFiltersAndUpdateCourses();
     },
     selectedSection () {
       this.updateCourses();
@@ -150,12 +152,28 @@ export default {
     }
   },
   methods: {
+    setCourseFiltersAndUpdateCourses () {
+      // Needs to be done in this order
+      this.setCourseFilterDefaults();
+      this.updateCourses();
+      this.updateCourseFilters();
+    },
+    setCourseFilterDefaults () {
+      this.selectedSection = "";
+      this.selectedCredits = "";
+      this.selectedSemester = "";
+    },
     updateCourses () {
       this.courses = api.getCourses(this);
     },
     updateCourseFilters () {
       // Call this method only after courses have been updated
-      const { sections, credits, semesters } = api.getCourseFilterOptions(this.courses);
+      const {
+        sections,
+        credits,
+        semesters
+      } = api.getCourseFilterOptions(this.courses);
+
       this.sections = sections;
       this.credits = credits;
       this.semesters = semesters;
