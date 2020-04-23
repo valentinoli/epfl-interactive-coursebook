@@ -1,5 +1,5 @@
 <template>
-  <v-col class="d-flex" cols="12" :sm="sm" :md="md">
+  <!-- <v-col class="d-flex" cols="12" :sm="sm" :md="md"> -->
     <v-select
       v-model="mutableValue"
       @change="$emit('update:value', mutableValue)"
@@ -9,7 +9,9 @@
       item-color="red"
       :disabled="!enabled"
       :autofocus="autofocus"
+      light
       outlined
+      dense
       clearable
     >
       <template v-slot:item="data">
@@ -27,7 +29,7 @@
         </slot>
       </template>
     </v-select>
-  </v-col>
+  <!-- </v-col> -->
 </template>
 
 <script>
@@ -53,14 +55,14 @@ export default {
       type: String,
       default: "Select an option"
     },
-    sm: {
-      type: Number,
-      default: 6
-    },
-    md: {
-      type: Number,
-      default: 4
-    }
+    // sm: {
+    //   type: Number,
+    //   default: 6
+    // },
+    // md: {
+    //   type: Number,
+    //   default: 4
+    // }
   },
   data() {
     return {

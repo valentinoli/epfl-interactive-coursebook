@@ -1,86 +1,92 @@
 <template>
-  <div>
-    <v-row>
-      <v-col cols="12" sm="4" md="3" class="d-flex flex-column">
-        <!-- General -->
-        <v-card>
-          <v-card-title>{{ code }}</v-card-title>
-          <v-card-subtitle>{{ name }}</v-card-subtitle>
-          <v-list>
-            <v-list-item v-for="(val, key) in generalInfo" :key="key">
-              <v-list-item-content>
-                <v-list-item-title>{{ key }}</v-list-item-title>
-                <v-list-item-subtitle>{{ val }}</v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-card>
+  <v-row class="course-detail">
+    <v-col cols="12" md="3" class="d-flex flex-column">
+      <!-- General -->
+      <v-card>
+        <v-card-title class="d-flex justify-space-between">
+          <span>{{ code }}</span>
+          <v-btn
+            :href="coursebookUrl"
+            target="_blank"
+            text
+            icon
+            color="red"
+            title="View source"
+          >
+            <v-icon>mdi-web</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-subtitle>{{ name }}</v-card-subtitle>
+        <v-list>
+          <v-list-item v-for="(val, key) in generalInfo" :key="key">
+            <v-list-item-content>
+              <v-list-item-title>{{ key }}</v-list-item-title>
+              <v-list-item-subtitle>{{ val }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-card>
 
-        <!-- Workload -->
-        <v-card>
-          <v-card-title>Workload</v-card-title>
-          <v-list two-line>
-            <v-list-item v-for="(val, key) in miscInfo" :key="key">
-              <v-list-item-content>
-                <v-list-item-title>{{ key }}</v-list-item-title>
-                <v-list-item-subtitle>{{ val }}</v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-card>
-      </v-col>
-      <v-col cols="12" sm="4" md="3" class="d-flex flex-column">
-        <!-- Notes -->
-        <v-alert v-if="note" type="info">
-          {{
-            note.startsWith("(") && note.endsWith(")")
-              ? note.slice(1, -1)
-              : note
-          }}
-        </v-alert>
+      <!-- Notes -->
+      <v-alert v-if="note" type="info">
+        {{ noteCleaned }}
+      </v-alert>
 
-        <v-alert v-if="number_of_places" type="info">
-          {{ `Limited number of places: ${number_of_places}` }}
-        </v-alert>
-
-        <!-- Lecturers and programs -->
-        <v-card v-if="lecturers.length > 0">
-          <v-card-title>Lecturers</v-card-title>
-          <v-card-text>
-            <div class="lecturer" v-for="[name, url] in lecturers" :key="url">
-              <v-btn
-                class="ma-2"
-                icon
-                color="red lighten-2"
-                :href="url"
-                target="_blank"
+      <v-alert v-if="number_of_places" type="info">
+        {{ `Limited number of places: ${number_of_places}` }}
+      </v-alert>
+    </v-col>
+    <v-col cols="12" md="4" class="d-flex flex-column">
+      <!-- Lecturers -->
+      <v-card v-if="lecturers.length > 0" class="lecturers">
+        <v-card-title>Lecturers</v-card-title>
+        <v-card-text>
+          <div
+            v-for="[name, url] in lecturers"
+            :key="url"
+          >
+            <a
+              :href="url"
+              target="_blank"
               >
-                <v-icon small>mdi-launch</v-icon>
-              </v-btn>
               {{ name }}
-            </div>
-          </v-card-text>
-        </v-card>
+            </a>
+          </div>
+        </v-card-text>
+      </v-card>
 
-        <v-card v-if="in_the_programs.length > 0">
-          <v-card-title>Programs</v-card-title>
-          <v-card-text>
-            <div
-              class="text--primary"
-              v-for="([name, semester], idx) in in_the_programs"
-              :key="idx"
-            >
-              {{ `${name}${semester ? ", " + semester : ""}` }}
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col cols="12" sm="4" md="6">
-        <!-- Registrations -->
-        <svg></svg>
-      </v-col>
-    </v-row>
-  </div>
+      <!-- Workload -->
+      <v-card>
+        <v-card-title>Workload</v-card-title>
+        <v-list two-line>
+          <v-list-item v-for="(val, key) in miscInfo" :key="key">
+            <v-list-item-content>
+              <v-list-item-title>{{ key }}</v-list-item-title>
+              <v-list-item-subtitle>{{ val }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-card>
+
+      <!-- Programs -->
+      <v-card v-if="in_the_programs.length > 0">
+        <v-card-title>Programs</v-card-title>
+        <v-card-text>
+          <div
+            class="text--primary"
+            v-for="(val, idx) in in_the_programs"
+            :key="idx"
+          >
+            {{ val.join(", ") }}
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-col>
+    <v-col cols="12" md="5" class="d-flex flex-column">
+      <!-- Registrations -->
+      <svg></svg>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -88,6 +94,8 @@
 
 export default {
   props: {
+    path: String,
+
     code: String,
     name: String,
 
@@ -126,7 +134,7 @@ export default {
     }
   },
   computed: {
-    generalInfo() {
+    generalInfo () {
       const info = {
         Semester: this.semester,
         Credits: this.credits,
@@ -137,7 +145,7 @@ export default {
       const filtered = this.filterEmptyProps(info);
       return filtered;
     },
-    miscInfo() {
+    miscInfo () {
       const info = {
         Lecture: this.lecture,
         Exercises: this.exercises,
@@ -148,6 +156,15 @@ export default {
 
       const filtered = this.filterEmptyProps(info);
       return filtered;
+    },
+    noteCleaned () {
+      const { note } = this;
+      return note.startsWith("(") && note.endsWith(")")
+        ? note.slice(1, -1)
+        : note;
+    },
+    coursebookUrl () {
+      return `https://edu.epfl.ch${this.path}`;
     }
   },
   methods: {
@@ -156,6 +173,7 @@ export default {
         Object.entries(obj).filter(
           entry =>
             Boolean(entry[1]) &&
+            !(entry[1] === 'Inapplicable') && // if value is "Inapplicable", remove it
             (!Array.isArray(entry[1]) || entry[1].length > 0)
         )
       );
@@ -165,29 +183,25 @@ export default {
 </script>
 
 <style scoped>
-/* dl {
-  margin-top: 50px;
-}
+.lecturers a {
+  color: red;
 
-dt {
-  font-weight: bold;
-  min-width: 150px;
-}
-
-dt::after {
-  content: ":";
-}
-
-dl > div {
-  display: flex;
-} */
-.lecturer {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow-x: hidden;
 }
 
-.v-card + .v-card {
+.lecturers a:not(:hover) {
+  text-decoration: none;
+}
+
+.course-detail > .flex-column > .v-card,
+.course-detail > .flex-column > .v-alert {
+  flex-grow: 1;
+}
+
+.course-detail > .flex-column > .v-card:not(:first-child),
+.course-detail > .flex-column > .v-alert:not(:first-child) {
   margin-top: 16px;
 }
 </style>

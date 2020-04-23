@@ -1,35 +1,28 @@
 <template>
-  <v-row align="center">
+  <v-row class="list" align="center">
     <v-slide-y-transition mode="out-in">
       <v-col
         v-if="selectedCourse"
-        class="d-flex flex-column flex-sm-column-reverse"
+        class="d-flex flex-column"
       >
-        <!-- <div> -->
-        <v-item-group class="nav-source-btn-group">
-          <v-btn @click="selectedCourse = null" large rounded dark color="red">
-            <v-icon left dark>mdi-keyboard-return</v-icon> back
-          </v-btn>
+        <CourseDetail v-bind="selectedCourse" />
+
+        <v-item-group class="align-self-center align-self-md-start">
           <v-btn
-            :href="selectedCourseUrl"
-            target="_blank"
+            @click="selectedCourse = null"
             large
-            rounded
             outlined
             color="red"
           >
-            <v-icon left dark>mdi-web</v-icon> source
+            <v-icon left dark>mdi-keyboard-return</v-icon> back
           </v-btn>
         </v-item-group>
-
-        <CourseDetail v-bind="selectedCourse" />
-        <!-- </div> -->
       </v-col>
 
-      <!-- :key=page so new page doesn't inherit selected item highlighting -->
-      <v-col v-else :key="page" align="center">
+      <v-col v-else align="center">
         <v-list dense rounded two-line width="100%">
           <v-pagination
+            v-if="courses.length > 0"
             v-model="page"
             :length="pages"
             circle
@@ -41,10 +34,10 @@
             <v-row align="center">
               <v-col
                 cols="12"
-                sm="4"
-                md="3"
-                lg="2"
-                xl="1"
+                sm="6"
+                md="4"
+                lg="3"
+                xl="2"
                 v-for="[k, v] in coursesDisplayed"
                 :key="k"
               >
@@ -73,8 +66,7 @@
           </v-list-item-group>
         </v-list>
         <div>
-          Showing
-          {{ recordFrom }}-{{ recordTo }} of {{ courses.length }}
+          {{ pageInfo }}
         </div>
       </v-col>
     </v-slide-y-transition>
@@ -112,32 +104,35 @@ export default {
     recordTo() {
       return Math.min(this.recordFrom + this.pagesize - 1, this.courses.length);
     },
+    pageInfo() {
+      const { courses, recordFrom, recordTo } = this
+      if (courses.length) {
+        return `Showing ${recordFrom}-${recordTo} of ${courses.length}`;
+      }
+
+      return `No courses found`;
+    },
     coursesDisplayed() {
       const index = this.page - 1;
       const { pagesize } = this;
       return this.courses.slice(index * pagesize, index * pagesize + pagesize);
-    },
-    selectedCourseUrl() {
-      const { selectedCourse } = this;
-      if (selectedCourse) {
-        return `https://edu.epfl.ch${selectedCourse.path}`;
-      }
-      return "";
     }
   },
   methods: {
     onCourseClicked(event, code, courseInfo) {
       this.selectedCourse = { ...{ code }, ...courseInfo };
     }
+  },
+  watch: {
+    courses () {
+      // course selection changed, initialize current page
+      this.page = 1;
+    }
   }
 };
 </script>
 
 <style scoped>
-.nav-source-btn-group > .v-btn:not(:last-child) {
-  margin-right: 10px;
-}
-
 .v-list-item {
   border: 0.5px groove rgba(255, 0, 0, 0.5);
 }

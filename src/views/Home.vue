@@ -4,81 +4,91 @@
       <v-col>{{ error }}</v-col>
     </v-row>
 
-    <v-sheet
-      v-else-if="loading"
-      :color="`grey ${theme.isDark ? 'darken-2' : 'lighten-4'}`"
-      class="px-3 pt-3 pb-3"
-    >
-      <v-skeleton-loader
-        class="mx-auto"
-        max-width="500"
-        type="card"
-      ></v-skeleton-loader>
-    </v-sheet>
+    <SkeletonLoader v-else-if="loading" />
 
-    <div v-else>
-      <v-row align="center" justify="center" justify-sm="start">
-        <Select
-          :value.sync="selectedLevel"
-          :items="$options.levels"
-          :autofocus="true"
-          label="Select level"
-        />
+    <v-row v-else class="d-flex flex-column flex-sm-row">
+      <v-card class="filters d-flex flex-column align-center align-sm-start justify-start">
+        <p class="title">
+          Filters
+        </p>
 
-        <Select
-          :enabled="programEnabled"
-          :value.sync="selectedProgram"
-          :items="programs"
-          :key="selectedLevel || `noprogram`"
-          label="Select program"
-        />
+        <div class="filters__hierarchical">
+          <p class="subtitle-1">
+            Hierarchical filters
+          </p>
+          <Select
+            :value.sync="selectedLevel"
+            :items="$options.levels"
+            :autofocus="true"
+            label="Select level"
+          />
 
-        <Select
-          :enabled="masterspecsEnabled"
-          :value.sync="selectedMasterspec"
-          :items="masterspecs"
-          :key="selectedProgram || `nospec`"
-          label="Select specialization"
-        >
-          <template v-slot:item-data="{ item }">
-            <img class="spec-icon" :src="item.iconUrl" />
-            {{ item.text }}
-          </template>
-          <template v-slot:selection-data="{ item }">
-            <img class="spec-icon" :src="item.iconUrl" />
-            {{ item.text }}
-          </template>
-        </Select>
+          <Select
+            :enabled="programEnabled"
+            :value.sync="selectedProgram"
+            :items="programs"
+            :key="selectedLevel || `noprogram`"
+            label="Select program"
+          />
 
-        <Select
-          :value.sync="selectedSection"
-          :items="sections"
-          :key="selectedSection || `nosection`"
-          label="Select section"
-        />
+          <Select
+            :enabled="masterspecsEnabled"
+            :value.sync="selectedMasterspec"
+            :items="masterspecs"
+            :key="selectedProgram || `nospec`"
+            label="Select specialization"
+          >
+            <template v-slot:item-data="{ item }">
+              <img class="spec-icon" :src="item.iconUrl" />
+              <span>{{ item.text }}</span>
+            </template>
+            <template v-slot:selection-data="{ item }">
+              <img class="spec-icon" :src="item.iconUrl" />
+              <span>{{ item.text }}</span>
+            </template>
+          </Select>
+        </div>
 
-        <Select
-          :value.sync="selectedCredits"
-          :items="credits"
-          :key="selectedCredits || `nocredits`"
-          label="Select number of credits"
-        />
+        <div class="filters__global">
+          <p class="subtitle-1">
+            Global filters
+          </p>
+          <Select
+            :value.sync="selectedSection"
+            :items="sections"
+            :key="selectedSection || `nosection`"
+            label="Select section"
+          />
 
-        <Select
-          :value.sync="selectedSemester"
-          :items="semesters"
-          :key="selectedSemester || `nosemester`"
-          label="Select semester"
-        />
-      </v-row>
+          <Select
+            :value.sync="selectedCredits"
+            :items="credits"
+            :key="selectedCredits || `nocredits`"
+            label="Select number of credits"
+          />
 
-      <v-tabs>
-        <v-tab @click="vizEnabled = true">Network</v-tab>
-        <v-tab @click="vizEnabled = false">List</v-tab>
-      </v-tabs>
-      <CourseViz v-if="vizEnabled" :courses="courses" />
-      <CourseList v-else :courses="courses" />
-    </div>
+          <Select
+            :value.sync="selectedSemester"
+            :items="semesters"
+            :key="selectedSemester || `nosemester`"
+            label="Select semester"
+          />
+        </div>
+        <!-- <div class="d-flex justify-center align-center d-sm-none">
+          <v-btn class="ma-2" text icon color="red lighten-2">
+            <v-icon>mdi-arrow</v-icon>
+          </v-btn>
+        </div> -->
+      </v-card>
+      <v-col class="view-pane">
+        <v-tabs class="d-flex justify-center justify-sm-start">
+          <v-tab @click="vizEnabled = true; vizTabClickCount++">Network</v-tab>
+          <v-tab @click="vizEnabled = false; listTabClickCount++">List</v-tab>
+        </v-tabs>
+        <CourseViz v-if="vizEnabled" :courses="courses" :key="`${vizTabClickCount}-viz`" />
+        <CourseList v-else :courses="courses" :key="`${listTabClickCount}-list`" />
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -88,24 +98,33 @@ import api from "@/services/api";
 import CourseList from "@/components/CourseList";
 import CourseViz from "@/components/CourseViz";
 import Select from "@/components/Select";
+import SkeletonLoader from "@/components/SkeletonLoader";
 
 export default {
   name: "Home",
   components: {
     CourseList,
     CourseViz,
-    Select
+    Select,
+    SkeletonLoader
   },
   data() {
     return {
+      vizTabClickCount: 0,
+      listTabClickCount: 0,
+
       loading: true,
       loadingCourses: false,
       error: false,
       vizEnabled: true,
+
       programs: [],
       masterspecs: [],
       sections: [],
+      credits: [],
+      semesters: [],
       courses: [],
+
       selectedLevel: "",
       selectedProgram: "",
       selectedMasterspec: "",
@@ -192,13 +211,31 @@ export default {
     masterspecsEnabled() {
       return this.selectedProgram !== `` && this.masterspecs.length > 0;
     }
-  },
-  inject: ["theme"]
+  }
 };
 </script>
 
 <style scoped>
 .spec-icon {
-  margin-right: 32px;
+  margin-right: 5px;
+}
+
+.home {
+  padding-right: 0;
+  padding-left: 0;
+  padding-bottom: 0;
+}
+
+.view-pane {
+  padding: 5px 30px 15px;
+}
+
+.filters {
+  padding: 30px;
+}
+
+.filters .v-select {
+  width: 270px;
+  flex-grow: 0;
 }
 </style>
