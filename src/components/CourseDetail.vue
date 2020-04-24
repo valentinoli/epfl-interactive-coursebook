@@ -41,14 +41,8 @@
       <v-card v-if="lecturers.length > 0" class="lecturers">
         <v-card-title>Lecturers</v-card-title>
         <v-card-text>
-          <div
-            v-for="[name, url] in lecturers"
-            :key="url"
-          >
-            <a
-              :href="url"
-              target="_blank"
-              >
+          <div v-for="[name, url] in lecturers" :key="url">
+            <a :href="url" target="_blank">
               {{ name }}
             </a>
           </div>
@@ -134,7 +128,7 @@ export default {
     }
   },
   computed: {
-    generalInfo () {
+    generalInfo() {
       const info = {
         Semester: this.semester,
         Credits: this.credits,
@@ -145,7 +139,7 @@ export default {
       const filtered = this.filterEmptyProps(info);
       return filtered;
     },
-    miscInfo () {
+    miscInfo() {
       const info = {
         Lecture: this.lecture,
         Exercises: this.exercises,
@@ -157,13 +151,13 @@ export default {
       const filtered = this.filterEmptyProps(info);
       return filtered;
     },
-    noteCleaned () {
+    noteCleaned() {
       const { note } = this;
       return note.startsWith("(") && note.endsWith(")")
         ? note.slice(1, -1)
         : note;
     },
-    coursebookUrl () {
+    coursebookUrl() {
       return `https://edu.epfl.ch${this.path}`;
     }
   },
@@ -173,7 +167,7 @@ export default {
         Object.entries(obj).filter(
           entry =>
             Boolean(entry[1]) &&
-            !(entry[1] === 'Inapplicable') && // if value is "Inapplicable", remove it
+            !(entry[1] === "Inapplicable") && // if value is "Inapplicable", remove it
             (!Array.isArray(entry[1]) || entry[1].length > 0)
         )
       );

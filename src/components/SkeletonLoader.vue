@@ -12,5 +12,5 @@
 </template>
 
 <script>
-export default { inject: ["theme"] }
+export default { inject: ["theme"] };
 </script>

@@ -7,7 +7,9 @@
     <SkeletonLoader v-else-if="loading" />
 
     <v-row v-else class="d-flex flex-column flex-sm-row">
-      <v-card class="filters d-flex flex-column align-center align-sm-start justify-start">
+      <v-card
+        class="filters d-flex flex-column align-center align-sm-start justify-start"
+      >
         <p class="title">
           Filters
         </p>
@@ -82,11 +84,31 @@
       </v-card>
       <v-col class="view-pane">
         <v-tabs class="d-flex justify-center justify-sm-start">
-          <v-tab @click="vizEnabled = true; vizTabClickCount++">Network</v-tab>
-          <v-tab @click="vizEnabled = false; listTabClickCount++">List</v-tab>
+          <v-tab
+            @click="
+              vizEnabled = true;
+              vizTabClickCount++;
+            "
+            >Network</v-tab
+          >
+          <v-tab
+            @click="
+              vizEnabled = false;
+              listTabClickCount++;
+            "
+            >List</v-tab
+          >
         </v-tabs>
-        <CourseViz v-if="vizEnabled" :courses="courses" :key="`${vizTabClickCount}-viz`" />
-        <CourseList v-else :courses="courses" :key="`${listTabClickCount}-list`" />
+        <CourseViz
+          v-if="vizEnabled"
+          :courses="courses"
+          :key="`${vizTabClickCount}-viz`"
+        />
+        <CourseList
+          v-else
+          :courses="courses"
+          :key="`${listTabClickCount}-list`"
+        />
       </v-col>
     </v-row>
   </v-container>

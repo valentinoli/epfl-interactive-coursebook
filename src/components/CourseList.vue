@@ -1,19 +1,11 @@
 <template>
   <v-row class="list" align="center">
     <v-slide-y-transition mode="out-in">
-      <v-col
-        v-if="selectedCourse"
-        class="d-flex flex-column"
-      >
+      <v-col v-if="selectedCourse" class="d-flex flex-column">
         <CourseDetail v-bind="selectedCourse" />
 
         <v-item-group class="align-self-center align-self-md-start">
-          <v-btn
-            @click="selectedCourse = null"
-            large
-            outlined
-            color="red"
-          >
+          <v-btn @click="selectedCourse = null" large outlined color="red">
             <v-icon left dark>mdi-keyboard-return</v-icon> back
           </v-btn>
         </v-item-group>
@@ -105,7 +97,7 @@ export default {
       return Math.min(this.recordFrom + this.pagesize - 1, this.courses.length);
     },
     pageInfo() {
-      const { courses, recordFrom, recordTo } = this
+      const { courses, recordFrom, recordTo } = this;
       if (courses.length) {
         return `Showing ${recordFrom}-${recordTo} of ${courses.length}`;
       }
@@ -124,7 +116,7 @@ export default {
     }
   },
   watch: {
-    courses () {
+    courses() {
       // course selection changed, initialize current page
       this.page = 1;
     }
