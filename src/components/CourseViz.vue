@@ -8,7 +8,9 @@
 
 <script>
 // import CourseDetail from "@/components/CourseDetail";
-import drawDemoViz from "@/services/demo-viz";
+// import drawDemoViz from "@/d3/demo-viz";
+import { drawGraph, startSimulation } from "@/d3/graph";
+import allLinks from "@/d3/links";
 
 export default {
   name: "CourseViz",
@@ -19,6 +21,21 @@ export default {
     courses: {
       type: Array,
       default: () => []
+    }
+  },
+  computed: {
+    nodes () {
+      const nodes = this.courses.map(([id, val]) => ({ id, ...val }));
+      return nodes;
+    },
+    links () {
+      const ids = this.courses.map(c => c[0]);
+      const links = allLinks.filter(
+        ({ source, target }) => ids.includes(source) && ids.includes(target)
+      );
+      const mapped = links.map(l => ({ id: `${l.source} -> ${l.target}`, ...l }));
+      console.log(mapped[0]);
+      return mapped;
     }
   },
   // data() {
@@ -41,18 +58,19 @@ export default {
   // }
   // },
   mounted() {
-    this.draw();
+    startSimulation(this.nodes, this.links);
+    // this.draw();
     console.log("viz component mounted");
   },
   watch: {
     courses() {
-      console.log("filter applied");
+      console.log("filter applied", this.links[0]);
       this.draw();
     }
   },
   methods: {
     draw() {
-      drawDemoViz(this.courses);
+      drawGraph(this.nodes, this.links);
     }
   }
 };

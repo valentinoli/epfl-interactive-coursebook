@@ -14,3 +14,9 @@
 <script>
 export default { inject: ["theme"] };
 </script>
+
+<style scoped>
+.v-sheet {
+  height: 100%;
+}
+</style>

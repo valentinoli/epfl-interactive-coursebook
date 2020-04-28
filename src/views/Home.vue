@@ -6,7 +6,7 @@
 
     <SkeletonLoader v-else-if="loading" />
 
-    <v-row v-else class="d-flex flex-column flex-sm-row">
+    <v-row v-else class="home-content d-flex flex-column flex-sm-row">
       <v-card
         class="filters d-flex flex-column align-center align-sm-start justify-start"
       >
@@ -86,29 +86,20 @@
         <v-tabs class="d-flex justify-center justify-sm-start">
           <v-tab
             @click="
-              vizEnabled = true;
-              vizTabClickCount++;
+              currentTabComponent = `CourseViz`;
             "
             >Network</v-tab
           >
           <v-tab
             @click="
-              vizEnabled = false;
-              listTabClickCount++;
+              currentTabComponent = `CourseList`;
             "
             >List</v-tab
           >
         </v-tabs>
-        <CourseViz
-          v-if="vizEnabled"
-          :courses="courses"
-          :key="`${vizTabClickCount}-viz`"
-        />
-        <CourseList
-          v-else
-          :courses="courses"
-          :key="`${listTabClickCount}-list`"
-        />
+        <keep-alive>
+          <component :is="currentTabComponent" :courses="courses"></component>
+        </keep-alive>
       </v-col>
     </v-row>
   </v-container>
@@ -132,13 +123,11 @@ export default {
   },
   data() {
     return {
-      vizTabClickCount: 0,
-      listTabClickCount: 0,
+      currentTabComponent: "CourseViz",
 
       loading: true,
       loadingCourses: false,
       error: false,
-      vizEnabled: true,
 
       programs: [],
       masterspecs: [],
@@ -246,6 +235,11 @@ export default {
   padding-right: 0;
   padding-left: 0;
   padding-bottom: 0;
+}
+
+.home,
+.home-content {
+  height: 100%;
 }
 
 .view-pane {
