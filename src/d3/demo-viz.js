@@ -25,11 +25,11 @@ export default function drawDemoViz(courses) {
 
     // Specify where to put label of text
     svg
-    .append("text")
-    .text(key)
-    .attr("x", parseFloat(el.attr("cx")) + radius)
-    .attr("y", parseFloat(el.attr("cy")) + radius)
-    .attr("id", `t${key.replace(/[-()]/g, "")}`);
+      .append("text")
+      .text(key)
+      .attr("x", parseFloat(el.attr("cx")) + radius)
+      .attr("y", parseFloat(el.attr("cy")) + radius)
+      .attr("id", `t${key.replace(/[-()]/g, "")}`);
   }
 
   function onMouseOut({ key }) {
@@ -39,28 +39,28 @@ export default function drawDemoViz(courses) {
   }
 
   const t = transition()
-  .duration(1000)
-  .ease(easeLinear);
+    .duration(1000)
+    .ease(easeLinear);
 
   const circle = svg.selectAll("circle").data(data, d => d.key);
 
   circle.transition(t).style("fill", "orange");
 
   circle
-  .enter()
-  .append("circle")
-  .attr("cx", d => d.cx)
-  .attr("cy", d => d.cy)
-  .style("fill", "green")
-  .on("mouseover", onMouseOver)
-  .on("mouseout", onMouseOut)
-  .transition(t)
-  .attr("r", d => Number(d.credits));
+    .enter()
+    .append("circle")
+    .attr("cx", d => d.cx)
+    .attr("cy", d => d.cy)
+    .style("fill", "green")
+    .on("mouseover", onMouseOver)
+    .on("mouseout", onMouseOut)
+    .transition(t)
+    .attr("r", d => Number(d.credits));
 
   circle
-  .exit()
-  .style("fill", "red")
-  .transition(t)
-  .attr("r", 0)
-  .remove();
+    .exit()
+    .style("fill", "red")
+    .transition(t)
+    .attr("r", 0)
+    .remove();
 }

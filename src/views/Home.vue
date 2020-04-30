@@ -84,21 +84,15 @@
       </v-card>
       <v-col class="view-pane">
         <v-tabs class="d-flex justify-center justify-sm-start">
-          <v-tab
-            @click="
-              currentTabComponent = `CourseViz`;
-            "
-            >Network</v-tab
-          >
-          <v-tab
-            @click="
-              currentTabComponent = `CourseList`;
-            "
-            >List</v-tab
-          >
+          <v-tab @click="currentTabComponent = `CourseViz`">Network</v-tab>
+          <v-tab @click="currentTabComponent = `CourseList`">List</v-tab>
         </v-tabs>
         <keep-alive>
-          <component :is="currentTabComponent" :courses="courses"></component>
+          <component
+            :is="currentTabComponent"
+            :courses="courses"
+            :links="links"
+          ></component>
         </keep-alive>
       </v-col>
     </v-row>
@@ -135,6 +129,7 @@ export default {
       credits: [],
       semesters: [],
       courses: [],
+      links: [],
 
       selectedLevel: "",
       selectedProgram: "",
@@ -149,7 +144,8 @@ export default {
       await api.loadAllData();
       // Don't need getters and setters for the levels
       this.$options.levels = api.getAllLevels();
-      this.courses = api.getCourses();
+      this.courses = api.getCourses(this);
+      this.links = api.getLinks();
 
       this.updateCourseFilters();
     } catch (err) {

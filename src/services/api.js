@@ -206,11 +206,20 @@ function getCourseFilterOptions(courses) {
   return { sections, credits, semesters };
 }
 
+/**
+ * Gets all dependency links of courses for the network
+ * @returns {Array} Array of Objects representing edges, each with properties source and target
+ */
+function getLinks() {
+  return getItem("links");
+}
+
 export default {
   loadAllData,
   getAllLevels,
   getProgramsByLevel,
   getMasterspecsByProgram,
   getCourses,
-  getCourseFilterOptions
+  getCourseFilterOptions,
+  getLinks
 };

@@ -7,70 +7,53 @@
 </template>
 
 <script>
-// import CourseDetail from "@/components/CourseDetail";
 // import drawDemoViz from "@/d3/demo-viz";
-import { drawGraph, startSimulation } from "@/d3/graph";
-import allLinks from "@/d3/links";
+import Graph from "@/d3/graph";
 
 export default {
   name: "CourseViz",
-  components: {
-    // CourseDetail
-  },
+  components: {},
   props: {
     courses: {
+      type: Array,
+      default: () => []
+    },
+    links: {
       type: Array,
       default: () => []
     }
   },
   computed: {
-    nodes () {
+    nodes() {
       const nodes = this.courses.map(([id, val]) => ({ id, ...val }));
       return nodes;
     },
-    links () {
+    linksFiltered() {
+      // Temporary computed value, until we implement this in the API
       const ids = this.courses.map(c => c[0]);
-      const links = allLinks.filter(
+      const links = this.links.filter(
         ({ source, target }) => ids.includes(source) && ids.includes(target)
       );
-      const mapped = links.map(l => ({ id: `${l.source} -> ${l.target}`, ...l }));
-      console.log(mapped[0]);
-      return mapped;
+      return links;
     }
   },
-  // data() {
-  //   return {
-  //     selectedCourse: null
-  //   };
-  // },
-  // computed: {
-  // selectedCourseUrl () {
-  //   const { selectedCourse } = this;
-  //   if (selectedCourse) {
-  //     return `https://edu.epfl.ch${selectedCourse.path}`;
-  //   }
-  //   return "";
-  // },
-  // },
-  // method: {
-  // onCourseClicked(code, courseInfo) {
-  //   this.selectedCourse = { ...{ code }, ...courseInfo };
-  // }
-  // },
   mounted() {
-    startSimulation(this.nodes, this.links);
-    // this.draw();
     console.log("viz component mounted");
+
+    const graph = new Graph();
+    this.$options.graph = graph;
+
+    this.render();
   },
   watch: {
     courses() {
-      console.log("filter applied", this.links[0]);
-      this.draw();
+      console.log("filter applied");
+      this.render();
     }
   },
   methods: {
-    draw() {
-      drawGraph(this.nodes, this.links);
+    render() {
+      this.$options.graph.render(this.nodes, this.linksFiltered);
     }
   }
 };
