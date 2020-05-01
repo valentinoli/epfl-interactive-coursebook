@@ -41,8 +41,7 @@ npm run lint
 [Read here](milestone1.md)
 
 ## Milestone 2 (Friday 1st May, 5pm)
-
-**10% of the final grade**
+[Read here](milestone2.pdf)
 
 ## Milestone 3 (Thursday 28th May, 5pm)
 
