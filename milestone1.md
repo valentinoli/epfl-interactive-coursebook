@@ -90,7 +90,7 @@ These graph examples have provided us with inspiration:
 
 ### Goals for next milestone
 * ~~Process and integrate course registration data into `epfl_courses.json`.~~
-* Process the fields `required`, `recommended`, `concepts` and `prerequisite_for` in `epfl_courses.json` to discover dependencies between courses and create an adjacency list. This list will be stored in a separate `.json` file(s).
+* ~~Process the fields `required`, `recommended`, `concepts` and `prerequisite_for` in `epfl_courses.json` to discover dependencies between courses and create an adjacency list. This list will be stored in a separate `.json` file(s).~~
 * ~~Fix the few inconsistencies discovered when processing `epfl_courses`. There are very few exceptions that will require manual overview, and we will handle them before the next milestone.~~
-* Make sketches and design core visualization.
-* Create an API to query the data.
+* ~~Make sketches and design core visualization.~~
+* ~~Create an API to query the data.~~
