@@ -21,6 +21,10 @@
           <span class="mr-2">Home</span>
         </v-btn>
 
+        <v-btn to="/story" text>
+          <span class="mr-2">Story</span>
+        </v-btn>
+
         <v-btn to="/about" text>
           <span class="mr-2">About</span>
         </v-btn>

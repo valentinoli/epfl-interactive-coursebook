@@ -85,6 +85,7 @@
       <v-col class="view-pane">
         <v-tabs class="d-flex justify-center justify-sm-start">
           <v-tab @click="currentTabComponent = `CourseViz`">Network</v-tab>
+          <v-tab @click="currentTabComponent = `DemoViz`">Demo-Viz</v-tab>
           <v-tab @click="currentTabComponent = `CourseList`">List</v-tab>
         </v-tabs>
         <keep-alive>
@@ -104,6 +105,7 @@
 import api from "@/services/api";
 import CourseList from "@/components/CourseList";
 import CourseViz from "@/components/CourseViz";
+import DemoViz from "@/components/DemoViz";
 import Select from "@/components/Select";
 import SkeletonLoader from "@/components/SkeletonLoader";
 
@@ -112,6 +114,7 @@ export default {
   components: {
     CourseList,
     CourseViz,
+    DemoViz,
     Select,
     SkeletonLoader
   },

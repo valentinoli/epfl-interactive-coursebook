@@ -7,7 +7,6 @@
 </template>
 
 <script>
-// import drawDemoViz from "@/d3/demo-viz";
 import Graph from "@/d3/graph";
 
 export default {

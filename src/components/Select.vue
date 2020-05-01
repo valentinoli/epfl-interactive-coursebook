@@ -71,3 +71,10 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.v-select__selections {
+  /* Override Vuetify property to display*/
+  flex-wrap: nowrap;
+}
+</style>
