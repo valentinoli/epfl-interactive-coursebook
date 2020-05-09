@@ -3,6 +3,7 @@ import {
   capitalize,
   replaceUnderscore,
   getItem,
+  setItem,
   specIconPrefix,
   specIconExt
 } from "./util";
@@ -16,8 +17,20 @@ async function loadAllData() {
 
   // Cache data in localStorage
   Object.entries(data).forEach(([key, val]) => {
-    window.localStorage.setItem(key, JSON.stringify(val));
+    setItem(key, val);
   });
+
+  // Store the courses as an array of objects too
+  // to have two different formats for convenience (and performance?)
+  const coursesObject = getItem("courses");
+
+  // Object of key: Object pairs --> Array of Objects
+  const coursesArray = Object.entries(coursesObject).map(([id, v]) => ({
+    id,
+    ...v
+  }));
+
+  setItem("coursesArray", coursesArray);
 }
 
 /**
@@ -36,7 +49,7 @@ function getAllLevels() {
 
 /**
  * Get all study programs for a given academic level, to display in a dropdown list
- * @param {string} level - the given academic level
+ * @param {String} level - the given academic level
  * @returns {Array} array of objects, each representing a program
  */
 function getProgramsByLevel(level) {
@@ -53,7 +66,7 @@ function getProgramsByLevel(level) {
 
 /**
  * Get all specializations for a given master's programs, to display in a dropdown list
- * @param {string} program - the master's program
+ * @param {String} program - the master's program
  * @returns {Array} array of objects, each representing a specialization
  */
 function getMasterspecsByProgram(program) {
@@ -74,17 +87,31 @@ function getMasterspecsByProgram(program) {
 }
 
 /**
+ * Gets a course by id
+ * @param {String} id
+ * @returns {Object} matched course
+ */
+function getCourseById(id) {
+  const coursesObject = getItem("courses");
+  return {
+    id,
+    ...coursesObject[id]
+  };
+}
+
+/**
  * Gets course info for all given course ids
  * @param {Array} ids - course ids
- * @returns {Array} filtered entries of coursesItem object containing only keys that exist in ids
+ * @returns {Array} filtered array of course Objects
  */
 const getCoursesByIds = ids => {
-  const coursesItem = getItem("courses");
+  const coursesArray = getItem("coursesArray");
+
   if (!ids) {
     // All courses if ids is not provided
-    return Object.entries(coursesItem);
+    return coursesArray;
   }
-  return Object.entries(coursesItem).filter(c => ids.includes(c[0]));
+  return coursesArray.filter(({ id }) => ids.includes(id));
 };
 
 function getPrefilteredCourses(level, program, masterspec) {
@@ -153,10 +180,9 @@ function getPrefilteredCourses(level, program, masterspec) {
 
     // specsPerCourseWithInfo contains all courses for the program,
     // but we only want to keep those for the selected specialization
-    const coursesWithSpecInfo = courses.map(([k, v]) => [
-      k,
-      { ...v, ...specsPerCourseWithInfo[k] } // add specs property
-    ]);
+    const coursesWithSpecInfo = courses.map(course =>
+      Object.assign(course, specsPerCourseWithInfo[course.id])
+    );
 
     return coursesWithSpecInfo;
   }
@@ -164,12 +190,12 @@ function getPrefilteredCourses(level, program, masterspec) {
 
 /**
  * Gets course info by given parameters
- * @param {string} level - academic level
- * @param {string} program - study program
- * @param {string} masterspec - specialization (level needs to be "master")
- * @param {string} section - EPFL section
- * @param {string} credits - number of credits
- * @param {string} semester -
+ * @param {String} level - academic level
+ * @param {String} program - study program
+ * @param {String} masterspec - specialization (level needs to be "master")
+ * @param {String} section - EPFL section
+ * @param {String} credits - number of credits
+ * @param {String} semester -
  * @returns {Array} matching courses, array of [id, value] pairs, where value is Object
  */
 function getCourses({
@@ -181,11 +207,11 @@ function getCourses({
   selectedSemester: semester = ""
 } = {}) {
   const prefiltered = getPrefilteredCourses(level, program, masterspec);
-  const filtered = prefiltered.filter(entry => {
+  const filtered = prefiltered.filter(c => {
     return (
-      (!section || entry[1].section === section) &&
-      (!credits || entry[1].credits === credits) &&
-      (!semester || entry[1].semester === semester)
+      (!section || c.section === section) &&
+      (!credits || c.credits === credits) &&
+      (!semester || c.semester === semester)
     );
   });
   return filtered;
@@ -197,12 +223,11 @@ function getCourses({
  * @returns {Object} object of arrays of distinct values for selected shared properties of all the courses
  */
 function getCourseFilterOptions(courses) {
-  const values = courses.map(item => item[1]);
-  const sections = Array.from(new Set(values.map(v => v.section))).sort();
-  const credits = Array.from(new Set(values.map(v => v.credits))).sort(
+  const sections = Array.from(new Set(courses.map(c => c.section))).sort();
+  const credits = Array.from(new Set(courses.map(c => c.credits))).sort(
     (a, b) => a - b
   );
-  const semesters = Array.from(new Set(values.map(v => v.semester)));
+  const semesters = Array.from(new Set(courses.map(c => c.semester)));
   return { sections, credits, semesters };
 }
 
@@ -219,6 +244,7 @@ export default {
   getAllLevels,
   getProgramsByLevel,
   getMasterspecsByProgram,
+  getCourseById,
   getCourses,
   getCourseFilterOptions,
   getLinks

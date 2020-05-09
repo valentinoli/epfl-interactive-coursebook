@@ -47,3 +47,12 @@ export function getItem(key) {
     return {};
   }
 }
+
+/**
+ * Saves an object in browser's local storage
+ * @param {string} key
+ * @param {string} val
+ */
+export function setItem(key, val) {
+  window.localStorage.setItem(key, JSON.stringify(val));
+}

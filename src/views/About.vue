@@ -30,11 +30,9 @@
     </v-row>
     <v-row align="center" justify="center">
       <Avatar
-        v-for="{ src, name, email } in $options.people"
-        :key="src"
-        :src="src"
-        :name="name"
-        :email="email"
+        v-for="person in $options.people"
+        :key="person.src"
+        v-bind="person"
       />
     </v-row>
   </v-container>

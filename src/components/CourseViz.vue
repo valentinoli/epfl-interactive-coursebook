@@ -23,13 +23,9 @@ export default {
     }
   },
   computed: {
-    nodes() {
-      const nodes = this.courses.map(([id, val]) => ({ id, ...val }));
-      return nodes;
-    },
     linksFiltered() {
       // Temporary computed value, until we implement this in the API
-      const ids = this.courses.map(c => c[0]);
+      const ids = this.courses.map(c => c.id);
       const links = this.links.filter(
         ({ source, target }) => ids.includes(source) && ids.includes(target)
       );
@@ -37,8 +33,6 @@ export default {
     }
   },
   mounted() {
-    console.log("viz component mounted");
-
     const graph = new Graph();
     this.$options.graph = graph;
 
@@ -46,13 +40,12 @@ export default {
   },
   watch: {
     courses() {
-      console.log("filter applied");
       this.render();
     }
   },
   methods: {
     render() {
-      this.$options.graph.render(this.nodes, this.linksFiltered);
+      this.$options.graph.render(this.courses, this.linksFiltered);
     }
   }
 };

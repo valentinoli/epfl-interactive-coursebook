@@ -1,5 +1,4 @@
 <template>
-  <!-- <v-col class="d-flex" cols="12" :sm="sm" :md="md"> -->
   <v-select
     v-model="mutableValue"
     @change="$emit('update:value', mutableValue)"
@@ -29,7 +28,6 @@
       </slot>
     </template>
   </v-select>
-  <!-- </v-col> -->
 </template>
 
 <script>
@@ -55,17 +53,13 @@ export default {
       type: String,
       default: "Select an option"
     }
-    // sm: {
-    //   type: Number,
-    //   default: 6
-    // },
-    // md: {
-    //   type: Number,
-    //   default: 4
-    // }
   },
   data() {
     return {
+      // We need to create a data property for the v-model
+      // since mutating a prop locally is considered an anti-pattern in Vue 2
+      // https://stackoverflow.com/questions/39868963/vue-2-mutating-props-vue-warn
+      // props down, events and data up
       mutableValue: this.value
     };
   }

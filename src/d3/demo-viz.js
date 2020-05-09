@@ -8,16 +8,15 @@ export default function drawDemoViz(courses) {
   const width = parseFloat(svg.style("width"));
   const height = parseFloat(svg.style("height"));
 
-  const data = courses.map(([key, val]) => ({
-    key,
+  const data = courses.map(course => ({
     cx: Math.random() * width,
     cy: Math.random() * height,
-    ...val
+    ...course
   }));
 
   const radiusExpansion = 1.5;
 
-  function onMouseOver({ key }) {
+  function onMouseOver({ id }) {
     const el = select(this);
     // el.transition(t)
     el.attr("r", el.attr("r") * radiusExpansion);
@@ -26,23 +25,23 @@ export default function drawDemoViz(courses) {
     // Specify where to put label of text
     svg
       .append("text")
-      .text(key)
+      .text(id)
       .attr("x", parseFloat(el.attr("cx")) + radius)
       .attr("y", parseFloat(el.attr("cy")) + radius)
-      .attr("id", `t${key.replace(/[-()]/g, "")}`);
+      .attr("id", `t${id.replace(/[-()]/g, "")}`);
   }
 
-  function onMouseOut({ key }) {
+  function onMouseOut({ id }) {
     const el = select(this);
     el.attr("r", el.attr("r") / radiusExpansion);
-    svg.select(`#t${key.replace(/[-()]/g, "")}`).remove(); // Remove text location
+    svg.select(`#t${id.replace(/[-()]/g, "")}`).remove(); // Remove text location
   }
 
   const t = transition()
     .duration(1000)
     .ease(easeLinear);
 
-  const circle = svg.selectAll("circle").data(data, d => d.key);
+  const circle = svg.selectAll("circle").data(data, d => d.id);
 
   circle.transition(t).style("fill", "orange");
 
