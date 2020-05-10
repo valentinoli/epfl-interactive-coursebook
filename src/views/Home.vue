@@ -6,85 +6,87 @@
 
     <SkeletonLoader v-else-if="loading" />
 
-    <v-row v-else class="home-content d-flex flex-column flex-sm-row">
-      <v-card
-        class="filters d-flex flex-column align-center align-sm-start justify-start"
-      >
-        <p class="title">
-          Filters
-        </p>
-
-        <div class="filters__hierarchical">
-          <p class="subtitle-1">
-            Hierarchical filters
+    <v-row v-else class="home-content">
+      <v-col cols="12" md="4" lg="3" class="pt-0">
+        <v-card
+          class="filters d-flex flex-column align-center align-md-start justify-start"
+        >
+          <p class="title">
+            Filters
           </p>
-          <Select
-            :value.sync="selectedLevel"
-            :items="$options.levels"
-            :autofocus="true"
-            label="Select level"
-          />
 
-          <Select
-            :enabled="programEnabled"
-            :value.sync="selectedProgram"
-            :items="programs"
-            :key="selectedLevel || `noprogram`"
-            label="Select program"
-          />
+          <div class="filters__hierarchical">
+            <p class="subtitle-1">
+              Hierarchical filters
+            </p>
+            <Select
+              :value.sync="selectedLevel"
+              :items="$options.levels"
+              :autofocus="true"
+              label="Select level"
+            />
 
-          <Select
-            :enabled="masterspecsEnabled"
-            :value.sync="selectedMasterspec"
-            :items="masterspecs"
-            :key="selectedProgram || `nospec`"
-            label="Select specialization"
-          >
-            <template v-slot:item-data="{ item }">
-              <img class="spec-icon" :src="item.iconUrl" />
-              <span>{{ item.text }}</span>
-            </template>
-            <template v-slot:selection-data="{ item }">
-              <img class="spec-icon" :src="item.iconUrl" />
-              <span>{{ item.text }}</span>
-            </template>
-          </Select>
-        </div>
+            <Select
+              :enabled="programEnabled"
+              :value.sync="selectedProgram"
+              :items="programs"
+              :key="selectedLevel || `noprogram`"
+              label="Select program"
+            />
 
-        <div class="filters__global">
-          <p class="subtitle-1">
-            Global filters
-          </p>
-          <Select
-            :value.sync="selectedSection"
-            :items="sections"
-            :key="selectedSection || `nosection`"
-            label="Select section"
-          />
+            <Select
+              :enabled="masterspecsEnabled"
+              :value.sync="selectedMasterspec"
+              :items="masterspecs"
+              :key="selectedProgram || `nospec`"
+              label="Select specialization"
+            >
+              <template v-slot:item-data="{ item }">
+                <img class="spec-icon" :src="item.iconUrl" />
+                <span>{{ item.text }}</span>
+              </template>
+              <template v-slot:selection-data="{ item }">
+                <img class="spec-icon" :src="item.iconUrl" />
+                <span>{{ item.text }}</span>
+              </template>
+            </Select>
+          </div>
 
-          <Select
-            :value.sync="selectedCredits"
-            :items="credits"
-            :key="selectedCredits || `nocredits`"
-            label="Select number of credits"
-          />
+          <div class="filters__global">
+            <p class="subtitle-1">
+              Global filters
+            </p>
+            <Select
+              :value.sync="selectedSection"
+              :items="sections"
+              :key="selectedSection || `nosection`"
+              label="Select section"
+            />
 
-          <Select
-            :value.sync="selectedSemester"
-            :items="semesters"
-            :key="selectedSemester || `nosemester`"
-            label="Select semester"
-          />
-        </div>
-      </v-card>
-      <v-col class="view-pane">
-        <div class="d-flex flex-column flex-sm-row mb-2 view-pane__tabs">
+            <Select
+              :value.sync="selectedCredits"
+              :items="credits"
+              :key="selectedCredits || `nocredits`"
+              label="Select number of credits"
+            />
+
+            <Select
+              :value.sync="selectedSemester"
+              :items="semesters"
+              :key="selectedSemester || `nosemester`"
+              label="Select semester"
+            />
+          </div>
+        </v-card>
+      </v-col>
+      <v-col cols="12" md="8" lg="9" class="view-pane">
+        <div class="d-flex flex-column flex-md-row mb-2 view-pane__tabs">
           <v-tabs
             v-model="mainTab"
             hide-slider
             optional
-            :centered="$vuetify.breakpoint.xsOnly"
-            class="mb-2 mb-sm-0"
+            :centered="$vuetify.breakpoint.smAndDown"
+            class="mb-2 mb-md-0"
           >
             <v-tab v-for="({ name }, idx) in $options.mainTabs" :key="idx">
               {{ name }}
@@ -93,13 +95,13 @@
           <v-tabs
             v-if="courseTabs.length > -1"
             v-model="courseTab"
-            max-width="80%"
             hide-slider
             optional
             show-arrows
             center-active
-            :centered="$vuetify.breakpoint.xsOnly"
-            :right="$vuetify.breakpoint.smAndUp"
+            :centered="$vuetify.breakpoint.smAndDown"
+            :right="$vuetify.breakpoint.mdAndUp"
+            class="course-tabs"
           >
             <v-tab
               v-for="({ id, name }, idx) in courseTabs"
@@ -374,12 +376,20 @@ export default {
   width: 100%;
 }
 
+.view-pane__tabs .v-tabs {
+  width: auto;
+}
+
+.view-pane__tabs .v-tabs.course-tabs {
+  overflow-x: auto;
+}
+
 .filters {
   padding: 30px;
 }
 
 .filters .v-select {
-  width: 270px;
-  flex-grow: 0;
+  /* width: 270px; */
+  /* flex-grow: 0; */
 }
 </style>
