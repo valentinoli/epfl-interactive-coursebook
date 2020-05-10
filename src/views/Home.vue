@@ -234,23 +234,33 @@ export default {
     selectedSemester() {
       this.updateCourses();
     },
-    mainTab() {
+    mainTab(newTab, prevTab) {
+      console.log(prevTab, newTab);
       // Called when the model for main tabs changes
-      if (this.mainTab !== null) {
+      if (newTab === undefined) {
+        // user tried deselecting current tab manually
+        // --> force selection
+        this.mainTab = prevTab;
+      } else if (newTab !== null) {
         // deselect course tab
         this.courseTab = null;
 
-        const { component } = this.$options.mainTabs[this.mainTab];
+        const { component } = this.$options.mainTabs[newTab];
         this.setCurrentComponent(component);
       }
     },
-    courseTab() {
+    courseTab(newTab, prevTab) {
+      console.log(prevTab, newTab);
       // Called when the model for course tabs changes
-      if (this.courseTab !== null) {
+      if (newTab === undefined) {
+        // user tried deselecting current tab manually
+        // --> force selection
+        this.courseTab = prevTab;
+      } else if (newTab !== null) {
         // deselect main tab
         this.mainTab = null;
 
-        this.displayedCourse = this.courseTabs[this.courseTab];
+        this.displayedCourse = this.courseTabs[newTab];
         this.setCurrentComponent("CourseDetail");
       }
     }
