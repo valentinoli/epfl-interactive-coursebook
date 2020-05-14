@@ -47,6 +47,24 @@
         </keep-alive>
       </transition>
     </v-content>
+
+    <v-footer app elevation=2 color="white" class="d-flex justify-center align-center font-weight-light">
+      <div>
+        <v-icon left>mdi-copyright</v-icon>
+        <span>
+          2020 -&nbsp;
+        </span>
+        <span>
+          <a
+            href="mailto:valentin.loftsson@epfl.ch,michal.pleskowicz@epfl.ch,michael.spierer@epfl.ch"
+            target="_blank"
+            class="contact-link"
+          >
+            Contact
+          </a>
+        </span>
+      </div>
+    </v-footer>
   </v-app>
 </template>
 
@@ -74,5 +92,14 @@ export default {
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
+}
+
+.contact-link {
+  color: black !important;
+  text-decoration: none;
+}
+
+.contact-link:hover {
+  text-decoration: underline;
 }
 </style>
