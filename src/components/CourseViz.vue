@@ -1,7 +1,8 @@
 <template>
   <v-row class="network">
-    <v-col>
-      <svg class="main-svg" width="100%" height="100%"></svg>
+    <v-col class="viz-container">
+      <svg id="viz" width="100%" height="100%"></svg>
+      <div id="tooltip"></div>
     </v-col>
   </v-row>
 </template>
@@ -11,7 +12,6 @@ import Graph from "@/d3/graph";
 
 export default {
   name: "CourseViz",
-  components: {},
   props: {
     courses: {
       type: Array,
@@ -33,7 +33,7 @@ export default {
     }
   },
   mounted() {
-    const graph = new Graph();
+    const graph = new Graph(this);
     this.$options.graph = graph;
 
     this.render();
@@ -46,6 +46,10 @@ export default {
   methods: {
     render() {
       this.$options.graph.render(this.courses, this.linksFiltered);
+    },
+    onNodeDblClick({ id }) {
+      // Emit the selectCourse event to the parent component
+      this.$emit("selectCourse", id);
     }
   }
 };
@@ -54,5 +58,22 @@ export default {
 <style scoped>
 .network {
   height: calc(100% - 50px);
+}
+
+.viz-container {
+  position: relative;
+}
+
+#tooltip {
+  display: none;
+  position: absolute;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+text {
+  pointer-events: none;
 }
 </style>

@@ -5,9 +5,24 @@ const t = d3
   .duration(1000)
   .ease(d3.easeLinear);
 
+const tooltipSelector = "#tooltip";
+
 export default class Graph {
-  constructor() {
-    const svg = d3.select(".main-svg");
+  vue;
+
+  svg;
+
+  simulation;
+
+  node;
+
+  link;
+
+  constructor(vue) {
+    // We want access to the vue component
+    this.vue = vue;
+
+    const svg = d3.select("#viz");
     const width = parseFloat(svg.style("width"));
     const height = parseFloat(svg.style("height"));
 
@@ -25,6 +40,7 @@ export default class Graph {
 
     this.node = svg
       .append("g")
+      .attr("cursor", "grab")
       .attr("stroke", "#fff")
       .attr("stroke-width", 1.5)
       .selectAll("circle");
@@ -34,6 +50,8 @@ export default class Graph {
       .attr("stroke", "#999")
       .attr("stroke-opacity", 0.6)
       .selectAll("line");
+
+    this.svg = svg;
   }
 
   ticked() {
@@ -46,12 +64,53 @@ export default class Graph {
     this.node.attr("cx", d => d.x).attr("cy", d => d.y);
   }
 
+  // Mouse events for node tooltip
+  mouseover({ id, name, credits }) {
+    const html = `
+      <div>${id}</div>
+      <div>${name}</div>
+      <div>Credits: ${credits}</div>
+    `;
+
+    d3.select(tooltipSelector)
+      .style("display", "block")
+      .html(html);
+    d3.select(this)
+      .style("stroke", "black")
+      .style("opacity", 1);
+  }
+
+  mousemove() {
+    const [x, y] = d3.mouse(this);
+
+    d3.select(tooltipSelector)
+      .style("left", `${x + 20}px`)
+      .style("top", `${y}px`);
+  }
+
+  mouseleave() {
+    d3.select(tooltipSelector).style("display", "none");
+    d3.select(this)
+      .style("stroke", "none")
+      .style("opacity", 0.8);
+  }
+
+  // Drag events for nodes
   dragstarted(d) {
     if (!d3.event.active) {
+      // I don't know what this does, I just copied it
       this.simulation.alphaTarget(0.3).restart();
     }
     d.fx = d.x;
     d.fy = d.y;
+
+    this.node
+      .attr("cursor", "grabbing")
+      .on("mouseover", null)
+      // .on("mousemove", null)
+      .on("mouseleave", null);
+
+    d3.select(tooltipSelector).style("display", "none");
   }
 
   dragged(d) {
@@ -61,10 +120,17 @@ export default class Graph {
 
   dragended(d) {
     if (!d3.event.active) {
+      // I don't know what this does, I just copied it
       this.simulation.alphaTarget(0);
     }
     d.fx = null;
     d.fy = null;
+
+    this.node
+      .attr("cursor", "grab")
+      .on("mouseover", this.mouseover)
+      // .on("mousemove", this.mousemove)
+      .on("mouseleave", this.mouseleave);
   }
 
   render(nodes, links) {
@@ -90,7 +156,8 @@ export default class Graph {
               .attr("stroke-width", 0)
               .remove()
           )
-      );
+      )
+      .attr("class", "link");
 
     /* Nodes */
     this.node = this.node
@@ -114,7 +181,8 @@ export default class Graph {
               .attr("r", 0)
               .remove()
           )
-      );
+      )
+      .attr("class", "node");
 
     this.node
       .call(
@@ -124,8 +192,10 @@ export default class Graph {
           .on("drag", this.dragged.bind(this))
           .on("end", this.dragended.bind(this))
       )
-      .append("title")
-      .text(d => `${d.id} - ${d.name}`);
+      .on("mouseover", this.mouseover)
+      .on("mousemove", this.mousemove)
+      .on("mouseleave", this.mouseleave)
+      .on("dblclick", this.vue.onNodeDblClick);
 
     this.restartSimulation(newNodes, newLinks);
   }
