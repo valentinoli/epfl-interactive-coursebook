@@ -169,7 +169,7 @@ export default {
       courses: [],
       links: [],
 
-      selectedLevel: "",
+      selectedLevel: "minor",
       selectedProgram: "",
       selectedMasterspec: "",
       selectedSection: "",

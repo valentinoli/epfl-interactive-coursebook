@@ -5,7 +5,6 @@ const t = d3
   .duration(1000)
   .ease(d3.easeLinear);
 
-const tooltipSelector = "#tooltip";
 
 export default class Graph {
   vue;
@@ -18,6 +17,9 @@ export default class Graph {
 
   link;
 
+  minX;
+  minY;
+
   constructor(vue) {
     // We want access to the vue component
     this.vue = vue;
@@ -25,6 +27,8 @@ export default class Graph {
     const svg = d3.select("#viz");
     const width = parseFloat(svg.style("width"));
     const height = parseFloat(svg.style("height"));
+    this.minX = -width / 2;
+    this.minY = -height / 2;
 
     this.simulation = d3
       .forceSimulation()
@@ -33,7 +37,6 @@ export default class Graph {
         "link",
         d3.forceLink().id(d => d.id)
       )
-      .force("center", d3.forceCenter(width / 2, height / 2))
       .force("x", d3.forceX())
       .force("y", d3.forceY())
       .on("tick", this.ticked.bind(this));
@@ -51,6 +54,7 @@ export default class Graph {
       .attr("stroke-opacity", 0.6)
       .selectAll("line");
 
+    svg.attr("viewBox", [this.minX, this.minY, width, height]);
     this.svg = svg;
   }
 
@@ -65,32 +69,30 @@ export default class Graph {
   }
 
   // Mouse events for node tooltip
-  mouseover({ id, name, credits }) {
+  mouseover(node, { id, name, credits }) {
     const html = `
-      <div>${id}</div>
+      <div><strong>${id}</strong></div>
       <div>${name}</div>
       <div>Credits: ${credits}</div>
     `;
 
-    d3.select(tooltipSelector)
-      .style("display", "block")
-      .html(html);
-    d3.select(this)
+    this.vue.showCourseTooltip(html);
+    d3.select(node)
       .style("stroke", "black")
       .style("opacity", 1);
   }
 
-  mousemove() {
-    const [x, y] = d3.mouse(this);
-
-    d3.select(tooltipSelector)
-      .style("left", `${x + 20}px`)
-      .style("top", `${y}px`);
+  mousemove(node) {
+    const [x, y] = d3.mouse(node);
+    this.vue.updateCourseTooltipPosition([
+      x - this.minX,
+      y - this.minY
+    ]);
   }
 
-  mouseleave() {
-    d3.select(tooltipSelector).style("display", "none");
-    d3.select(this)
+  mouseleave(node) {
+    this.vue.hideCourseTooltip();
+    d3.select(node)
       .style("stroke", "none")
       .style("opacity", 0.8);
   }
@@ -104,13 +106,7 @@ export default class Graph {
     d.fx = d.x;
     d.fy = d.y;
 
-    this.node
-      .attr("cursor", "grabbing")
-      .on("mouseover", null)
-      // .on("mousemove", null)
-      .on("mouseleave", null);
-
-    d3.select(tooltipSelector).style("display", "none");
+    this.vue.hideCourseTooltip();
   }
 
   dragged(d) {
@@ -125,12 +121,6 @@ export default class Graph {
     }
     d.fx = null;
     d.fy = null;
-
-    this.node
-      .attr("cursor", "grab")
-      .on("mouseover", this.mouseover)
-      // .on("mousemove", this.mousemove)
-      .on("mouseleave", this.mouseleave);
   }
 
   render(nodes, links) {
@@ -182,6 +172,7 @@ export default class Graph {
               .remove()
           )
       )
+      .style("opacity", 0.8)
       .attr("class", "node");
 
     this.node
@@ -192,9 +183,25 @@ export default class Graph {
           .on("drag", this.dragged.bind(this))
           .on("end", this.dragended.bind(this))
       )
-      .on("mouseover", this.mouseover)
-      .on("mousemove", this.mousemove)
-      .on("mouseleave", this.mouseleave)
+      .on("mouseover", ((graph) => {
+          return function (d) {
+            // "this" refers to the node being moused over
+            return graph.mouseover.bind(graph, this)(d);
+          }
+        })(this)
+      )
+      .on("mousemove", ((graph) => {
+          return function (d) {
+            return graph.mousemove.bind(graph, this)(d);
+          }
+        })(this)
+      )
+      .on("mouseleave", ((graph) => {
+          return function (d) {
+            return graph.mouseleave.bind(graph, this)(d);
+          }
+        })(this)
+      )
       .on("dblclick", this.vue.onNodeDblClick);
 
     this.restartSimulation(newNodes, newLinks);

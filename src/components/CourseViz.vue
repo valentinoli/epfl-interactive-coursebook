@@ -1,8 +1,30 @@
 <template>
   <v-row class="network">
-    <v-col class="viz-container">
-      <svg id="viz" width="100%" height="100%"></svg>
-      <div id="tooltip"></div>
+    <v-col id="viz-container">
+      <div id="viz-toolbar" class="mb-4">
+        <!-- Info tooltip -->
+        <v-tooltip
+          attach="#viz-container"
+          right
+        >
+          <template v-slot:activator="{ on }">
+            <v-icon id="viz-user-info" v-on="on">mdi-information-outline</v-icon>
+          </template>
+          <div>Double click on a node to view the course</div>
+        </v-tooltip>
+      </div>
+
+      <div id="viz-svg">
+        <v-tooltip
+          v-model="courseTooltip"
+          attach="#viz-svg"
+          content-class="viz-course-tooltip"
+        >
+          <!-- display tooltip content as raw html -->
+          <div v-html="courseTooltipHtml"></div>
+        </v-tooltip>
+        <svg id="viz" width="100%" height="100%"></svg>
+      </div>
     </v-col>
   </v-row>
 </template>
@@ -21,6 +43,12 @@ export default {
       type: Array,
       default: () => []
     }
+  },
+  data() {
+    return {
+      courseTooltip: false,
+      courseTooltipHtml: ""
+    };
   },
   computed: {
     linksFiltered() {
@@ -47,6 +75,18 @@ export default {
     render() {
       this.$options.graph.render(this.courses, this.linksFiltered);
     },
+    showCourseTooltip(html) {
+      this.courseTooltip = true;
+      this.courseTooltipHtml = html;
+    },
+    updateCourseTooltipPosition([x, y]) {
+      const tooltip = document.querySelector(".viz-course-tooltip");
+      tooltip.style.top = `${y}px`;
+      tooltip.style.left = `${x + 20}px`;
+    },
+    hideCourseTooltip() {
+      this.courseTooltip = false;
+    },
     onNodeDblClick({ id }) {
       // Emit the selectCourse event to the parent component
       this.$emit("selectCourse", id);
@@ -60,17 +100,15 @@ export default {
   height: calc(100% - 50px);
 }
 
-.viz-container {
+#viz-svg {
+  /* position relative to allow absolute positioning of children */
   position: relative;
+  height: 100%;
 }
 
-#tooltip {
-  display: none;
+.viz-course-tooltip {
+  /* position tooltip content absolutely */
   position: absolute;
-  background-color: white;
-  border: 1px solid black;
-  border-radius: 5px;
-  padding: 5px;
 }
 
 text {
