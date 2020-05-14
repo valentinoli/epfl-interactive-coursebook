@@ -122,7 +122,7 @@
             <component
               :is="currentComponent"
               v-bind="currentProperties"
-              v-on:[currentComponentEvent]="selectCourse"
+              @[selectCourseEventName]="selectCourse"
             ></component>
           </keep-alive>
         </v-slide-x-transition>
@@ -134,7 +134,6 @@
 <script>
 // @ is an alias to /src
 import api from "@/services/api";
-import DemoViz from "@/components/DemoViz";
 import CourseViz from "@/components/CourseViz";
 import CourseList from "@/components/CourseList";
 import CourseDetail from "@/components/CourseDetail";
@@ -144,7 +143,6 @@ import SkeletonLoader from "@/components/SkeletonLoader";
 export default {
   name: "Home",
   components: {
-    DemoViz,
     CourseViz,
     CourseList,
     CourseDetail,
@@ -235,7 +233,6 @@ export default {
       this.updateCourses();
     },
     mainTab(newTab, prevTab) {
-      console.log(prevTab, newTab);
       // Called when the model for main tabs changes
       if (newTab === undefined) {
         // user tried deselecting current tab manually
@@ -250,7 +247,6 @@ export default {
       }
     },
     courseTab(newTab, prevTab) {
-      console.log(prevTab, newTab);
       // Called when the model for course tabs changes
       if (newTab === undefined) {
         // user tried deselecting current tab manually
@@ -353,8 +349,10 @@ export default {
           return {};
       }
     },
-    currentComponentEvent() {
+    selectCourseEventName() {
       if (this.currentComponent !== "CourseDetail") {
+        // We only want to bind the selectCourse event
+        // to the list and viz components
         return "selectCourse";
       }
 
