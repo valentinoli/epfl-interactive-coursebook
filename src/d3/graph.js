@@ -8,15 +8,10 @@ const t = d3
 
 export default class Graph {
   vue;
-
   svg;
-
   simulation;
-
   node;
-
   link;
-
   minX;
   minY;
 
@@ -24,7 +19,7 @@ export default class Graph {
     // We want access to the vue component
     this.vue = vue;
 
-    const svg = d3.select("#viz");
+    const svg = d3.select("#viz-svg");
     const width = parseFloat(svg.style("width"));
     const height = parseFloat(svg.style("height"));
     this.minX = -width / 2;

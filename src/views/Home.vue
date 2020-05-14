@@ -7,79 +7,114 @@
     <SkeletonLoader v-else-if="loading" />
 
     <v-row v-else class="home-content">
-      <v-col cols="12" md="4" lg="3" class="pt-0">
+      <v-col cols="12" md="4" xl="3" class="filters-pane pb-3 pt-0 py-md-0">
         <v-card
-          class="filters d-flex flex-column align-center align-md-start justify-start"
+          class="d-flex flex-column align-center align-md-start justify-start"
         >
-          <p class="title">
-            Filters
-          </p>
+          <v-row class="flex-columns" justify="center" align="center" no-gutters>
+            <!-- Hierarchical filters -->
+            <v-col cols="12" sm="7" md="12" class="filters__hierarchical">
+              <p class="subtitle-1">
+                Hierarchical filters
+              </p>
+              <Select
+                :value.sync="selectedLevel"
+                :items="$options.levels"
+                :autofocus="true"
+                label="Select level"
+              />
 
-          <div class="filters__hierarchical">
-            <p class="subtitle-1">
-              Hierarchical filters
-            </p>
-            <Select
-              :value.sync="selectedLevel"
-              :items="$options.levels"
-              :autofocus="true"
-              label="Select level"
-            />
+              <Select
+                :enabled="programEnabled"
+                :value.sync="selectedProgram"
+                :items="programs"
+                :key="selectedLevel || `noprogram`"
+                label="Select program"
+              />
 
-            <Select
-              :enabled="programEnabled"
-              :value.sync="selectedProgram"
-              :items="programs"
-              :key="selectedLevel || `noprogram`"
-              label="Select program"
-            />
+              <Select
+                :enabled="masterspecsEnabled"
+                :value.sync="selectedMasterspec"
+                :items="masterspecs"
+                :key="selectedProgram || `nospec`"
+                label="Select specialization"
+              >
+                <template v-slot:item-data="{ item }">
+                  <img class="spec-icon" :src="item.iconUrl" />
+                  <span>{{ item.text }}</span>
+                </template>
+                <template v-slot:selection-data="{ item }">
+                  <div class="d-flex align-start mt-2">
+                    <img class="spec-icon" :src="item.iconUrl" />
+                    <span>{{ item.text }}</span>
+                  </div>
+                </template>
+              </Select>
+            </v-col>
 
-            <Select
-              :enabled="masterspecsEnabled"
-              :value.sync="selectedMasterspec"
-              :items="masterspecs"
-              :key="selectedProgram || `nospec`"
-              label="Select specialization"
-            >
-              <template v-slot:item-data="{ item }">
-                <img class="spec-icon" :src="item.iconUrl" />
-                <span>{{ item.text }}</span>
-              </template>
-              <template v-slot:selection-data="{ item }">
-                <img class="spec-icon" :src="item.iconUrl" />
-                <span>{{ item.text }}</span>
-              </template>
-            </Select>
-          </div>
+            <!-- Global filters -->
+            <v-col cols="12" sm="7" md="12" class="filters__global">
+              <p class="subtitle-1">
+                Global filters
+              </p>
+              <Select
+                :value.sync="selectedSection"
+                :items="sections"
+                :key="selectedSection || `nosection`"
+                label="Select section"
+              />
 
-          <div class="filters__global">
-            <p class="subtitle-1">
-              Global filters
-            </p>
-            <Select
-              :value.sync="selectedSection"
-              :items="sections"
-              :key="selectedSection || `nosection`"
-              label="Select section"
-            />
+              <Select
+                :value.sync="selectedCredits"
+                :items="credits"
+                :key="selectedCredits || `nocredits`"
+                label="Select number of credits"
+              />
 
-            <Select
-              :value.sync="selectedCredits"
-              :items="credits"
-              :key="selectedCredits || `nocredits`"
-              label="Select number of credits"
-            />
+              <Select
+                :value.sync="selectedSemester"
+                :items="semesters"
+                :key="selectedSemester || `nosemester`"
+                label="Select semester"
+              />
+            </v-col>
 
-            <Select
-              :value.sync="selectedSemester"
-              :items="semesters"
-              :key="selectedSemester || `nosemester`"
-              label="Select semester"
-            />
-          </div>
+            <v-col cols="12" sm="7" md="12" class="filters__autocompletes">
+              <p class="subtitle-1">
+                Search tools
+              </p>
+              <!-- Course cherry-picker -->
+              <v-autocomplete
+                v-model="courseCherries"
+                :items="coursesFiltered"
+                :item-value="item => item"
+                :item-text="({ id, name }) => `${id} - ${name}`"
+                append-icon="mdi-magnify"
+                color="red"
+                item-color="red"
+                label=""
+                placeholder="Search filtered courses..."
+                menu-props="closeOnContentClick"
+                multiple
+                hide-no-data
+                hide-details
+                outlined
+              >
+                <template v-slot:selection="{ item }">
+                  <v-chip
+                    outlined
+                    close
+                    @click:close="removeCourseCherry(item.id)"
+                  >
+                    {{ item.id }}
+                  </v-chip>
+                </template>
+              </v-autocomplete>
+            </v-col>
+          </v-row>
         </v-card>
       </v-col>
-      <v-col cols="12" md="8" lg="9" class="view-pane">
+      <v-col cols="12" md="8" xl="9" class="view-pane">
         <div class="d-flex flex-column flex-md-row mb-2 view-pane__tabs">
           <v-tabs
             v-model="mainTab"
@@ -152,29 +187,46 @@ export default {
   data() {
     return {
       currentComponent: "CourseViz",
-      mainTab: 0,
-      courseTab: null,
-      courseTabs: [],
-      displayedCourse: null,
 
+      // Tab indices
+      mainTab: 0,
+      courseTab: undefined,
+
+      // Available course tabs
+      courseTabs: [],
+
+      // Course tab being viewed
+      courseDetail: null,
+
+      // Loading/error states
       loading: true,
       loadingCourses: false,
       error: false,
 
+      // Dropdowns
       programs: [],
       masterspecs: [],
       sections: [],
       credits: [],
       semesters: [],
-      courses: [],
-      links: [],
 
+      // Dropdowns: selected values
       selectedLevel: "minor",
       selectedProgram: "",
       selectedMasterspec: "",
       selectedSection: "",
       selectedCredits: "",
-      selectedSemester: ""
+      selectedSemester: "",
+
+      // Displayed courses and links
+      courses: [],
+      links: [],
+
+      // Courses matching filter conditions
+      coursesFiltered: [],
+
+      // Cherry-picked courses from filtered courses
+      courseCherries: []
     };
   },
   mainTabs: [
@@ -192,7 +244,7 @@ export default {
       await api.loadAllData();
       // Don't need getters and setters for the levels
       this.$options.levels = api.getAllLevels();
-      this.courses = api.getCourses(this);
+      this.updateCourses();
       this.links = api.getLinks();
 
       this.updateCourseFilters();
@@ -232,6 +284,14 @@ export default {
     selectedSemester() {
       this.updateCourses();
     },
+    courseCherries() {
+      const { courseCherries } = this;
+      if (courseCherries.length > 0) {
+        this.courses = courseCherries;
+      } else {
+        this.courses = this.coursesFiltered;
+      }
+    },
     mainTab(newTab, prevTab) {
       // Called when the model for main tabs changes
       if (newTab === undefined) {
@@ -256,7 +316,7 @@ export default {
         // deselect main tab
         this.mainTab = null;
 
-        this.displayedCourse = this.courseTabs[newTab];
+        this.courseDetail = this.courseTabs[newTab];
         this.setCurrentComponent("CourseDetail");
       }
     }
@@ -274,7 +334,16 @@ export default {
       this.selectedSemester = "";
     },
     updateCourses() {
-      this.courses = api.getCourses(this);
+      const courses = api.getCourses(this);
+      // Clone array to keep track of which courses match the filters
+      this.coursesFiltered = [...courses];
+      console.log(this.coursesFiltered.length);
+
+      if (!this.courseCherries.length) {
+        // If there are no cherry picked courses,
+        // update the list of displayed courses
+        this.courses = courses;
+      }
     },
     updateCourseFilters() {
       // Call this method only after courses have been updated
@@ -285,6 +354,10 @@ export default {
       this.sections = sections;
       this.credits = credits;
       this.semesters = semesters;
+    },
+    removeCourseCherry(id) {
+      const index = this.courseCherries.findIndex(course => course.id === id);
+      this.courseCherries.splice(index, 1);
     },
     setCurrentComponent(component) {
       this.currentComponent = component;
@@ -335,7 +408,7 @@ export default {
     },
     currentProperties() {
       // Compute properties to pass on to the current component
-      const { currentComponent, courses, links, displayedCourse } = this;
+      const { currentComponent, courses, links, courseDetail } = this;
 
       switch (currentComponent) {
         case "CourseList":
@@ -344,7 +417,7 @@ export default {
         case "CourseViz":
           return { courses, links };
         case "CourseDetail":
-          return displayedCourse;
+          return courseDetail;
         default:
           return {};
       }
@@ -392,12 +465,27 @@ export default {
   overflow-x: auto;
 }
 
-.filters {
+.filters-pane > .v-card {
   padding: 30px;
+  height: 100%;
 }
 
-.filters .v-select {
-  /* width: 270px; */
-  /* flex-grow: 0; */
+.filters-pane .v-select,
+.filters-pane .v-autocomplete {
+  /* width: 270px;
+  max-width: 270px; */
+  width: 100%;
+}
+</style>
+
+<style>
+.filters-pane .v-select__selections input[readonly="readonly"] {
+  /* Override style to fit selected items that don't fit on one line */
+  height: 0;
+  padding: 0;
+}
+
+.v-autocomplete.v-select--is-menu-active .v-input__icon--append .v-icon {
+  transform: none;
 }
 </style>

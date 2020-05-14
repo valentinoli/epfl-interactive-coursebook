@@ -14,16 +14,16 @@
         </v-tooltip>
       </div>
 
-      <div id="viz-svg">
+      <div id="viz">
         <v-tooltip
           v-model="courseTooltip"
-          attach="#viz-svg"
+          attach="#viz"
           content-class="viz-course-tooltip"
         >
           <!-- display tooltip content as raw html -->
           <div v-html="courseTooltipHtml"></div>
         </v-tooltip>
-        <svg id="viz" width="100%" height="100%"></svg>
+        <svg id="viz-svg" width="100%" height="100%"></svg>
       </div>
     </v-col>
   </v-row>
@@ -100,10 +100,14 @@ export default {
   height: calc(100% - 50px);
 }
 
-#viz-svg {
+#viz {
   /* position relative to allow absolute positioning of children */
   position: relative;
   height: 100%;
+}
+
+#viz-toolbar {
+  padding: 0 16px;
 }
 
 .viz-course-tooltip {
