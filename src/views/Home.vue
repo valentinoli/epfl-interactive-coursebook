@@ -6,95 +6,126 @@
 
     <SkeletonLoader v-else-if="loading" />
 
-    <v-row v-else class="home-content d-flex flex-column flex-sm-row">
-      <v-card
-        class="filters d-flex flex-column align-center align-sm-start justify-start"
-      >
-        <p class="title">
-          Filters
-        </p>
-
-        <div class="filters__hierarchical">
-          <p class="subtitle-1">
-            Hierarchical filters
+    <v-row v-else class="home-content">
+      <v-col cols="12" md="4" lg="3" class="pt-0">
+        <v-card
+          class="filters d-flex flex-column align-center align-md-start justify-start"
+        >
+          <p class="title">
+            Filters
           </p>
-          <Select
-            :value.sync="selectedLevel"
-            :items="$options.levels"
-            :autofocus="true"
-            label="Select level"
-          />
 
-          <Select
-            :enabled="programEnabled"
-            :value.sync="selectedProgram"
-            :items="programs"
-            :key="selectedLevel || `noprogram`"
-            label="Select program"
-          />
+          <div class="filters__hierarchical">
+            <p class="subtitle-1">
+              Hierarchical filters
+            </p>
+            <Select
+              :value.sync="selectedLevel"
+              :items="$options.levels"
+              :autofocus="true"
+              label="Select level"
+            />
 
-          <Select
-            :enabled="masterspecsEnabled"
-            :value.sync="selectedMasterspec"
-            :items="masterspecs"
-            :key="selectedProgram || `nospec`"
-            label="Select specialization"
+            <Select
+              :enabled="programEnabled"
+              :value.sync="selectedProgram"
+              :items="programs"
+              :key="selectedLevel || `noprogram`"
+              label="Select program"
+            />
+
+            <Select
+              :enabled="masterspecsEnabled"
+              :value.sync="selectedMasterspec"
+              :items="masterspecs"
+              :key="selectedProgram || `nospec`"
+              label="Select specialization"
+            >
+              <template v-slot:item-data="{ item }">
+                <img class="spec-icon" :src="item.iconUrl" />
+                <span>{{ item.text }}</span>
+              </template>
+              <template v-slot:selection-data="{ item }">
+                <img class="spec-icon" :src="item.iconUrl" />
+                <span>{{ item.text }}</span>
+              </template>
+            </Select>
+          </div>
+
+          <div class="filters__global">
+            <p class="subtitle-1">
+              Global filters
+            </p>
+            <Select
+              :value.sync="selectedSection"
+              :items="sections"
+              :key="selectedSection || `nosection`"
+              label="Select section"
+            />
+
+            <Select
+              :value.sync="selectedCredits"
+              :items="credits"
+              :key="selectedCredits || `nocredits`"
+              label="Select number of credits"
+            />
+
+            <Select
+              :value.sync="selectedSemester"
+              :items="semesters"
+              :key="selectedSemester || `nosemester`"
+              label="Select semester"
+            />
+          </div>
+        </v-card>
+      </v-col>
+      <v-col cols="12" md="8" lg="9" class="view-pane">
+        <div class="d-flex flex-column flex-md-row mb-2 view-pane__tabs">
+          <v-tabs
+            v-model="mainTab"
+            hide-slider
+            optional
+            :centered="$vuetify.breakpoint.smAndDown"
+            class="mb-2 mb-md-0"
           >
-            <template v-slot:item-data="{ item }">
-              <img class="spec-icon" :src="item.iconUrl" />
-              <span>{{ item.text }}</span>
-            </template>
-            <template v-slot:selection-data="{ item }">
-              <img class="spec-icon" :src="item.iconUrl" />
-              <span>{{ item.text }}</span>
-            </template>
-          </Select>
+            <v-tab v-for="({ name }, idx) in $options.mainTabs" :key="idx">
+              {{ name }}
+            </v-tab>
+          </v-tabs>
+          <v-tabs
+            v-if="courseTabs.length > -1"
+            v-model="courseTab"
+            hide-slider
+            optional
+            show-arrows
+            center-active
+            :centered="$vuetify.breakpoint.smAndDown"
+            :right="$vuetify.breakpoint.mdAndUp"
+            class="course-tabs"
+          >
+            <v-tab
+              v-for="({ id, name }, idx) in courseTabs"
+              :key="idx"
+              :title="name"
+            >
+              {{ id }}
+              <v-btn icon x-small class="ml-1 mr-n2">
+                <v-icon x-small @click.stop="removeCourseTab(idx)"
+                  >mdi-close</v-icon
+                >
+              </v-btn>
+            </v-tab>
+          </v-tabs>
         </div>
-
-        <div class="filters__global">
-          <p class="subtitle-1">
-            Global filters
-          </p>
-          <Select
-            :value.sync="selectedSection"
-            :items="sections"
-            :key="selectedSection || `nosection`"
-            label="Select section"
-          />
-
-          <Select
-            :value.sync="selectedCredits"
-            :items="credits"
-            :key="selectedCredits || `nocredits`"
-            label="Select number of credits"
-          />
-
-          <Select
-            :value.sync="selectedSemester"
-            :items="semesters"
-            :key="selectedSemester || `nosemester`"
-            label="Select semester"
-          />
-        </div>
-        <!-- <div class="d-flex justify-center align-center d-sm-none">
-          <v-btn class="ma-2" text icon color="red lighten-2">
-            <v-icon>mdi-arrow</v-icon>
-          </v-btn>
-        </div> -->
-      </v-card>
-      <v-col class="view-pane">
-        <v-tabs class="d-flex justify-center justify-sm-start">
-          <v-tab @click="currentTabComponent = `CourseViz`">Network</v-tab>
-          <v-tab @click="currentTabComponent = `DemoViz`">Demo-Viz</v-tab>
-          <v-tab @click="currentTabComponent = `CourseList`">List</v-tab>
-        </v-tabs>
-        <keep-alive>
-          <component
-            :is="currentTabComponent"
-            :courses="courses"
-            :links="links"
-          ></component>
-        </keep-alive>
+        <v-slide-x-transition mode="out-in">
+          <keep-alive>
+            <component
+              :is="currentComponent"
+              v-bind="currentProperties"
+              v-on:[currentComponentEvent]="selectCourse"
+            ></component>
+          </keep-alive>
+        </v-slide-x-transition>
       </v-col>
     </v-row>
   </v-container>
@@ -103,24 +134,30 @@
 <script>
 // @ is an alias to /src
 import api from "@/services/api";
-import CourseList from "@/components/CourseList";
-import CourseViz from "@/components/CourseViz";
 import DemoViz from "@/components/DemoViz";
+import CourseViz from "@/components/CourseViz";
+import CourseList from "@/components/CourseList";
+import CourseDetail from "@/components/CourseDetail";
 import Select from "@/components/Select";
 import SkeletonLoader from "@/components/SkeletonLoader";
 
 export default {
   name: "Home",
   components: {
-    CourseList,
-    CourseViz,
     DemoViz,
+    CourseViz,
+    CourseList,
+    CourseDetail,
     Select,
     SkeletonLoader
   },
   data() {
     return {
-      currentTabComponent: "CourseViz",
+      currentComponent: "CourseViz",
+      mainTab: 0,
+      courseTab: null,
+      courseTabs: [],
+      displayedCourse: null,
 
       loading: true,
       loadingCourses: false,
@@ -142,6 +179,16 @@ export default {
       selectedSemester: ""
     };
   },
+  mainTabs: [
+    {
+      component: "CourseViz",
+      name: "Network"
+    },
+    {
+      component: "CourseList",
+      name: "List"
+    }
+  ],
   async created() {
     try {
       await api.loadAllData();
@@ -186,6 +233,36 @@ export default {
     },
     selectedSemester() {
       this.updateCourses();
+    },
+    mainTab(newTab, prevTab) {
+      console.log(prevTab, newTab);
+      // Called when the model for main tabs changes
+      if (newTab === undefined) {
+        // user tried deselecting current tab manually
+        // --> force selection
+        this.mainTab = prevTab;
+      } else if (newTab !== null) {
+        // deselect course tab
+        this.courseTab = null;
+
+        const { component } = this.$options.mainTabs[newTab];
+        this.setCurrentComponent(component);
+      }
+    },
+    courseTab(newTab, prevTab) {
+      console.log(prevTab, newTab);
+      // Called when the model for course tabs changes
+      if (newTab === undefined) {
+        // user tried deselecting current tab manually
+        // --> force selection
+        this.courseTab = prevTab;
+      } else if (newTab !== null) {
+        // deselect main tab
+        this.mainTab = null;
+
+        this.displayedCourse = this.courseTabs[newTab];
+        this.setCurrentComponent("CourseDetail");
+      }
     }
   },
   methods: {
@@ -212,6 +289,45 @@ export default {
       this.sections = sections;
       this.credits = credits;
       this.semesters = semesters;
+    },
+    setCurrentComponent(component) {
+      this.currentComponent = component;
+    },
+    removeCourseTab(index) {
+      this.courseTabs.splice(index, 1);
+
+      if (this.courseTabs.length > 0) {
+        // there are some tabs available
+        if (index === this.courseTab) {
+          // if closed tab is the current one,
+          // select the one before (if first one closed, select first one)
+          this.courseTab = index > 0 ? index - 1 : 0;
+        } else if (this.courseTab > index) {
+          // closed tab comes before the current tab
+          // --> fix current tab index
+          this.courseTab = this.courseTab - 1;
+        }
+      } else {
+        // otherwise, select the first main tab
+        this.courseTab = null;
+        this.mainTab = 0;
+      }
+    },
+    selectCourse(courseId) {
+      // Called when user selects a course from
+      // a main tab component: list or network
+      const courseIndex = this.courseTabs.findIndex(
+        ({ id }) => id === courseId
+      );
+      if (courseIndex >= 0) {
+        // course is already available as a tab
+        this.courseTab = courseIndex;
+      } else {
+        // course is not a tab, so we add it as a tab and select it
+        const course = api.getCourseById(courseId);
+        const newLength = this.courseTabs.push(course);
+        this.courseTab = newLength - 1;
+      }
     }
   },
   computed: {
@@ -220,6 +336,29 @@ export default {
     },
     masterspecsEnabled() {
       return this.selectedProgram !== `` && this.masterspecs.length > 0;
+    },
+    currentProperties() {
+      // Compute properties to pass on to the current component
+      const { currentComponent, courses, links, displayedCourse } = this;
+
+      switch (currentComponent) {
+        case "CourseList":
+        case "DemoViz":
+          return { courses };
+        case "CourseViz":
+          return { courses, links };
+        case "CourseDetail":
+          return displayedCourse;
+        default:
+          return {};
+      }
+    },
+    currentComponentEvent() {
+      if (this.currentComponent !== "CourseDetail") {
+        return "selectCourse";
+      }
+
+      return null;
     }
   }
 };
@@ -231,9 +370,7 @@ export default {
 }
 
 .home {
-  padding-right: 0;
-  padding-left: 0;
-  padding-bottom: 0;
+  padding: 0;
 }
 
 .home,
@@ -242,7 +379,19 @@ export default {
 }
 
 .view-pane {
-  padding: 5px 30px 15px;
+  padding: 10px 30px 15px;
+}
+
+.view-pane__tabs {
+  width: 100%;
+}
+
+.view-pane__tabs .v-tabs {
+  width: auto;
+}
+
+.view-pane__tabs .v-tabs.course-tabs {
+  overflow-x: auto;
 }
 
 .filters {
@@ -250,7 +399,7 @@ export default {
 }
 
 .filters .v-select {
-  width: 270px;
-  flex-grow: 0;
+  /* width: 270px; */
+  /* flex-grow: 0; */
 }
 </style>

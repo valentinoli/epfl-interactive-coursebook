@@ -4,7 +4,7 @@
       <!-- General -->
       <v-card>
         <v-card-title class="d-flex justify-space-between">
-          <span>{{ code }}</span>
+          <span>{{ id }}</span>
           <v-btn
             :href="coursebookUrl"
             target="_blank"
@@ -90,7 +90,7 @@ export default {
   props: {
     path: String,
 
-    code: String,
+    id: String,
     name: String,
 
     // General
