@@ -8,10 +8,8 @@
 
     <v-row v-else class="home-content">
       <v-col cols="12" md="4" xl="3" class="filters-pane pb-3 pt-0 py-md-0">
-        <v-card
-          class="d-flex flex-column align-center align-md-start justify-start"
-        >
-          <v-row class="flex-columns" justify="center" align="center" no-gutters>
+        <v-card>
+          <v-row class="flex-column" justify="center" align="center" no-gutters>
             <!-- Hierarchical filters -->
             <v-col cols="12" sm="7" md="12" class="filters__hierarchical">
               <p class="subtitle-1">
@@ -105,6 +103,7 @@
                     outlined
                     close
                     @click:close="removeCourseCherry(item.id)"
+                    :title="item.name"
                   >
                     {{ item.id }}
                   </v-chip>
@@ -157,7 +156,7 @@
             <component
               :is="currentComponent"
               v-bind="currentProperties"
-              @[selectCourseEventName]="selectCourse"
+              @selectCourse="selectCourse"
             ></component>
           </keep-alive>
         </v-slide-x-transition>
@@ -337,7 +336,6 @@ export default {
       const courses = api.getCourses(this);
       // Clone array to keep track of which courses match the filters
       this.coursesFiltered = [...courses];
-      console.log(this.coursesFiltered.length);
 
       if (!this.courseCherries.length) {
         // If there are no cherry picked courses,
@@ -421,15 +419,6 @@ export default {
         default:
           return {};
       }
-    },
-    selectCourseEventName() {
-      if (this.currentComponent !== "CourseDetail") {
-        // We only want to bind the selectCourse event
-        // to the list and viz components
-        return "selectCourse";
-      }
-
-      return null;
     }
   }
 };
@@ -472,8 +461,6 @@ export default {
 
 .filters-pane .v-select,
 .filters-pane .v-autocomplete {
-  /* width: 270px;
-  max-width: 270px; */
   width: 100%;
 }
 </style>

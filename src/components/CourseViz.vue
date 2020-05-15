@@ -3,12 +3,11 @@
     <v-col id="viz-container">
       <div id="viz-toolbar" class="mb-4">
         <!-- Info tooltip -->
-        <v-tooltip
-          attach="#viz-container"
-          right
-        >
+        <v-tooltip attach="#viz-container" right>
           <template v-slot:activator="{ on }">
-            <v-icon id="viz-user-info" v-on="on">mdi-information-outline</v-icon>
+            <v-icon id="viz-user-info" v-on="on"
+              >mdi-information-outline</v-icon
+            >
           </template>
           <div>Double click on a node to view the course</div>
         </v-tooltip>

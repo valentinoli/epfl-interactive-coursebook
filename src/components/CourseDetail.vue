@@ -27,6 +27,23 @@
         </v-list>
       </v-card>
 
+      <!-- Ingoing/Outgoing prerequisites -->
+      <template
+        v-for="{ courses, title } in [
+          { courses: ingoing, title: 'Requirements' },
+          { courses: outgoing, title: 'Preparation for' }
+        ]"
+      >
+        <v-card v-if="courses.length" :key="title">
+          <v-card-title>{{ title }}</v-card-title>
+          <v-card-text>
+            <div v-for="{ id, name } in courses" :key="id">
+              <a @click="$emit('selectCourse', id)"> {{ id }} - {{ name }} </a>
+            </div>
+          </v-card-text>
+        </v-card>
+      </template>
+
       <!-- Notes -->
       <v-alert v-if="note" type="info">
         {{ noteCleaned }}
@@ -36,15 +53,15 @@
         {{ `Limited number of places: ${number_of_places}` }}
       </v-alert>
     </v-col>
-    <v-col cols="12" md="4" class="d-flex flex-column">
+    <v-col cols="12" md="3" class="d-flex flex-column">
       <!-- Lecturers -->
       <v-card v-if="lecturers.length > 0" class="lecturers">
         <v-card-title>Lecturers</v-card-title>
         <v-card-text>
           <div v-for="[name, url] in lecturers" :key="url">
-            <a :href="url" target="_blank">
-              {{ name }}
-            </a>
+            <a :href="url" target="_blank">{{ name }}</a
+            >&nbsp;
+            <v-icon x-small>mdi-open-in-new</v-icon>
           </div>
         </v-card-text>
       </v-card>
@@ -119,6 +136,16 @@ export default {
       default: () => []
     },
 
+    // Ingoing/outgoing prerequisites
+    ingoing: {
+      type: Array,
+      default: () => []
+    },
+    outgoing: {
+      type: Array,
+      default: () => []
+    },
+
     // Registrations
     registrations: {
       type: Object,
@@ -175,15 +202,15 @@ export default {
 </script>
 
 <style scoped>
-.lecturers a {
+a {
   color: red;
-
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow-x: hidden;
 }
 
-.lecturers a:not(:hover) {
+a:hover {
+  text-decoration: underline;
+}
+
+a:not(:hover) {
   text-decoration: none;
 }
 

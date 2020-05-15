@@ -20,9 +20,25 @@ async function loadAllData() {
     setItem(key, val);
   });
 
+  const links = getItem("links");
+
   // Store the courses as an array of objects too
   // to have two different formats for convenience (and performance?)
   const coursesObject = getItem("courses");
+
+  // Add ingoing and outgoing neighbor fields
+  Object.values(coursesObject).forEach(val => {
+    val.ingoing = [];
+    val.outgoing = [];
+  });
+
+  // Populate ingoing and outgoing neighbors
+  links.forEach(({ source, target }) => {
+    const sourceCourse = coursesObject[source];
+    const targetCourse = coursesObject[target];
+    sourceCourse.outgoing.push({ id: target, name: targetCourse.name });
+    targetCourse.ingoing.push({ id: source, name: sourceCourse.name });
+  });
 
   // Object of key: Object pairs --> Array of Objects
   const coursesArray = Object.entries(coursesObject).map(([id, v]) => ({
@@ -30,6 +46,7 @@ async function loadAllData() {
     ...v
   }));
 
+  setItem("courses", coursesObject);
   setItem("coursesArray", coursesArray);
 }
 

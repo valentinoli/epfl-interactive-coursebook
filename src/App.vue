@@ -48,7 +48,12 @@
       </transition>
     </v-content>
 
-    <v-footer app elevation=2 color="white" class="d-flex justify-center align-center font-weight-light">
+    <v-footer
+      app
+      elevation="2"
+      color="white"
+      class="d-flex justify-center align-center font-weight-light"
+    >
       <div>
         <v-icon left>mdi-copyright</v-icon>
         <span>

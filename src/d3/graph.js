@@ -5,7 +5,6 @@ const t = d3
   .duration(1000)
   .ease(d3.easeLinear);
 
-
 export default class Graph {
   vue;
   svg;
@@ -79,10 +78,7 @@ export default class Graph {
 
   mousemove(node) {
     const [x, y] = d3.mouse(node);
-    this.vue.updateCourseTooltipPosition([
-      x - this.minX,
-      y - this.minY
-    ]);
+    this.vue.updateCourseTooltipPosition([x - this.minX, y - this.minY]);
   }
 
   mouseleave(node) {
@@ -178,23 +174,29 @@ export default class Graph {
           .on("drag", this.dragged.bind(this))
           .on("end", this.dragended.bind(this))
       )
-      .on("mouseover", ((graph) => {
-          return function (d) {
+      .on(
+        "mouseover",
+        (graph => {
+          return function(d) {
             // "this" refers to the node being moused over
             return graph.mouseover.bind(graph, this)(d);
-          }
+          };
         })(this)
       )
-      .on("mousemove", ((graph) => {
-          return function (d) {
+      .on(
+        "mousemove",
+        (graph => {
+          return function(d) {
             return graph.mousemove.bind(graph, this)(d);
-          }
+          };
         })(this)
       )
-      .on("mouseleave", ((graph) => {
-          return function (d) {
+      .on(
+        "mouseleave",
+        (graph => {
+          return function(d) {
             return graph.mouseleave.bind(graph, this)(d);
-          }
+          };
         })(this)
       )
       .on("dblclick", this.vue.onNodeDblClick);
