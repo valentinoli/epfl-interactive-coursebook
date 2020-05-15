@@ -65,11 +65,7 @@ export default class Graph {
 
   // Click event for node
   click({ id }) {
-    // Do nothing if user has a touch interface
-    // (instead he can select the link in the tooltip)
-    if (!this.vue.touchInterface) {
-      this.vue.onNodeClick(id);
-    }
+    this.vue.onNodeClick(id);
   }
 
   // Mouse events for node tooltip

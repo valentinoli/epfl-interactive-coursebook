@@ -2,15 +2,7 @@
   <v-row class="network">
     <v-col id="viz-container">
       <div id="viz-toolbar" class="mb-4">
-        <!-- Info tooltip -->
-        <!-- <v-tooltip attach="#viz-container" right>
-          <template v-slot:activator="{ on }">
-            <v-icon id="viz-user-info" v-on="on"
-              >mdi-information-outline</v-icon
-            >
-          </template>
-          <div>Double click on a node to view the course</div>
-        </v-tooltip> -->
+        <!-- Tools soon to be added -->
       </div>
 
       <div id="viz">
@@ -21,8 +13,14 @@
         >
           <!-- display tooltip content as raw html -->
           <div v-html="courseTooltipHtml"></div>
+
+          <!-- content specific to touch interfaces -->
           <template v-if="touchInterface">
-            <v-btn small @click="onNodeClick(this.courseTooltipCourseId)" class="mt-2 mb-1">
+            <v-btn
+              small
+              @click="$emit('selectCourse', courseTooltipCourseId)"
+              class="mt-2 mb-1"
+            >
               <v-icon left>mdi-eye</v-icon>
               View course
             </v-btn>
@@ -51,7 +49,7 @@ export default {
   },
   data() {
     return {
-      courseTooltip: false,
+      courseTooltip: true,
       courseTooltipHtml: "",
       courseTooltipCourseId: null,
       touchInterface: false
@@ -80,22 +78,22 @@ export default {
         document.removeEventListener("touchstart", onTouchStart);
       }
       this.touchInterface = true;
-    }
+
+      // Tooltip should be clickable
+      const tooltipEl = document.querySelector(".viz-course-tooltip");
+      tooltipEl.addEventListener("click", evt => {
+        evt.stopPropagation();
+        this.courseTooltip = true;
+      });
+    };
 
     document.addEventListener("touchstart", onTouchStart);
+    this.courseTooltip = false;
   },
   watch: {
     courses() {
       this.render();
     }
-    // courseTooltip() {
-    //   if (this.touchInterface && this.courseTooltip) {
-    //     const tooltipEl = document.querySelector(".viz-course-tooltip");
-    //     tooltipEl.addEventListener("touchstart", () => {
-    //       this.courseTooltip = true;
-    //     })
-    //   }
-    // }
   },
   methods: {
     render() {
@@ -107,9 +105,9 @@ export default {
         <div>${name}</div>
         <div>Credits: ${credits}</div>
       `;
-      this.courseTooltip = true;
       this.courseTooltipHtml = html;
       this.courseTooltipCourseId = id;
+      this.courseTooltip = true;
     },
     updateCourseTooltipPosition([x, y]) {
       const tooltip = document.querySelector(".viz-course-tooltip");
@@ -120,9 +118,12 @@ export default {
       this.courseTooltip = false;
     },
     onNodeClick(id) {
-      // Emit the selectCourse event to the parent component
-      this.$emit("selectCourse", id);
-      console.log("clicked");
+      // Do nothing if user has a touch interface
+      // (instead he can select the link in the tooltip)
+      if (!this.touchInterface) {
+        // Emit the selectCourse event to the parent component
+        this.$emit("selectCourse", id);
+      }
     }
   }
 };
@@ -146,6 +147,9 @@ export default {
 .viz-course-tooltip {
   /* position tooltip content absolutely */
   position: absolute;
+
+  /* Override default Vuetify */
+  pointer-events: auto;
 }
 
 text {
