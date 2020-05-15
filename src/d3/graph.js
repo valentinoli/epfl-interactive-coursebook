@@ -49,6 +49,7 @@ export default class Graph {
       .selectAll("line");
 
     svg.attr("viewBox", [this.minX, this.minY, width, height]);
+
     this.svg = svg;
   }
 
@@ -62,15 +63,18 @@ export default class Graph {
     this.node.attr("cx", d => d.x).attr("cy", d => d.y);
   }
 
-  // Mouse events for node tooltip
-  mouseover(node, { id, name, credits }) {
-    const html = `
-      <div><strong>${id}</strong></div>
-      <div>${name}</div>
-      <div>Credits: ${credits}</div>
-    `;
+  // Click event for node
+  click({ id }) {
+    // Do nothing if user has a touch interface
+    // (instead he can select the link in the tooltip)
+    if (!this.vue.touchInterface) {
+      this.vue.onNodeClick(id);
+    }
+  }
 
-    this.vue.showCourseTooltip(html);
+  // Mouse events for node tooltip
+  mouseover(node, d) {
+    this.vue.showCourseTooltip(d);
     d3.select(node)
       .style("stroke", "black")
       .style("opacity", 1);
@@ -94,10 +98,11 @@ export default class Graph {
       // I don't know what this does, I just copied it
       this.simulation.alphaTarget(0.3).restart();
     }
-    d.fx = d.x;
-    d.fy = d.y;
 
     this.vue.hideCourseTooltip();
+
+    d.fx = d.x;
+    d.fy = d.y;
   }
 
   dragged(d) {
@@ -199,7 +204,7 @@ export default class Graph {
           };
         })(this)
       )
-      .on("dblclick", this.vue.onNodeDblClick);
+      .on("click", this.click.bind(this));
 
     this.restartSimulation(newNodes, newLinks);
   }
