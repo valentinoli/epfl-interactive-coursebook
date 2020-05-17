@@ -20,11 +20,14 @@ export default class Graph {
 
     //const width = parseFloat(svg.style("width"));
     //const height = parseFloat(svg.style("height"));
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    //const width = window.innerWidth;
+    //const height = window.innerHeight;
+    const width = 1300;
+    const height = 850;
 
     const svg = d3
       .select("#viz-svg")
+      .append("svg")
       .attr("width", width)
       .attr("height", height)
       .call(
@@ -34,14 +37,15 @@ export default class Graph {
       )
       .append("g");
 
-    const defs = svg.append("svg:defs");
+    this.minX = -width / 2;
+    this.minY = -height / 2;
 
-    // define arrow markers for leading arrow
-    defs
+    svg
+      .append("defs")
       .append("svg:marker")
       .attr("id", "arrowhead")
       .attr("viewBox", "0 -5 10 10")
-      .attr("refX", 5)
+      .attr("refX", 23)
       .attr("refY", 0)
       .attr("markerWidth", 5)
       .attr("markerHeight", 5)
@@ -51,9 +55,6 @@ export default class Graph {
       .attr("d", "M0,-5L10,0L0,5")
       .attr("fill", "#999")
       .style("stroke", "none");
-
-    this.minX = -width / 2;
-    this.minY = -height / 2;
 
     this.simulation = d3
       .forceSimulation()
@@ -74,11 +75,7 @@ export default class Graph {
       .attr("stroke-width", 1.5)
       .selectAll("circle");
 
-    this.link = svg
-      .append("g")
-      .attr("stroke", "#999")
-      .attr("stroke-opacity", 0.6)
-      .selectAll("line");
+    this.link = svg.append("g").selectAll("line");
 
     svg.attr("viewBox", [this.minX, this.minY, width, height]);
 
@@ -87,12 +84,26 @@ export default class Graph {
 
   ticked() {
     this.link
-      .attr("x1", d => d.source.x)
-      .attr("y1", d => d.source.y)
-      .attr("x2", d => d.target.x)
-      .attr("y2", d => d.target.y);
+      .attr("x1", function(link) {
+        return link.source.x;
+      })
+      .attr("y1", function(link) {
+        return link.source.y;
+      })
+      .attr("x2", function(link) {
+        return link.target.x;
+      })
+      .attr("y2", function(link) {
+        return link.target.y;
+      });
 
-    this.node.attr("cx", d => d.x).attr("cy", d => d.y);
+    this.node
+      .attr("cx", function(node) {
+        return node.x;
+      })
+      .attr("cy", function(node) {
+        return node.y;
+      });
   }
 
   // Click event for node
@@ -102,16 +113,14 @@ export default class Graph {
 
   // Mouse events for node tooltip
   mouseover(node, d) {
+    //const [x, y] = d3.mouse(node);
+    //this.vue.updateCourseTooltipPosition([x, y]);
     this.vue.showCourseTooltip(d);
     d3.select(node)
       .style("stroke", "black")
       .style("opacity", 1);
   }
 
-  mousemove(node) {
-    const [x, y] = d3.mouse(node);
-    this.vue.updateCourseTooltipPosition([x - this.minX, y - this.minY]);
-  }
 
   mouseleave(node) {
     this.vue.hideCourseTooltip();
@@ -162,6 +171,8 @@ export default class Graph {
           enter
             .append("svg:line")
             .attr("class", "link")
+            .attr("stroke", "#999")
+            .attr("stroke-opacity", 0.8)
             .style("stroke-width", nominal_stroke)
             .style("marker-end", "url(#arrowhead)"),
 
