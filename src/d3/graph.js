@@ -18,9 +18,23 @@ export default class Graph {
     // We want access to the vue component
     this.vue = vue;
 
-    const svg = d3.select("#viz-svg");
-    const width = parseFloat(svg.style("width"));
-    const height = parseFloat(svg.style("height"));
+    //const width = parseFloat(svg.style("width"));
+    //const height = parseFloat(svg.style("height"));
+    const width = 1000;
+    const height = 800;
+
+    const svg = d3
+      .select("#viz-svg")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .call(
+        d3.zoom().on("zoom", function() {
+          svg.attr("transform", d3.event.transform);
+        })
+      )
+      .append("g");
+      
     this.minX = -width / 2;
     this.minY = -height / 2;
 
