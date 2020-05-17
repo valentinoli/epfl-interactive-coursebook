@@ -26,7 +26,7 @@
             </v-btn>
           </template>
         </v-tooltip>
-        <div id="viz-svg" width="100%" height="100%"></div>
+        <svg id="viz-svg" width="100%" height="100%"></svg>
       </div>
     </v-col>
   </v-row>

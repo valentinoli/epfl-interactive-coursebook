@@ -20,12 +20,11 @@ export default class Graph {
 
     //const width = parseFloat(svg.style("width"));
     //const height = parseFloat(svg.style("height"));
-    const width = 1000;
-    const height = 800;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
 
     const svg = d3
       .select("#viz-svg")
-      .append("svg")
       .attr("width", width)
       .attr("height", height)
       .call(
@@ -35,18 +34,37 @@ export default class Graph {
       )
       .append("g");
 
+    const defs = svg.append("svg:defs");
+
+    // define arrow markers for leading arrow
+    defs
+      .append("svg:marker")
+      .attr("id", "arrowhead")
+      .attr("viewBox", "0 -5 10 10")
+      .attr("refX", 5)
+      .attr("refY", 0)
+      .attr("markerWidth", 5)
+      .attr("markerHeight", 5)
+      .attr("orient", "auto")
+      .attr("xoverflow", "visible")
+      .append("svg:path")
+      .attr("d", "M0,-5L10,0L0,5")
+      .attr("fill", "#999")
+      .style("stroke", "none");
+
     this.minX = -width / 2;
     this.minY = -height / 2;
 
     this.simulation = d3
       .forceSimulation()
-      .force("charge", d3.forceManyBody())
+      .force("charge", d3.forceManyBody().strength(-120))
       .force(
         "link",
         d3.forceLink().id(d => d.id)
       )
       .force("x", d3.forceX())
       .force("y", d3.forceY())
+      .force("center", d3.forceCenter(width / 1.1, height / 1.1))
       .on("tick", this.ticked.bind(this));
 
     this.node = svg
@@ -135,25 +153,21 @@ export default class Graph {
     const old = new Map(this.node.data().map(d => [d.id, d]));
     const newNodes = nodes.map(d => Object.assign(old.get(d.id) || {}, d));
     const newLinks = links.map(d => Object.assign({}, d));
-
+    const nominal_stroke = 1.5;
     /* Links */
     this.link = this.link
       .data(newLinks, d => `${d.source} -> ${d.target}`)
       .join(
         enter =>
           enter
-            .append("line")
-            .call(enter => enter.transition(t).attr("stroke-width", 1)),
+            .append("svg:line")
+            .attr("class", "link")
+            .style("stroke-width", nominal_stroke)
+            .style("marker-end", "url(#arrowhead)"),
+
         update => update,
-        exit =>
-          exit.call(exit =>
-            exit
-              .transition(t)
-              .attr("stroke-width", 0)
-              .remove()
-          )
-      )
-      .attr("class", "link");
+        exit => exit.call(exit => exit.transition(t).remove())
+      );
 
     /* Nodes */
     this.node = this.node
@@ -162,7 +176,7 @@ export default class Graph {
         enter =>
           enter
             .append("circle")
-            .attr("fill", "green")
+            .attr("fill", getNodeColor)
             .call(enter =>
               enter
                 .transition(t)
@@ -224,4 +238,8 @@ export default class Graph {
     this.simulation.force("link").links(links);
     this.simulation.alpha(1).restart();
   }
+}
+
+function getNodeColor(node) {
+  return node.level === 1 ? "red" : "green";
 }
