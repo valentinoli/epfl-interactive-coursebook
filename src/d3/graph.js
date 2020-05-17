@@ -34,7 +34,7 @@ export default class Graph {
         })
       )
       .append("g");
-      
+
     this.minX = -width / 2;
     this.minY = -height / 2;
 
@@ -166,7 +166,7 @@ export default class Graph {
             .call(enter =>
               enter
                 .transition(t)
-                .attr("r", d => Math.log(Math.pow(Number(d.credits), 7) + 3))
+                .attr("r", d => Math.log(Math.pow(Number(d.credits), 7) + 20))
             ),
         update =>
           update.call(update => update.transition(t).attr("fill", "orange")),
