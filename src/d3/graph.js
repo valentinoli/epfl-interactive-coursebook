@@ -20,10 +20,8 @@ export default class Graph {
 
     //const width = parseFloat(svg.style("width"));
     //const height = parseFloat(svg.style("height"));
-    //const width = window.innerWidth;
-    //const height = window.innerHeight;
-    const width = 1300;
-    const height = 850;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
 
     const svg = d3
       .select("#viz-svg")
