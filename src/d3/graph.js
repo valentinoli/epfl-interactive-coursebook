@@ -18,27 +18,36 @@ export default class Graph {
     // We want access to the vue component
     this.vue = vue;
 
-    //const width = parseFloat(svg.style("width"));
-    //const height = parseFloat(svg.style("height"));
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-
-    const svg = d3
-      .select("#viz-svg")
-      .append("svg")
-      .attr("width", width)
-      .attr("height", height)
-      .call(
-        d3.zoom().on("zoom", function() {
-          svg.attr("transform", d3.event.transform);
-        })
-      )
-      .append("g");
+    const container = d3.select("#viz-svg");
+    const width = parseFloat(container.style("width"));
+    const height = parseFloat(container.style("height"));
 
     this.minX = -width / 2;
     this.minY = -height / 2;
 
+    const zoom = d3.zoom().on("zoom", this.zoomed.bind(this));
+
+    const initialScale = 0.15;
+
+    // https://stackoverflow.com/questions/16178366/d3-js-set-initial-zoom-level
+    const svg = container
+      .append("svg")
+      .attr("cursor", "move")
+      .attr("viewBox", [this.minX, this.minY, width, height])
+      .call(zoom);
+
+    this.svg = svg
+      // append a <g> to apply the transform globally on all elements
+      .append("g")
+      // Set initial zoom level
+      .attr("transform", `scale(${initialScale}, ${initialScale})`);
+
     svg
+      // Set initial zoom level, calls this.zoomed()
+      .call(zoom.transform, d3.zoomIdentity.scale(initialScale));
+
+    // Arrowhead
+    this.svg
       .append("defs")
       .append("svg:marker")
       .attr("id", "arrowhead")
@@ -63,45 +72,30 @@ export default class Graph {
       )
       .force("x", d3.forceX())
       .force("y", d3.forceY())
-      .force("center", d3.forceCenter(width / 1.1, height / 1.1))
       .on("tick", this.ticked.bind(this));
 
-    this.node = svg
+    this.node = this.svg
       .append("g")
       .attr("cursor", "grab")
       .attr("stroke", "#fff")
       .attr("stroke-width", 1.5)
       .selectAll("circle");
 
-    this.link = svg.append("g").selectAll("line");
+    this.link = this.svg.append("g").selectAll("line");
+  }
 
-    svg.attr("viewBox", [this.minX, this.minY, width, height]);
-
-    this.svg = svg;
+  zoomed() {
+    this.svg.attr("transform", d3.event.transform);
   }
 
   ticked() {
     this.link
-      .attr("x1", function(link) {
-        return link.source.x;
-      })
-      .attr("y1", function(link) {
-        return link.source.y;
-      })
-      .attr("x2", function(link) {
-        return link.target.x;
-      })
-      .attr("y2", function(link) {
-        return link.target.y;
-      });
+      .attr("x1", d => d.source.x)
+      .attr("y1", d => d.source.y)
+      .attr("x2", d => d.target.x)
+      .attr("y2", d => d.target.y);
 
-    this.node
-      .attr("cx", function(node) {
-        return node.x;
-      })
-      .attr("cy", function(node) {
-        return node.y;
-      });
+    this.node.attr("cx", d => d.x).attr("cy", d => d.y);
   }
 
   // Click event for node
@@ -111,14 +105,17 @@ export default class Graph {
 
   // Mouse events for node tooltip
   mouseover(node, d) {
-    //const [x, y] = d3.mouse(node);
-    //this.vue.updateCourseTooltipPosition([x, y]);
     this.vue.showCourseTooltip(d);
     d3.select(node)
       .style("stroke", "black")
       .style("opacity", 1);
   }
 
+  mousemove() {
+    // console.log(node);
+    // const [x, y] = d3.mouse(node);
+    // this.vue.updateCourseTooltipPosition([x - this.minX, y - this.minY]);
+  }
 
   mouseleave(node) {
     this.vue.hideCourseTooltip();
@@ -134,6 +131,7 @@ export default class Graph {
       this.simulation.alphaTarget(0.3).restart();
     }
 
+    // Hide the info tooltip on drag
     this.vue.hideCourseTooltip();
 
     d.fx = d.x;

@@ -7,7 +7,12 @@
     <SkeletonLoader v-else-if="loading" />
 
     <v-row v-else class="home-content">
-      <v-col cols="12" md="4" xl="3" class="filters-pane pb-3 pt-0 py-md-0">
+      <v-col
+        cols="12"
+        md="4"
+        xl="3"
+        class="filters-pane pr-0 pr-md-3 pb-3 pt-0 py-md-0"
+      >
         <v-card>
           <v-row class="flex-column" justify="center" align="center" no-gutters>
             <!-- Hierarchical filters -->
@@ -210,7 +215,7 @@ export default {
       semesters: [],
 
       // Dropdowns: selected values
-      selectedLevel: "minor",
+      selectedLevel: "",
       selectedProgram: "",
       selectedMasterspec: "",
       selectedSection: "",

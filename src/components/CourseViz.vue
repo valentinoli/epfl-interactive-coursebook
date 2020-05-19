@@ -26,12 +26,7 @@
             </v-btn>
           </template>
         </v-tooltip>
-        <div
-          id="viz-svg"
-          width="100%"
-          height="100%"
-          style="max-width: 1300px; overflow-x: auto; padding: 0px; margin: 3px;"
-        ></div>
+        <div id="viz-svg"></div>
       </div>
     </v-col>
   </v-row>
@@ -143,6 +138,15 @@ export default {
   /* position relative to allow absolute positioning of children */
   position: relative;
   height: 100%;
+}
+
+#viz-svg {
+  width: 100%;
+  height: 100%;
+  /* max-width: 1300px; */
+  /* overflow-x: auto; */
+  padding: 0px;
+  margin: 3px;
 }
 
 #viz-toolbar {
