@@ -11,8 +11,6 @@ export default class Graph {
   simulation;
   node;
   link;
-  minX;
-  minY;
   isDragging = false;
 
   constructor(vue) {
@@ -22,9 +20,9 @@ export default class Graph {
     const container = d3.select("#viz-svg");
     const width = parseFloat(container.style("width"));
     const height = parseFloat(container.style("height"));
-    console.log(height);
-    this.minX = -width / 2;
-    this.minY = -height / 2;
+
+    const minX = -width / 2;
+    const minY = -height / 2;
 
     const zoom = d3.zoom().on("zoom", this.zoomed.bind(this));
 
@@ -34,7 +32,7 @@ export default class Graph {
     const svg = container
       .append("svg")
       .attr("cursor", "move")
-      .attr("viewBox", [this.minX, this.minY, width, height])
+      .attr("viewBox", [minX, minY, width, height])
       .call(zoom);
 
     this.svg = svg
