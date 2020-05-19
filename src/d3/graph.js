@@ -67,11 +67,17 @@ export default class Graph {
       .force("charge", d3.forceManyBody().strength(-120))
       .force(
         "link",
-        d3.forceLink().id(d => d.id)
+        d3
+          .forceLink()
+          .distance(50)
+          .strength(0.5)
+          .id(d => d.id)
       )
-      .force("x", d3.forceX())
-      .force("y", d3.forceY())
+      .force("x", d3.forceX().strength(0.05))
+      .force("y", d3.forceY().strength(0.05))
       .on("tick", this.ticked.bind(this));
+
+    this.link = this.svg.append("g").selectAll("line");
 
     this.node = this.svg
       .append("g")
@@ -79,8 +85,6 @@ export default class Graph {
       .attr("stroke", "#fff")
       .attr("stroke-width", 1.5)
       .selectAll("circle");
-
-    this.link = this.svg.append("g").selectAll("line");
   }
 
   zoomed() {
@@ -106,22 +110,22 @@ export default class Graph {
   mouseover(node, d) {
     if (!this.isDragging) {
       this.vue.showCourseTooltip(d);
-      d3.select(node)
-      .style("stroke", "black")
-      .style("opacity", 1);
+      d3.select(node).style("stroke", "black");
     }
   }
 
   mousemove() {
-    const position = d3.mouse(d3.select("#app").node());
-    this.vue.updateCourseTooltipPosition(position);
+    if (!this.isDragging) {
+      const position = d3.mouse(d3.select("#app").node());
+      this.vue.updateCourseTooltipPosition(position);
+    }
   }
 
   mouseleave(node) {
-    this.vue.hideCourseTooltip();
-    d3.select(node)
-      .style("stroke", "none")
-      .style("opacity", 0.8);
+    if (!this.isDragging) {
+      this.vue.hideCourseTooltip();
+      d3.select(node).style("stroke", "none");
+    }
   }
 
   // Drag events for nodes
@@ -171,7 +175,7 @@ export default class Graph {
       .join(
         enter =>
           enter
-            .append("svg:line")
+            .append("line")
             .attr("class", "link")
             .attr("stroke", "#999")
             .attr("stroke-opacity", 0.8)
@@ -179,7 +183,14 @@ export default class Graph {
             .style("marker-end", "url(#arrowhead)"),
 
         update => update,
-        exit => exit.call(exit => exit.transition(t).remove())
+        exit =>
+          exit.call(exit =>
+            exit
+              .transition(t)
+              .attr("stroke-opacity", 0)
+              .style("marker-end", "none")
+              .remove()
+          )
       );
 
     /* Nodes */
@@ -193,7 +204,7 @@ export default class Graph {
             .call(enter =>
               enter
                 .transition(t)
-                .attr("r", d => Math.log(Math.pow(Number(d.credits), 7) + 20))
+                .attr("r", d => Math.log(Math.pow(Number(d.credits), 7) + 15))
             ),
         update =>
           update.call(update => update.transition(t).attr("fill", "orange")),
@@ -205,7 +216,6 @@ export default class Graph {
               .remove()
           )
       )
-      .style("opacity", 0.8)
       .attr("class", "node");
 
     this.node

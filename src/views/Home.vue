@@ -118,12 +118,7 @@
           </v-row>
         </v-card>
       </v-col>
-      <v-col
-        cols="12"
-        md="8"
-        xl="9"
-        class="view-pane d-flex flex-column"
-      >
+      <v-col cols="12" md="8" xl="9" class="view-pane d-flex flex-column">
         <div class="d-flex flex-column flex-md-row mb-2 view-pane__tabs">
           <v-tabs
             v-model="mainTab"
