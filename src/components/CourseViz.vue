@@ -8,7 +8,7 @@
       <div id="viz">
         <v-tooltip
           v-model="courseTooltip"
-          attach="#viz"
+          attach="#app"
           content-class="viz-course-tooltip"
         >
           <!-- display tooltip content as raw html -->
@@ -110,9 +110,11 @@ export default {
       this.courseTooltip = true;
     },
     updateCourseTooltipPosition([x, y]) {
-      const tooltip = document.querySelector(".viz-course-tooltip");
-      tooltip.style.top = `${y}px`;
-      tooltip.style.left = `${x + 20}px`;
+      if (this.courseTooltip) {
+        const tooltip = document.querySelector(".viz-course-tooltip");
+        tooltip.style.top = `${y}px`;
+        tooltip.style.left = `${x + 20}px`;
+      }
     },
     hideCourseTooltip() {
       this.courseTooltip = false;

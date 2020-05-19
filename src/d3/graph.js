@@ -112,9 +112,8 @@ export default class Graph {
   }
 
   mousemove() {
-    // console.log(node);
-    // const [x, y] = d3.mouse(node);
-    // this.vue.updateCourseTooltipPosition([x - this.minX, y - this.minY]);
+    const position = d3.mouse(d3.select("#app").node());
+    this.vue.updateCourseTooltipPosition(position);
   }
 
   mouseleave(node) {
@@ -158,7 +157,9 @@ export default class Graph {
     const old = new Map(this.node.data().map(d => [d.id, d]));
     const newNodes = nodes.map(d => Object.assign(old.get(d.id) || {}, d));
     const newLinks = links.map(d => Object.assign({}, d));
+
     const nominal_stroke = 1.5;
+
     /* Links */
     this.link = this.link
       .data(newLinks, d => `${d.source} -> ${d.target}`)
