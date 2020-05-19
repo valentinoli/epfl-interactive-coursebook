@@ -11,7 +11,7 @@
         cols="12"
         md="4"
         xl="3"
-        class="filters-pane pr-0 pr-md-3 pb-3 pt-0 py-md-0"
+        class="filters-pane pr-0 pb-3 pt-0 py-md-0"
       >
         <v-card>
           <v-row class="flex-column" justify="center" align="center" no-gutters>
@@ -118,7 +118,12 @@
           </v-row>
         </v-card>
       </v-col>
-      <v-col cols="12" md="8" xl="9" class="view-pane">
+      <v-col
+        cols="12"
+        md="8"
+        xl="9"
+        class="view-pane d-flex flex-column"
+      >
         <div class="d-flex flex-column flex-md-row mb-2 view-pane__tabs">
           <v-tabs
             v-model="mainTab"
@@ -444,7 +449,7 @@ export default {
 }
 
 .view-pane {
-  padding: 10px 30px 15px;
+  min-height: 100vh;
 }
 
 .view-pane__tabs {

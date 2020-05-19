@@ -1,35 +1,31 @@
 <template>
-  <v-row class="network">
-    <v-col id="viz-container">
-      <div id="viz-toolbar" class="mb-4">
-        <!-- Tools soon to be added -->
-      </div>
+  <div id="viz-container" class="flex-grow-1">
+    <div id="viz-toolbar" class="mb-0">
+      <!-- Tools soon to be added -->
+    </div>
 
-      <div id="viz">
-        <v-tooltip
-          v-model="courseTooltip"
-          attach="#app"
-          content-class="viz-course-tooltip"
+    <div id="viz-svg"></div>
+    <v-tooltip
+      v-model="courseTooltip"
+      attach="#app"
+      content-class="viz-course-tooltip"
+    >
+      <!-- display tooltip content as raw html -->
+      <div v-html="courseTooltipHtml"></div>
+
+      <!-- content specific to touch interfaces -->
+      <template v-if="touchInterface">
+        <v-btn
+          small
+          @click="$emit('selectCourse', courseTooltipCourseId)"
+          class="mt-2 mb-1"
         >
-          <!-- display tooltip content as raw html -->
-          <div v-html="courseTooltipHtml"></div>
-
-          <!-- content specific to touch interfaces -->
-          <template v-if="touchInterface">
-            <v-btn
-              small
-              @click="$emit('selectCourse', courseTooltipCourseId)"
-              class="mt-2 mb-1"
-            >
-              <v-icon left>mdi-eye</v-icon>
-              View course
-            </v-btn>
-          </template>
-        </v-tooltip>
-        <div id="viz-svg"></div>
-      </div>
-    </v-col>
-  </v-row>
+          <v-icon left>mdi-eye</v-icon>
+          View course
+        </v-btn>
+      </template>
+    </v-tooltip>
+  </div>
 </template>
 
 <script>
@@ -132,27 +128,10 @@ export default {
 </script>
 
 <style scoped>
-.network {
-  height: calc(100% - 50px);
-}
-
-#viz {
-  /* position relative to allow absolute positioning of children */
-  position: relative;
-  height: 100%;
-}
-
 #viz-svg {
   width: 100%;
   height: 100%;
-  /* max-width: 1300px; */
-  /* overflow-x: auto; */
-  padding: 0px;
-  margin: 3px;
-}
-
-#viz-toolbar {
-  padding: 0 16px;
+  margin: 0 3px;
 }
 
 .viz-course-tooltip {
@@ -161,9 +140,5 @@ export default {
 
   /* Override default Vuetify */
   pointer-events: auto;
-}
-
-text {
-  pointer-events: none;
 }
 </style>
