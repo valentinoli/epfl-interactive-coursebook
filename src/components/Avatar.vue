@@ -1,5 +1,5 @@
 <template>
-  <v-col cols="12" sm="3" align="center">
+  <v-col cols="12" sm="4" align="center">
     <v-avatar color="grey" size="120">
       <v-img :src="src" :alt="name"></v-img>
     </v-avatar>

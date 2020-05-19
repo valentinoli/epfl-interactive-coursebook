@@ -29,11 +29,15 @@
       </v-col>
     </v-row>
     <v-row align="center" justify="center">
-      <Avatar
-        v-for="person in $options.people"
-        :key="person.src"
-        v-bind="person"
-      />
+      <v-col cols="12" md="9">
+        <v-row align="center" justify="center">
+          <Avatar
+            v-for="person in $options.people"
+            :key="person.src"
+            v-bind="person"
+          />
+        </v-row>
+      </v-col>
     </v-row>
   </v-container>
 </template>
