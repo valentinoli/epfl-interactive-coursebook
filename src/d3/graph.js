@@ -13,6 +13,7 @@ export default class Graph {
   link;
   minX;
   minY;
+  isDragging = false;
 
   constructor(vue) {
     // We want access to the vue component
@@ -21,7 +22,7 @@ export default class Graph {
     const container = d3.select("#viz-svg");
     const width = parseFloat(container.style("width"));
     const height = parseFloat(container.style("height"));
-
+    console.log(height);
     this.minX = -width / 2;
     this.minY = -height / 2;
 
@@ -105,10 +106,12 @@ export default class Graph {
 
   // Mouse events for node tooltip
   mouseover(node, d) {
-    this.vue.showCourseTooltip(d);
-    d3.select(node)
+    if (!this.isDragging) {
+      this.vue.showCourseTooltip(d);
+      d3.select(node)
       .style("stroke", "black")
       .style("opacity", 1);
+    }
   }
 
   mousemove() {
@@ -135,6 +138,8 @@ export default class Graph {
 
     d.fx = d.x;
     d.fy = d.y;
+
+    this.isDragging = true;
   }
 
   dragged(d) {
@@ -149,6 +154,8 @@ export default class Graph {
     }
     d.fx = null;
     d.fy = null;
+
+    this.isDragging = false;
   }
 
   render(nodes, links) {
