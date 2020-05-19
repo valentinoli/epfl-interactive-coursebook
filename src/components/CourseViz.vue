@@ -1,10 +1,10 @@
 <template>
-  <div id="viz-container" class="flex-grow-1">
+  <div id="viz-container" class="flex-grow-1 d-flex flex-column">
     <div id="viz-toolbar" class="mb-0">
       <!-- Tools soon to be added -->
     </div>
 
-    <div id="viz-svg"></div>
+    <div id="viz-svg" class="flex-grow-1"></div>
     <v-tooltip
       v-model="courseTooltip"
       attach="#app"
@@ -130,7 +130,6 @@ export default {
 <style scoped>
 #viz-svg {
   width: 100%;
-  height: 100%;
   margin: 0 3px;
 }
 
