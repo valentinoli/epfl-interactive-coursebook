@@ -315,11 +315,11 @@ export default class Graph {
     ingoingLinks,
     outgoingLinks
   }) {
-    // Make a shallow copy to protect against mutation, while
-    // recycling old nodes to preserve position and velocity.
     const allNodes = [...subgraphNodes, ...ingoingNodes, ...outgoingNodes];
     const allLinks = [...subgraphLinks, ...ingoingLinks, ...outgoingLinks];
 
+    // Make a shallow copy to protect against mutation, while
+    // recycling old nodes to preserve position and velocity.
     const old = new Map(this.node.data().map(d => [d.id, d]));
     const newNodes = allNodes.map(d => Object.assign(old.get(d.id) || {}, d));
     const newLinks = allLinks.map(d => Object.assign({}, d));
@@ -413,7 +413,7 @@ export default class Graph {
       )
       .on("click", this.click.bind(this));
 
-    this.restartSimulation(allNodes, allLinks);
+    this.restartSimulation(newNodes, newLinks);
   }
 
   restartSimulation(nodes, links) {

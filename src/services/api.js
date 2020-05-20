@@ -260,11 +260,11 @@ function getLinksAndNeighborhoods(ids) {
   const [subgraphLinks, ingoingLinks, outgoingLinks] = getLinks(ids);
 
   const ingoingNodes = getCoursesByIds(
-    ingoingLinks.map(({ source }) => ({ ...source, ingoing: true }))
-  );
+    ingoingLinks.map(({ source }) => source)
+  ).map(n => ({ ...n, ingoing: true, outgoing: false }));
   const outgoingNodes = getCoursesByIds(
-    outgoingLinks.map(({ target }) => ({ ...target, outgoing: true }))
-  );
+    outgoingLinks.map(({ target }) => target)
+  ).map(n => ({ ...n, ingoing: false, outgoing: true }));
 
   return {
     ingoingNodes,
@@ -301,7 +301,8 @@ function getSubgraphNodes({
       (!semester || c.semester === semester)
   );
 
-  return subgraphNodes;
+  const nodes = subgraphNodes.map(n => ({ ...n, ingoing: false, outgoing: false }));
+  return nodes;
 }
 
 export default {

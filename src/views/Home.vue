@@ -360,6 +360,7 @@ export default {
       this.subgraphLinks = subgraphLinks;
       this.ingoingLinks = ingoingLinks;
       this.outgoingLinks = outgoingLinks;
+      console.log(ingoingNodes.find(n => n.id === "BIOENG-315"));
     },
     updateCourseGraph() {
       const subgraphNodes = api.getSubgraphNodes(this);

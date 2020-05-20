@@ -101,6 +101,7 @@ export default {
     render() {
       this.$options.graph.render(this);
     },
+
     showCourseTooltip({ id, name, credits }) {
       const html = `
         <div><strong>${id}</strong></div>
