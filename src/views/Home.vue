@@ -89,7 +89,7 @@
               <!-- Course cherry-picker -->
               <v-autocomplete
                 v-model="courseCherries"
-                :items="coursesFiltered"
+                :items="nodesFiltered"
                 :item-value="item => item"
                 :item-text="({ id, name }) => `${id} - ${name}`"
                 append-icon="mdi-magnify"
@@ -223,11 +223,15 @@ export default {
       selectedSemester: "",
 
       // Displayed courses and links
-      courses: [],
-      links: [],
+      subgraphNodes: [],
+      ingoingNodes: [],
+      outgoingNodes: [],
+      subgraphLinks: [],
+      ingoingLinks: [],
+      outgoingLinks: [],
 
       // Courses matching filter conditions
-      coursesFiltered: [],
+      nodesFiltered: [],
 
       // Cherry-picked courses from filtered courses
       courseCherries: []
@@ -248,8 +252,7 @@ export default {
       await api.loadAllData();
       // Don't need getters and setters for the levels
       this.$options.levels = api.getAllLevels();
-      this.updateCourses();
-      this.links = api.getLinks();
+      this.updateCourseGraph();
 
       this.updateCourseFilters();
     } catch (err) {
@@ -265,7 +268,7 @@ export default {
       this.selectedProgram = "";
       this.selectedMasterspec = "";
 
-      this.setCourseFiltersAndUpdateCourses();
+      this.setCourseFiltersAndUpdateCourseGraph();
     },
     selectedProgram() {
       if (this.selectedLevel === "master") {
@@ -274,27 +277,30 @@ export default {
 
       this.selectedMasterspec = "";
 
-      this.setCourseFiltersAndUpdateCourses();
+      this.setCourseFiltersAndUpdateCourseGraph();
     },
     selectedMasterspec() {
-      this.setCourseFiltersAndUpdateCourses();
+      this.setCourseFiltersAndUpdateCourseGraph();
     },
     selectedSection() {
-      this.updateCourses();
+      this.updateCourseGraph();
     },
     selectedCredits() {
-      this.updateCourses();
+      this.updateCourseGraph();
     },
     selectedSemester() {
-      this.updateCourses();
+      this.updateCourseGraph();
     },
     courseCherries() {
       const { courseCherries } = this;
       if (courseCherries.length > 0) {
-        this.courses = courseCherries;
+        this.subgraphNodes = courseCherries;
       } else {
-        this.courses = this.coursesFiltered;
+        this.subgraphNodes = this.nodesFiltered;
       }
+
+      const subgraphIds = this.subgraphNodes.map(({ id }) => id);
+      this.updateLinksAndNeighborHoods(subgraphIds);
     },
     mainTab(newTab, prevTab) {
       // Called when the model for main tabs changes
@@ -326,10 +332,10 @@ export default {
     }
   },
   methods: {
-    setCourseFiltersAndUpdateCourses() {
+    setCourseFiltersAndUpdateCourseGraph() {
       // Needs to be done in this order
       this.setCourseFilterDefaults();
-      this.updateCourses();
+      this.updateCourseGraph();
       this.updateCourseFilters();
     },
     setCourseFilterDefaults() {
@@ -337,21 +343,39 @@ export default {
       this.selectedCredits = "";
       this.selectedSemester = "";
     },
-    updateCourses() {
-      const courses = api.getCourses(this);
+    updateLinksAndNeighborHoods(subgraphIds) {
+      const {
+        ingoingNodes,
+        outgoingNodes,
+        subgraphLinks,
+        ingoingLinks,
+        outgoingLinks
+      } = api.getLinksAndNeighborhoods(subgraphIds);
+      this.ingoingNodes = ingoingNodes;
+      this.outgoingNodes = outgoingNodes;
+      this.subgraphLinks = subgraphLinks;
+      this.ingoingLinks = ingoingLinks;
+      this.outgoingLinks = outgoingLinks;
+    },
+    updateCourseGraph() {
+      const subgraphNodes = api.getSubgraphNodes(this);
+
       // Clone array to keep track of which courses match the filters
-      this.coursesFiltered = [...courses];
+      this.nodesFiltered = [...subgraphNodes];
 
       if (!this.courseCherries.length) {
         // If there are no cherry picked courses,
-        // update the list of displayed courses
-        this.courses = courses;
+        // update the graph/list, otherwise
+        // let courseCherries watcher take care of it
+        this.subgraphNodes = subgraphNodes;
+        const ids = subgraphNodes.map(({ id }) => id);
+        this.updateLinksAndNeighborHoods(ids);
       }
     },
     updateCourseFilters() {
       // Call this method only after courses have been updated
       const { sections, credits, semesters } = api.getCourseFilterOptions(
-        this.courses
+        this.subgraphNodes
       );
 
       this.sections = sections;
@@ -411,14 +435,30 @@ export default {
     },
     currentProperties() {
       // Compute properties to pass on to the current component
-      const { currentComponent, courses, links, courseDetail } = this;
+      const {
+        currentComponent,
+        subgraphNodes,
+        ingoingNodes,
+        outgoingNodes,
+        subgraphLinks,
+        ingoingLinks,
+        outgoingLinks,
+        courseDetail
+      } = this;
 
       switch (currentComponent) {
         case "CourseList":
         case "DemoViz":
-          return { courses };
+          return { subgraphNodes };
         case "CourseViz":
-          return { courses, links };
+          return {
+            subgraphNodes,
+            ingoingNodes,
+            outgoingNodes,
+            subgraphLinks,
+            ingoingLinks,
+            outgoingLinks
+          };
         case "CourseDetail":
           return courseDetail;
         default:

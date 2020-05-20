@@ -250,6 +250,32 @@ function getLinks(ids) {
 }
 
 /**
+ * Returns the links and neighborhood nodes based on subgraph node ids
+ * @param {Array} ids - subgraph ids
+ * @returns {Object} Object containing five Arrays:
+ * links of subgraph, ingoing, and outgoing subgraph neighborhoods,
+ * nodes of ingoing and outgoing subgraph neighborhoods
+ */
+function getLinksAndNeighborhoods(ids) {
+  const [subgraphLinks, ingoingLinks, outgoingLinks] = getLinks(ids);
+
+  const ingoingNodes = getCoursesByIds(
+    ingoingLinks.map(({ source }) => source)
+  );
+  const outgoingNodes = getCoursesByIds(
+    outgoingLinks.map(({ target }) => target)
+  );
+
+  return {
+    ingoingNodes,
+    outgoingNodes,
+    subgraphLinks,
+    ingoingLinks,
+    outgoingLinks
+  };
+}
+
+/**
  * Gets course info by given parameters
  * @param {String} level - academic level
  * @param {String} program - study program
@@ -257,12 +283,9 @@ function getLinks(ids) {
  * @param {String} section - EPFL section
  * @param {String} credits - number of credits
  * @param {String} semester -
- * @returns {Array} Array containing three Arrays:
- * 1. courses that match the filter criteria, i.e. subgraph
- * 2. ingoing neighbors of the subgraph (with ingoing link)
- * 3. outgoing neighbors of the subgraph (with outgoing link)
+ * @returns {Array} subgraph nodes
  */
-function getGraph({
+function getSubgraphNodes({
   selectedLevel: level = "",
   selectedProgram: program = "",
   selectedMasterspec: masterspec = "",
@@ -278,24 +301,7 @@ function getGraph({
       (!semester || c.semester === semester)
   );
 
-  const subgraphIds = subgraphNodes.map(({ id }) => id);
-  const [subgraphLinks, ingoingLinks, outgoingLinks] = getLinks(subgraphIds);
-
-  const ingoingNodes = getCoursesByIds(
-    ingoingLinks.map(({ source }) => source)
-  );
-  const outgoingNodes = getCoursesByIds(
-    outgoingLinks.map(({ target }) => target)
-  );
-
-  return {
-    subgraphNodes,
-    ingoingNodes,
-    outgoingNodes,
-    subgraphLinks,
-    ingoingLinks,
-    outgoingLinks
-  };
+  return subgraphNodes;
 }
 
 export default {
@@ -305,5 +311,6 @@ export default {
   getMasterspecsByProgram,
   getCourseFilterOptions,
   getCourseById,
-  getGraph
+  getLinksAndNeighborhoods,
+  getSubgraphNodes
 };
