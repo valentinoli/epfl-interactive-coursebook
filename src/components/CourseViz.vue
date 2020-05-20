@@ -99,7 +99,7 @@ export default {
   },
   methods: {
     render() {
-      this.$options.graph.render(this.subgraphNodes, this.ingoingNodes, this.outgoingNodes, this.subgraphLinks, this.ingoingLinks, this.outgoingLinks);
+      this.$options.graph.render(this);
     },
     showCourseTooltip({ id, name, credits }) {
       const html = `
