@@ -104,6 +104,20 @@ function getMasterspecsByProgram(program) {
 }
 
 /**
+ * Gets filtering options for independent course filtering dropdown lists
+ * @param {Array} courses - currently displayed courses, array of [id, value] pairs, where value is Object
+ * @returns {Object} object of arrays of distinct values for selected shared properties of all the courses
+ */
+function getCourseFilterOptions(courses) {
+  const sections = Array.from(new Set(courses.map(c => c.section))).sort();
+  const credits = Array.from(new Set(courses.map(c => c.credits))).sort(
+    (a, b) => a - b
+  );
+  const semesters = Array.from(new Set(courses.map(c => c.semester)));
+  return { sections, credits, semesters };
+}
+
+/**
  * Gets a course by id
  * @param {String} id
  * @returns {Object} matched course
@@ -121,7 +135,7 @@ function getCourseById(id) {
  * @param {Array} ids - course ids
  * @returns {Array} filtered array of course Objects
  */
-const getCoursesByIds = ids => {
+function getCoursesByIds(ids) {
   const coursesArray = getItem("coursesArray");
 
   if (!ids) {
@@ -129,7 +143,7 @@ const getCoursesByIds = ids => {
     return coursesArray;
   }
   return coursesArray.filter(({ id }) => ids.includes(id));
-};
+}
 
 function getPrefilteredCourses(level, program, masterspec) {
   if (masterspec && level !== "master") {
@@ -206,6 +220,36 @@ function getPrefilteredCourses(level, program, masterspec) {
 }
 
 /**
+ * Gets all dependency links of courses for the network
+ * @param {Array} ids - ids of courses which match the filter criteria
+ * @returns {Array} Array containing three Arrays:
+ * 1. links between the courses that match the filter criteria, i.e. subgraph
+ * 2. ingoing links of the subgraph
+ * 3. outgoing links of the subgraph
+ */
+function getLinks(ids) {
+  const linksArray = getItem("links");
+  return linksArray.reduce(
+    ([subgraph, ingoing, outgoing], link) => {
+      if (ids.includes(link.source) && ids.includes(link.target)) {
+        // Between nodes in the subgraph
+        return [[...subgraph, link], ingoing, outgoing];
+      } else if (!ids.includes(link.source) && ids.includes(link.target)) {
+        // Ingoing links do not have the source node in the subgraph
+        return [subgraph, [...ingoing, link], outgoing];
+      } else if (ids.includes(link.source) && !ids.includes(link.target)) {
+        // Outgoing links do not have the target node in the subgraph
+        return [subgraph, ingoing, [...outgoing, link]];
+      } else {
+        // Not a match
+        return [subgraph, ingoing, outgoing];
+      }
+    },
+    [[], [], []]
+  );
+}
+
+/**
  * Gets course info by given parameters
  * @param {String} level - academic level
  * @param {String} program - study program
@@ -213,9 +257,12 @@ function getPrefilteredCourses(level, program, masterspec) {
  * @param {String} section - EPFL section
  * @param {String} credits - number of credits
  * @param {String} semester -
- * @returns {Array} matching courses, array of [id, value] pairs, where value is Object
+ * @returns {Array} Array containing three Arrays:
+ * 1. courses that match the filter criteria, i.e. subgraph
+ * 2. ingoing neighbors of the subgraph (with ingoing link)
+ * 3. outgoing neighbors of the subgraph (with outgoing link)
  */
-function getCourses({
+function getGraph({
   selectedLevel: level = "",
   selectedProgram: program = "",
   selectedMasterspec: masterspec = "",
@@ -224,36 +271,31 @@ function getCourses({
   selectedSemester: semester = ""
 } = {}) {
   const prefiltered = getPrefilteredCourses(level, program, masterspec);
-  const filtered = prefiltered.filter(c => {
-    return (
+  const subgraphNodes = prefiltered.filter(
+    c =>
       (!section || c.section === section) &&
       (!credits || c.credits === credits) &&
       (!semester || c.semester === semester)
-    );
-  });
-  return filtered;
-}
-
-/**
- * Gets filtering options for independent course filtering dropdown lists
- * @param {Array} courses - currently displayed courses, array of [id, value] pairs, where value is Object
- * @returns {Object} object of arrays of distinct values for selected shared properties of all the courses
- */
-function getCourseFilterOptions(courses) {
-  const sections = Array.from(new Set(courses.map(c => c.section))).sort();
-  const credits = Array.from(new Set(courses.map(c => c.credits))).sort(
-    (a, b) => a - b
   );
-  const semesters = Array.from(new Set(courses.map(c => c.semester)));
-  return { sections, credits, semesters };
-}
 
-/**
- * Gets all dependency links of courses for the network
- * @returns {Array} Array of Objects representing edges, each with properties source and target
- */
-function getLinks() {
-  return getItem("links");
+  const subgraphIds = subgraphNodes.map(({ id }) => id);
+  const [subgraphLinks, ingoingLinks, outgoingLinks] = getLinks(subgraphIds);
+
+  const ingoingNodes = getCoursesByIds(
+    ingoingLinks.map(({ source }) => source)
+  );
+  const outgoingNodes = getCoursesByIds(
+    outgoingLinks.map(({ target }) => target)
+  );
+
+  return {
+    subgraphNodes,
+    ingoingNodes,
+    outgoingNodes,
+    subgraphLinks,
+    ingoingLinks,
+    outgoingLinks
+  };
 }
 
 export default {
@@ -261,8 +303,7 @@ export default {
   getAllLevels,
   getProgramsByLevel,
   getMasterspecsByProgram,
-  getCourseById,
-  getCourses,
   getCourseFilterOptions,
-  getLinks
+  getCourseById,
+  getGraph
 };
