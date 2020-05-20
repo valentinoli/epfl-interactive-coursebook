@@ -34,11 +34,27 @@ import Graph from "@/d3/graph";
 export default {
   name: "CourseViz",
   props: {
-    courses: {
+    subgraphNodes: {
       type: Array,
       default: () => []
     },
-    links: {
+    ingoingNodes: {
+      type: Array,
+      default: () => []
+    },
+    outgoingNodes: {
+      type: Array,
+      default: () => []
+    },
+    subgraphLinks: {
+      type: Array,
+      default: () => []
+    },
+    ingoingLinks: {
+      type: Array,
+      default: () => []
+    },
+    outgoingLinks: {
       type: Array,
       default: () => []
     }
@@ -50,16 +66,6 @@ export default {
       courseTooltipCourseId: null,
       touchInterface: false
     };
-  },
-  computed: {
-    linksFiltered() {
-      // Temporary computed value, until we implement this in the API
-      const ids = this.courses.map(c => c.id);
-      const links = this.links.filter(
-        ({ source, target }) => ids.includes(source) && ids.includes(target)
-      );
-      return links;
-    }
   },
   mounted() {
     const graph = new Graph(this);
@@ -87,13 +93,13 @@ export default {
     this.courseTooltip = false;
   },
   watch: {
-    courses() {
+    subgraphNodes() {
       this.render();
     }
   },
   methods: {
     render() {
-      this.$options.graph.render(this.courses, this.linksFiltered);
+      this.$options.graph.render(this.subgraphNodes, this.ingoingNodes, this.outgoingNodes, this.subgraphLinks, this.ingoingLinks, this.outgoingLinks);
     },
     showCourseTooltip({ id, name, credits }) {
       const html = `
