@@ -12,6 +12,12 @@ export default class Graph {
   node;
   link;
   isDragging = false;
+  nodeOpacity = 0.5;
+  nodeStrokeWidth = 1;
+  nodeStroke = "#fff";
+  linkStroke = "#999";
+  arrowMarkerWidth = 10;
+  arrowMarkerId = "arrowmarker";
 
   constructor(vue) {
     // We want access to the vue component
@@ -26,7 +32,7 @@ export default class Graph {
 
     const zoom = d3.zoom().on("zoom", this.zoomed.bind(this));
 
-    const initialScale = 0.15;
+    const initialScale = 0.175;
 
     // https://stackoverflow.com/questions/16178366/d3-js-set-initial-zoom-level
     const svg = container
@@ -45,21 +51,22 @@ export default class Graph {
       // Set initial zoom level, calls this.zoomed()
       .call(zoom.transform, d3.zoomIdentity.scale(initialScale));
 
-    // Arrowhead
+    // Arrow markers for directed edges
+    const { arrowMarkerWidth: mWidth } = this;
     this.svg
       .append("defs")
-      .append("svg:marker")
-      .attr("id", "arrowhead")
-      .attr("viewBox", "0 -5 10 10")
-      .attr("refX", 23)
+      .append("marker")
+      .attr("id", this.arrowMarkerId)
+      .attr("viewBox", [0, -mWidth / 2, mWidth, mWidth])
+      .attr("refX", 0)
       .attr("refY", 0)
-      .attr("markerWidth", 5)
-      .attr("markerHeight", 5)
+      .attr("markerWidth", mWidth)
+      .attr("markerHeight", mWidth)
       .attr("orient", "auto")
       .attr("xoverflow", "visible")
-      .append("svg:path")
-      .attr("d", "M0,-5L10,0L0,5")
-      .attr("fill", "#999")
+      .append("path")
+      .attr("d", `M 0,${-mWidth / 2} L ${mWidth},0 L 0,${mWidth / 2}`)
+      .attr("fill", this.linkStroke)
       .style("stroke", "none");
 
     this.simulation = d3
@@ -73,30 +80,166 @@ export default class Graph {
           .strength(0.5)
           .id(d => d.id)
       )
-      .force("x", d3.forceX().strength(0.05))
-      .force("y", d3.forceY().strength(0.05))
+      .force("x", d3.forceX().strength(0.2))
+      .force("y", d3.forceY().strength(0.2))
       .on("tick", this.ticked.bind(this));
 
     this.link = this.svg.append("g").selectAll("line");
-
-    this.node = this.svg
-      .append("g")
-      .attr("cursor", "grab")
-      .attr("stroke", "#fff")
-      .attr("stroke-width", 1.5)
-      .selectAll("circle");
+    this.node = this.svg.append("g").selectAll("circle");
   }
 
   zoomed() {
     this.svg.attr("transform", d3.event.transform);
   }
 
+  computeNodeRadius({ credits }) {
+    return Math.log(Math.pow(Number(credits), 7) + 30);
+  }
+
+  linkClipHypotenuseFromSource(source, hypotenuse) {
+    const nodeRadius = this.computeNodeRadius(source);
+    const offset = nodeRadius + this.nodeStrokeWidth / 2;
+    return hypotenuse - offset;
+  }
+
+  linkClipHypotenuseFromTarget(target, hypotenuse) {
+    const nodeRadius = this.computeNodeRadius(target);
+    const offset =
+      nodeRadius + this.arrowMarkerWidth + this.nodeStrokeWidth / 2;
+    return hypotenuse - offset;
+  }
+
+  /**
+   * Computes hypothetical hypotenuse (line length) between
+   * node centers using the Pythagorean theorem and an angle
+   */
+  linkAngleHypotenuse(source, target) {
+    const xDiff = Math.abs(source.x - target.x);
+    const yDiff = Math.abs(source.y - target.y);
+
+    const hypotenuse = Math.sqrt(xDiff ** 2 + yDiff ** 2);
+
+    const angle = Math.asin(yDiff / hypotenuse);
+
+    return { angle, hypotenuse };
+  }
+
+  linkX2({ source, target }) {
+    if (source.x === target.x) {
+      return source.x;
+    }
+
+    const { angle, hypotenuse } = this.linkAngleHypotenuse(source, target);
+    const clippedHypotenuse = this.linkClipHypotenuseFromTarget(
+      target,
+      hypotenuse
+    );
+
+    // Compute transformed x-coordinate
+    const newXDiff = Math.cos(angle) * clippedHypotenuse;
+    if (target.x > source.x) {
+      return source.x + newXDiff;
+    } else {
+      return source.x - newXDiff;
+    }
+  }
+
+  linkY2({ source, target }) {
+    if (source.y === target.y) {
+      return source.y;
+    }
+
+    const { angle, hypotenuse } = this.linkAngleHypotenuse(source, target);
+    const clippedHypotenuse = this.linkClipHypotenuseFromTarget(
+      target,
+      hypotenuse
+    );
+
+    // Compute transformed y-coordinate
+    const newYDiff = Math.sin(angle) * clippedHypotenuse;
+    if (target.y > source.y) {
+      return source.y + newYDiff;
+    } else {
+      return source.y - newYDiff;
+    }
+  }
+
+  linkX1({ source, target }) {
+    if (source.x === target.x) {
+      return source.x;
+    }
+
+    const { angle, hypotenuse } = this.linkAngleHypotenuse(source, target);
+    const clippedHypotenuse = this.linkClipHypotenuseFromSource(
+      source,
+      hypotenuse
+    );
+
+    // Compute transformed x-coordinate
+    const newXDiff = Math.cos(angle) * clippedHypotenuse;
+    if (source.x > target.x) {
+      return target.x + newXDiff;
+    } else {
+      return target.x - newXDiff;
+    }
+  }
+
+  linkY1({ source, target }) {
+    if (source.y === target.y) {
+      return source.y;
+    }
+
+    const { angle, hypotenuse } = this.linkAngleHypotenuse(source, target);
+    const clippedHypotenuse = this.linkClipHypotenuseFromSource(
+      source,
+      hypotenuse
+    );
+
+    // Compute transformed y-coordinate
+    const newYDiff = Math.sin(angle) * clippedHypotenuse;
+    if (source.y > target.y) {
+      return target.y + newYDiff;
+    } else {
+      return target.y - newYDiff;
+    }
+  }
+
+  nodeCollision({ source, target }) {
+    // Checks the closeness of source and target, and returns a boolean
+    // indicating whether the link should be visible
+    const sourceRadius = this.computeNodeRadius(source);
+    const targetRadius = this.computeNodeRadius(target);
+    const { hypotenuse } = this.linkAngleHypotenuse(source, target);
+    const limit =
+      sourceRadius +
+      targetRadius +
+      this.arrowMarkerWidth +
+      this.nodeStrokeWidth;
+    return hypotenuse < limit;
+  }
+
   ticked() {
     this.link
-      .attr("x1", d => d.source.x)
-      .attr("y1", d => d.source.y)
-      .attr("x2", d => d.target.x)
-      .attr("y2", d => d.target.y);
+      .attr("x1", this.linkX1.bind(this))
+      .attr("y1", this.linkY1.bind(this))
+      .attr("x2", this.linkX2.bind(this))
+      .attr("y2", this.linkY2.bind(this))
+      .attr("stroke", d => {
+        const collision = this.nodeCollision.bind(this)(d);
+        if (collision) {
+          return null;
+        }
+
+        return this.linkStroke;
+      })
+      .style("marker-end", d => {
+        const collision = this.nodeCollision.bind(this)(d);
+        if (collision) {
+          return null;
+        }
+
+        return `url(#${this.arrowMarkerId})`;
+      });
 
     this.node.attr("cx", d => d.x).attr("cy", d => d.y);
   }
@@ -110,7 +253,9 @@ export default class Graph {
   mouseover(node, d) {
     if (!this.isDragging) {
       this.vue.showCourseTooltip(d);
-      d3.select(node).style("stroke", "black");
+      d3.select(node)
+        .attr("opacity", 0.75)
+        .style("stroke", "#000");
     }
   }
 
@@ -124,7 +269,9 @@ export default class Graph {
   mouseleave(node) {
     if (!this.isDragging) {
       this.vue.hideCourseTooltip();
-      d3.select(node).style("stroke", "none");
+      d3.select(node)
+        .attr("opacity", this.nodeOpacity)
+        .style("stroke", this.nodeStroke);
     }
   }
 
@@ -167,8 +314,6 @@ export default class Graph {
     const newNodes = nodes.map(d => Object.assign(old.get(d.id) || {}, d));
     const newLinks = links.map(d => Object.assign({}, d));
 
-    const nominal_stroke = 1.5;
-
     /* Links */
     this.link = this.link
       .data(newLinks, d => `${d.source} -> ${d.target}`)
@@ -177,10 +322,9 @@ export default class Graph {
           enter
             .append("line")
             .attr("class", "link")
-            .attr("stroke", "#999")
-            .attr("stroke-opacity", 0.8)
-            .style("stroke-width", nominal_stroke)
-            .style("marker-end", "url(#arrowhead)"),
+            .attr("stroke", this.linkStroke)
+            .style("stroke-width", 1)
+            .style("marker-end", `url(#${this.arrowMarkerId})`),
 
         update => update,
         exit =>
@@ -200,11 +344,9 @@ export default class Graph {
         enter =>
           enter
             .append("circle")
-            .attr("fill", getNodeColor)
+            .attr("fill", "green")
             .call(enter =>
-              enter
-                .transition(t)
-                .attr("r", d => Math.log(Math.pow(Number(d.credits), 7) + 15))
+              enter.transition(t).attr("r", this.computeNodeRadius)
             ),
         update =>
           update.call(update => update.transition(t).attr("fill", "orange")),
@@ -216,6 +358,10 @@ export default class Graph {
               .remove()
           )
       )
+      .attr("cursor", "grab")
+      .attr("stroke", this.nodeStroke)
+      .attr("stroke-width", this.nodeStrokeWidth)
+      .attr("opacity", this.nodeOpacity)
       .attr("class", "node");
 
     this.node
@@ -261,8 +407,4 @@ export default class Graph {
     this.simulation.force("link").links(links);
     this.simulation.alpha(1).restart();
   }
-}
-
-function getNodeColor(node) {
-  return node.level === 1 ? "red" : "green";
 }
