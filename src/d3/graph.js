@@ -307,12 +307,22 @@ export default class Graph {
     this.isDragging = false;
   }
 
-  render(nodes, links) {
+  render({
+    subgraphNodes,
+    ingoingNodes,
+    outgoingNodes,
+    subgraphLinks,
+    ingoingLinks,
+    outgoingLinks
+  }) {
     // Make a shallow copy to protect against mutation, while
     // recycling old nodes to preserve position and velocity.
+    const allNodes = [...subgraphNodes, ...ingoingNodes, ...outgoingNodes];
+    const allLinks = [...subgraphLinks, ...ingoingLinks, ...outgoingLinks];
+
     const old = new Map(this.node.data().map(d => [d.id, d]));
-    const newNodes = nodes.map(d => Object.assign(old.get(d.id) || {}, d));
-    const newLinks = links.map(d => Object.assign({}, d));
+    const newNodes = allNodes.map(d => Object.assign(old.get(d.id) || {}, d));
+    const newLinks = allLinks.map(d => Object.assign({}, d));
 
     /* Links */
     this.link = this.link
@@ -344,12 +354,16 @@ export default class Graph {
         enter =>
           enter
             .append("circle")
-            .attr("fill", "green")
+            .attr("fill", d => (d.ingoing || d.outgoing ? "grey" : "green"))
             .call(enter =>
               enter.transition(t).attr("r", this.computeNodeRadius)
             ),
         update =>
-          update.call(update => update.transition(t).attr("fill", "orange")),
+          update.call(update =>
+            update
+              .transition(t)
+              .attr("fill", d => (d.ingoing || d.outgoing ? "grey" : "orange"))
+          ),
         exit =>
           exit.attr("fill", "red").call(exit =>
             exit
@@ -399,7 +413,7 @@ export default class Graph {
       )
       .on("click", this.click.bind(this));
 
-    this.restartSimulation(newNodes, newLinks);
+    this.restartSimulation(allNodes, allLinks);
   }
 
   restartSimulation(nodes, links) {

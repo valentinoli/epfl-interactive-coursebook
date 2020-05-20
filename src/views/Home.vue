@@ -234,7 +234,11 @@ export default {
       nodesFiltered: [],
 
       // Cherry-picked courses from filtered courses
-      courseCherries: []
+      courseCherries: [],
+
+      //Toggles
+      outgoingToggled: true,
+      ingoingToggled: true
     };
   },
   mainTabs: [
@@ -443,7 +447,9 @@ export default {
         subgraphLinks,
         ingoingLinks,
         outgoingLinks,
-        courseDetail
+        courseDetail,
+        ingoingToggled,
+        outgoingToggled
       } = this;
 
       switch (currentComponent) {
@@ -453,11 +459,11 @@ export default {
         case "CourseViz":
           return {
             subgraphNodes,
-            ingoingNodes,
-            outgoingNodes,
+            ingoingNodes: ingoingToggled ? ingoingNodes : [],
+            outgoingNodes: outgoingToggled ? outgoingNodes : [],
             subgraphLinks,
-            ingoingLinks,
-            outgoingLinks
+            ingoingLinks: ingoingToggled ? ingoingLinks : [],
+            outgoingLinks: outgoingToggled ? outgoingLinks : []
           };
         case "CourseDetail":
           return courseDetail;

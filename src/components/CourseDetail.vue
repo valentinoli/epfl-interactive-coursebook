@@ -95,12 +95,14 @@
     </v-col>
     <v-col cols="12" md="5" class="d-flex flex-column">
       <!-- Registrations -->
-      <svg></svg>
+      <svg id="viz-registrations"></svg>
     </v-col>
   </v-row>
 </template>
 
 <script>
+import * as d3 from "d3";
+
 export default {
   props: {
     path: String,
@@ -186,6 +188,10 @@ export default {
       return `https://edu.epfl.ch${this.path}`;
     }
   },
+  mounted() {
+    this.logdata();
+    this.renderRegistrations();
+  },
   methods: {
     filterEmptyProps(obj) {
       return Object.fromEntries(
@@ -196,6 +202,109 @@ export default {
             (!Array.isArray(entry[1]) || entry[1].length > 0)
         )
       );
+    },
+    renderRegistrations() {
+      const margin = { top: 30, right: 0, bottom: 10, left: 60 };
+      const barHeight = 25;
+
+      //mapping key:value to {year: key, registrations: value}
+      let data = [];
+      var element = {};
+      Object.entries(this.registrations).forEach(item => {
+        element = {};
+        element.year = item[0];
+        element.registrations = item[1];
+        data.push(element);
+      });
+      data = data.reverse();
+
+      const height =
+        Math.ceil((data.length + 0.1) * barHeight) + margin.top + margin.bottom;
+      const width = "400";
+
+      const x = d3
+        .scaleLinear()
+        .domain([0, d3.max(data, d => d.registrations)])
+        .range([margin.left, width - margin.right]);
+
+      const format = x.tickFormat(20, data.format);
+
+      const y = d3
+        .scaleBand()
+        .domain(d3.range(data.length))
+        .rangeRound([margin.top, height - margin.bottom])
+        .padding(0.1);
+
+      const xAxis = g =>
+        g
+          .attr("transform", `translate(0,${margin.top})`)
+          .call(d3.axisTop(x).ticks(width / 80, data.format))
+          .call(g => g.select(".domain").remove());
+
+      const yAxis = g =>
+        g.attr("transform", `translate(${margin.left},0)`).call(
+          d3
+            .axisLeft(y)
+            .tickFormat(i => data[i].year)
+            .tickSizeOuter(0)
+        );
+
+      // selecting the svg from the template
+      const svg = d3.select("#viz-registrations");
+      svg.selectAll("*").remove();
+      svg.attr("viewBox", [0, 0, width, height]);
+
+      //add rectangles
+      svg
+        .append("g")
+        .attr("fill", "steelblue")
+        .selectAll("rect")
+        .data(data)
+        .join("rect")
+        .attr("x", x(0))
+        .attr("y", (d, i) => y(i))
+        .attr("width", d => x(d.registrations) - x(0))
+        .attr("height", y.bandwidth());
+
+      //add white text on bars
+      svg
+        .append("g")
+        .attr("fill", "white")
+        .attr("text-anchor", "end")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", 12)
+        .selectAll("text")
+        .data(data)
+        //add black text outside small or absent bars
+        .join("text")
+        .attr("x", d => x(d.registrations))
+        .attr("y", (d, i) => y(i) + y.bandwidth() / 2)
+        .attr("dy", "0.35em")
+        .attr("dx", -4)
+        .text(d => format(d.registrations))
+        .call(text =>
+          text
+            .filter(d => x(d.registrations) - x(0) < 20) // short bars
+            .attr("dx", +4)
+            .attr("fill", "black")
+            .attr("text-anchor", "start")
+        );
+
+      svg.append("g").call(xAxis);
+
+      svg.append("g").call(yAxis);
+    },
+    logdata() {
+      console.log(this.registrations);
+    } /*,
+    render() {
+      this.$options.histogram.render(???);
+    }*/
+  },
+  watch: {
+    registrations() {
+      // course selection changed, initialize current page
+      this.renderRegistrations();
     }
   }
 };

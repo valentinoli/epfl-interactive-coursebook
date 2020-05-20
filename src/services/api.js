@@ -260,10 +260,10 @@ function getLinksAndNeighborhoods(ids) {
   const [subgraphLinks, ingoingLinks, outgoingLinks] = getLinks(ids);
 
   const ingoingNodes = getCoursesByIds(
-    ingoingLinks.map(({ source }) => source)
+    ingoingLinks.map(({ source }) => ({ ...source, ingoing: true }))
   );
   const outgoingNodes = getCoursesByIds(
-    outgoingLinks.map(({ target }) => target)
+    outgoingLinks.map(({ target }) => ({ ...target, outgoing: true }))
   );
 
   return {
