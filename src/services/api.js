@@ -301,7 +301,11 @@ function getSubgraphNodes({
       (!semester || c.semester === semester)
   );
 
-  const nodes = subgraphNodes.map(n => ({ ...n, ingoing: false, outgoing: false }));
+  const nodes = subgraphNodes.map(n => ({
+    ...n,
+    ingoing: false,
+    outgoing: false
+  }));
   return nodes;
 }
 
