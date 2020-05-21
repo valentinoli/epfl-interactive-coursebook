@@ -1,7 +1,9 @@
 <template>
   <div id="viz-container" class="flex-grow-1 d-flex flex-column">
-    <div id="viz-toolbar" class="mb-0">
+    <div id="viz-toolbar" class="mb-0 d-flex flex-wrap justify-center justify-md-start">
       <!-- Tools soon to be added -->
+      <v-switch v-model="ingoingToggled" class="mx-2" label="Ingoing"></v-switch>
+      <v-switch v-model="outgoingToggled" class="mx-2" label="Outgoing"></v-switch>
     </div>
 
     <div id="viz-svg" class="flex-grow-1"></div>
@@ -64,7 +66,9 @@ export default {
       courseTooltip: true,
       courseTooltipHtml: "",
       courseTooltipCourseId: null,
-      touchInterface: false
+      touchInterface: false,
+      outgoingToggled: true,
+      ingoingToggled: true
     };
   },
   mounted() {
@@ -95,13 +99,46 @@ export default {
   watch: {
     subgraphNodes() {
       this.render();
+    },
+    ingoingToggled() {
+      this.render();
+    },
+    outgoingToggled() {
+      this.render();
     }
   },
   methods: {
     render() {
-      this.$options.graph.render(this);
-    },
+      const {
+        subgraphNodes,
+        ingoingNodes,
+        outgoingNodes,
+        subgraphLinks,
+        ingoingLinks,
+        outgoingLinks,
+        ingoingToggled,
+        outgoingToggled
+      } = this;
 
+      const nodes = [
+        ...subgraphNodes,
+        ...(ingoingToggled ? ingoingNodes : []),
+        ...(outgoingToggled ? outgoingNodes : [])
+      ];
+
+      // Some nodes might be part of both the ingoing and
+      // outgoing neighborhoods, so we remove duplicates
+      const nodesUnique = nodes.filter((node, index, self) =>
+        // search for the first index of the course id
+        index === self.findIndex(n => n.id === node.id)
+      );
+      const links = [
+        ...subgraphLinks,
+        ...(ingoingToggled ? ingoingLinks : []),
+        ...(outgoingToggled ? outgoingLinks : [])
+      ];
+      this.$options.graph.render(nodesUnique, links);
+    },
     showCourseTooltip({ id, name, credits }) {
       const html = `
         <div><strong>${id}</strong></div>

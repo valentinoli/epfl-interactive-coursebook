@@ -254,6 +254,13 @@ export default class Graph {
   }
 
   linkId({ source, target }) {
+    if (typeof source === "object") {
+      // When the link force is re-initialized after nodes or links change
+      // d3 replaces the source and target string ids, with the corresponding
+      // node data objects
+      // See docs: https://github.com/d3/d3-force#link_links
+      return `${this.nodeId(source.id)}--${this.nodeId(target.id)}`;
+    }
     return `${this.nodeId(source)}--${this.nodeId(target)}`;
   }
 
@@ -359,25 +366,12 @@ export default class Graph {
     this.isDragging = false;
   }
 
-  render({
-    subgraphNodes,
-    ingoingNodes,
-    outgoingNodes,
-    subgraphLinks,
-    ingoingLinks,
-    outgoingLinks
-  }) {
-    // Some nodes might be both part of the ingoing and outgoing neighborhoods
-    const allNodes = Array.from(
-      new Set([...subgraphNodes, ...ingoingNodes, ...outgoingNodes])
-    );
-    const allLinks = [...subgraphLinks, ...ingoingLinks, ...outgoingLinks];
-
+  render(nodes, links) {
     // Make a shallow copy to protect against mutation, while
     // recycling old nodes to preserve position and velocity.
     const old = new Map(this.node.data().map(d => [d.id, d]));
-    const newNodes = allNodes.map(d => Object.assign(old.get(d.id) || {}, d));
-    const newLinks = allLinks.map(d => Object.assign({}, d));
+    const newNodes = nodes.map(d => Object.assign(old.get(d.id) || {}, d));
+    const newLinks = links.map(d => Object.assign({}, d));
 
     /* Links */
     this.link = this.link

@@ -132,7 +132,7 @@
             </v-tab>
           </v-tabs>
           <v-tabs
-            v-if="courseTabs.length > -1"
+            v-if="courseTabs.length > 0"
             v-model="courseTab"
             hide-slider
             optional
@@ -234,11 +234,7 @@ export default {
       nodesFiltered: [],
 
       // Cherry-picked courses from filtered courses
-      courseCherries: [],
-
-      //Toggles
-      outgoingToggled: true,
-      ingoingToggled: true
+      courseCherries: []
     };
   },
   mainTabs: [
@@ -447,9 +443,7 @@ export default {
         subgraphLinks,
         ingoingLinks,
         outgoingLinks,
-        courseDetail,
-        ingoingToggled,
-        outgoingToggled
+        courseDetail
       } = this;
 
       switch (currentComponent) {
@@ -459,11 +453,11 @@ export default {
         case "CourseViz":
           return {
             subgraphNodes,
-            ingoingNodes: ingoingToggled ? ingoingNodes : [],
-            outgoingNodes: outgoingToggled ? outgoingNodes : [],
+            ingoingNodes,
+            outgoingNodes,
             subgraphLinks,
-            ingoingLinks: ingoingToggled ? ingoingLinks : [],
-            outgoingLinks: outgoingToggled ? outgoingLinks : []
+            ingoingLinks,
+            outgoingLinks
           };
         case "CourseDetail":
           return courseDetail;

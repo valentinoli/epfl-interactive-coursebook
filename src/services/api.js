@@ -266,6 +266,20 @@ function getLinksAndNeighborhoods(ids) {
     outgoingLinks.map(({ target }) => target)
   ).map(n => ({ ...n, ingoingNeighbor: false, outgoingNeighbor: true }));
 
+  // Some nodes might be part of both the ingoing and outgoing neighborhoods
+  // and we want to avoid rendering them twice later on (see CourseViz.vue)
+  ingoingNodes.forEach(ingoing => {
+    outgoingNodes.forEach(outgoing => {
+      if (ingoing.id === outgoing.id) {
+        ingoing.ingoingNeighbor = true;
+        ingoing.outgoingNeighbor = true;
+        outgoing.ingoingNeighbor = true;
+        outgoing.outgoingNeighbor = true;
+      }
+    })
+  });
+
+
   return {
     ingoingNodes,
     outgoingNodes,
