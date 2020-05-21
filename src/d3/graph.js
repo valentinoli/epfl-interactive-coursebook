@@ -448,7 +448,7 @@ export default class Graph {
       .attr("cursor", "grab")
       .attr("stroke", this.nodeStroke)
       .attr("stroke-width", this.nodeStrokeWidth)
-      .attr("opacity", this.graphOpacity)
+      .attr("opacity", this.graphOpacity);
 
     this.node
       .call(

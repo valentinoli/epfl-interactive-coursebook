@@ -2,7 +2,7 @@
   <div id="viz-container" class="flex-grow-1 d-flex flex-column">
     <div
       id="viz-toolbar"
-      class="mb-3 mx-2 mr-md-4 px-4 py-1 d-flex flex-wrap justify-center justify-md-space-between align-center"
+      class="mb-3 mx-2 mr-md-4 px-4 px-md-0 py-1 d-flex flex-wrap justify-center justify-md-space-between align-center"
     >
       <!-- Tools soon to be added -->
       <div class="d-flex">
@@ -192,14 +192,7 @@ export default {
 
       this.$options.graph.render(nodesUnique, links);
     },
-    showCourseTooltip({
-      id,
-      name,
-      credits,
-      registrations,
-      ingoing,
-      outgoing
-    }) {
+    showCourseTooltip({ id, name, credits, registrations, ingoing, outgoing }) {
       const html = `
         <div>
           <strong>${id}</strong>
@@ -211,7 +204,9 @@ export default {
           Credits: ${credits}
         </div>
         <div>
-          Registrations: ${registrations ? registrations["2019-2020"] : "Unknown"}
+          Registrations: ${
+            registrations ? registrations["2019-2020"] : "Unknown"
+          }
         </div>
         <div>
           In-degree: ${ingoing.length}
