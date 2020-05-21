@@ -12,7 +12,7 @@ export default class Graph {
   node;
   link;
   isDragging = false;
-  nodeOpacity = 0.5;
+  graphOpacity = 0.5;
   nodeStrokeWidth = 1;
   nodeStroke = "#fff";
   linkStroke = "#999";
@@ -315,7 +315,10 @@ export default class Graph {
     ingoingLinks,
     outgoingLinks
   }) {
-    const allNodes = [...subgraphNodes, ...ingoingNodes, ...outgoingNodes];
+    // Some nodes might be both part of the ingoing and outgoing neighborhoods
+    const allNodes = Array.from(
+      new Set([...subgraphNodes, ...ingoingNodes, ...outgoingNodes])
+    );
     const allLinks = [...subgraphLinks, ...ingoingLinks, ...outgoingLinks];
 
     // Make a shallow copy to protect against mutation, while
@@ -328,24 +331,23 @@ export default class Graph {
     this.link = this.link
       .data(newLinks, d => `${d.source} -> ${d.target}`)
       .join(
-        enter =>
-          enter
-            .append("line")
-            .attr("class", "link")
-            .attr("stroke", this.linkStroke)
-            .style("stroke-width", 1)
-            .style("marker-end", `url(#${this.arrowMarkerId})`),
-
+        enter => enter.append("line"),
         update => update,
         exit =>
           exit.call(exit =>
             exit
               .transition(t)
               .attr("stroke-opacity", 0)
-              .style("marker-end", "none")
+              .attr("opacity", 0)
               .remove()
           )
-      );
+      )
+      .attr("class", "link")
+      .attr("stroke", this.linkStroke)
+      .attr("stroke-opacity", this.graphOpacity)
+      .attr("opacity", this.graphOpacity)
+      .style("stroke-width", 1)
+      .style("marker-end", `url(#${this.arrowMarkerId})`);
 
     /* Nodes */
     this.node = this.node
@@ -354,7 +356,9 @@ export default class Graph {
         enter =>
           enter
             .append("circle")
-            .attr("fill", d => (d.ingoing || d.outgoing ? "grey" : "green"))
+            .attr("fill", d =>
+              d.ingoingNeighbor || d.outgoingNeighbor ? "grey" : "green"
+            )
             .call(enter =>
               enter.transition(t).attr("r", this.computeNodeRadius)
             ),
@@ -362,7 +366,9 @@ export default class Graph {
           update.call(update =>
             update
               .transition(t)
-              .attr("fill", d => (d.ingoing || d.outgoing ? "grey" : "orange"))
+              .attr("fill", d =>
+                d.ingoingNeighbor || d.outgoingNeighbor ? "grey" : "orange"
+              )
           ),
         exit =>
           exit.attr("fill", "red").call(exit =>
@@ -372,11 +378,11 @@ export default class Graph {
               .remove()
           )
       )
+      .attr("class", "node")
       .attr("cursor", "grab")
       .attr("stroke", this.nodeStroke)
       .attr("stroke-width", this.nodeStrokeWidth)
-      .attr("opacity", this.nodeOpacity)
-      .attr("class", "node");
+      .attr("opacity", this.graphOpacity);
 
     this.node
       .call(
