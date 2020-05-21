@@ -139,11 +139,20 @@ export default {
       ];
       this.$options.graph.render(nodesUnique, links);
     },
-    showCourseTooltip({ id, name, credits }) {
+    showCourseTooltip({
+      id, name, credits, ingoing, outgoing, ingoingNeighbor, outgoingNeighbor
+    }) {
       const html = `
         <div><strong>${id}</strong></div>
-        <div>${name}</div>
+        <div class="mb-2">${name}</div>
         <div>Credits: ${credits}</div>
+        ${!ingoingNeighbor && !outgoingNeighbor
+          ? `
+            <div class="mt-1">In-degree: ${ingoing.length}</div>
+            <div>Out-degree: ${outgoing.length}</div>
+          `
+          : ''
+        }
       `;
       this.courseTooltipHtml = html;
       this.courseTooltipCourseId = id;
