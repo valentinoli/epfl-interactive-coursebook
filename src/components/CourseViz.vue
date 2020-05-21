@@ -2,19 +2,37 @@
   <div id="viz-container" class="flex-grow-1 d-flex flex-column">
     <div
       id="viz-toolbar"
-      class="mb-0 d-flex flex-wrap justify-center justify-md-start"
+      class="mb-3 mx-2 mr-md-4 px-4 py-1 d-flex flex-wrap justify-center justify-md-space-between align-center"
     >
       <!-- Tools soon to be added -->
-      <v-switch
-        v-model="ingoingToggled"
-        class="mx-2"
-        label="Ingoing"
-      ></v-switch>
-      <v-switch
-        v-model="outgoingToggled"
-        class="mx-2"
-        label="Outgoing"
-      ></v-switch>
+      <div class="d-flex">
+        <v-switch
+          v-model="ingoingToggled"
+          color="red"
+          class="mx-2"
+          label="Ingoing"
+        ></v-switch>
+        <v-switch
+          v-model="outgoingToggled"
+          color="red"
+          class="mx-2"
+          label="Outgoing"
+        ></v-switch>
+      </div>
+      <div class="d-flex">
+        <v-select
+          v-model="nodeSizeParameter"
+          :items="nodeSizeParameters"
+          label="Node size parameter"
+          color="red"
+          item-color="red"
+          light
+          dense
+          hide-details
+          class="node-size-select ml-2"
+        >
+        </v-select>
+      </div>
     </div>
 
     <div id="viz-svg" class="flex-grow-1"></div>
@@ -79,7 +97,26 @@ export default {
       courseTooltipCourseId: null,
       touchInterface: false,
       outgoingToggled: true,
-      ingoingToggled: true
+      ingoingToggled: true,
+      nodeSizeParameter: "credits",
+      nodeSizeParameters: [
+        {
+          value: "credits",
+          text: "Credits"
+        },
+        {
+          value: "registrations",
+          text: "Registrations"
+        },
+        {
+          value: "indegree",
+          text: "In-degree"
+        },
+        {
+          value: "outdegree",
+          text: "Out-degree"
+        }
+      ]
     };
   },
   mounted() {
@@ -116,6 +153,9 @@ export default {
     },
     outgoingToggled() {
       this.render();
+    },
+    nodeSizeParameter() {
+      this.render();
     }
   },
   methods: {
@@ -149,33 +189,36 @@ export default {
         ...(ingoingToggled ? ingoingLinks : []),
         ...(outgoingToggled ? outgoingLinks : [])
       ];
+
       this.$options.graph.render(nodesUnique, links);
     },
     showCourseTooltip({
       id,
       name,
       credits,
+      registrations,
       ingoing,
-      outgoing,
-      ingoingNeighbor,
-      outgoingNeighbor
+      outgoing
     }) {
       const html = `
-        <div><strong>${id}</strong></div>
-        <div class="mb-2">${name}</div>
-        <div>Credits: ${credits}</div>
-        ${
-          !ingoingNeighbor && !outgoingNeighbor
-            ? `
-            <div class="mt-1">
-              In-degree: ${ingoing.length}
-            </div>
-            <div>
-              Out-degree: ${outgoing.length}
-            </div>
-          `
-            : ""
-        }
+        <div>
+          <strong>${id}</strong>
+        </div>
+        <div class="mb-2">
+          ${name}
+        </div>
+        <div>
+          Credits: ${credits}
+        </div>
+        <div>
+          Registrations: ${registrations ? registrations["2019-2020"] : "Unknown"}
+        </div>
+        <div>
+          In-degree: ${ingoing.length}
+        </div>
+        <div>
+          Out-degree: ${outgoing.length}
+        </div>
       `;
       this.courseTooltipHtml = html;
       this.courseTooltipCourseId = id;
@@ -209,11 +252,20 @@ export default {
   margin: 0 3px;
 }
 
+#viz-toolbar {
+  /* border: 0.5px solid grey;
+  border-radius: 7px; */
+}
+
 .viz-course-tooltip {
   /* position tooltip content absolutely */
   position: absolute;
 
   /* Override default Vuetify */
   pointer-events: auto;
+}
+
+.node-size-select {
+  max-width: 200px;
 }
 </style>

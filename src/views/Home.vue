@@ -71,7 +71,7 @@
                 :value.sync="selectedCredits"
                 :items="credits"
                 :key="selectedCredits || `nocredits`"
-                label="Select number of credits"
+                label="Select credits"
               />
 
               <Select

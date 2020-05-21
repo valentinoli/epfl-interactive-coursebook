@@ -11,7 +11,9 @@
     light
     outlined
     dense
+    hide-details
     clearable
+    class="mb-4"
   >
     <template v-slot:item="data">
       <!-- Custom HTML that describe how select should render items when the select is open -->

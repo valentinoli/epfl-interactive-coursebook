@@ -80,8 +80,8 @@ export default class Graph {
           .strength(0.5)
           .id(d => d.id)
       )
-      .force("x", d3.forceX().strength(0.2))
-      .force("y", d3.forceY().strength(0.2))
+      .force("x", d3.forceX().strength(0.07))
+      .force("y", d3.forceY().strength(0.07))
       .on("tick", this.ticked.bind(this));
 
     this.link = this.svg.append("g").selectAll("line");
@@ -92,8 +92,27 @@ export default class Graph {
     this.svg.attr("transform", d3.event.transform);
   }
 
-  computeNodeRadius({ credits }) {
-    return Math.log(Math.pow(Number(credits), 7) + 30);
+  computeNodeRadius({ credits, registrations, ingoing, outgoing }) {
+    switch (this.vue.nodeSizeParameter) {
+      case "credits":
+      default: {
+        return Math.log(Math.pow(Number(credits), 10) + 30);
+      }
+      case "registrations": {
+        // fallback to 0 when no data available
+        let students = 0;
+        if (registrations) {
+          students = registrations["2019-2020"];
+        }
+        return Math.log(Math.pow(students, 4) + 30);
+      }
+      case "indegree": {
+        return Math.log(Math.pow(ingoing.length + 2, 10) + 30);
+      }
+      case "outdegree": {
+        return Math.log(Math.pow(outgoing.length + 2, 10) + 30);
+      }
+    }
   }
 
   linkClipHypotenuseFromSource(source, hypotenuse) {
@@ -406,9 +425,7 @@ export default class Graph {
             .attr("fill", d =>
               d.ingoingNeighbor || d.outgoingNeighbor ? "grey" : "green"
             )
-            .call(enter =>
-              enter.transition(t).attr("r", this.computeNodeRadius)
-            ),
+            .attr("r", this.computeNodeRadius.bind(this)),
         update =>
           update.call(update =>
             update
@@ -416,6 +433,7 @@ export default class Graph {
               .attr("fill", d =>
                 d.ingoingNeighbor || d.outgoingNeighbor ? "grey" : "orange"
               )
+              .attr("r", this.computeNodeRadius.bind(this))
           ),
         exit =>
           exit.attr("fill", "red").call(exit =>
@@ -430,7 +448,7 @@ export default class Graph {
       .attr("cursor", "grab")
       .attr("stroke", this.nodeStroke)
       .attr("stroke-width", this.nodeStrokeWidth)
-      .attr("opacity", this.graphOpacity);
+      .attr("opacity", this.graphOpacity)
 
     this.node
       .call(
