@@ -276,9 +276,8 @@ function getLinksAndNeighborhoods(ids) {
         outgoing.ingoingNeighbor = true;
         outgoing.outgoingNeighbor = true;
       }
-    })
+    });
   });
-
 
   return {
     ingoingNodes,
