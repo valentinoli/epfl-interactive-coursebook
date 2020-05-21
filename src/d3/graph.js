@@ -249,13 +249,62 @@ export default class Graph {
     this.vue.onNodeClick(id);
   }
 
-  // Mouse events for node tooltip
-  mouseover(node, d) {
+  nodeId(id) {
+    return id.replace(/[()]/g, "_");
+  }
+
+  linkId({ source, target }) {
+    return `${this.nodeId(source)}--${this.nodeId(target)}`;
+  }
+
+  // Mouse events for nodes
+  mouseover(d) {
     if (!this.isDragging) {
       this.vue.showCourseTooltip(d);
-      d3.select(node)
-        .attr("opacity", 0.75)
-        .style("stroke", "#000");
+
+      const selectedId = this.nodeId(d.id);
+      const selectedNode = d3.select(`#${selectedId}`);
+      const {
+        ingoing,
+        outgoing,
+        ingoingNeighbor,
+        outgoingNeighbor
+      } = selectedNode.datum();
+
+      // If the node is part of the subgraph, we highlight its neighborhood
+      if (!ingoingNeighbor && !outgoingNeighbor) {
+        const highOpacity = this.graphOpacity + 0.25;
+        const lowOpacity = this.graphOpacity - 0.25;
+
+        // First we lower opacity of all nodes and links
+        this.node.attr("opacity", lowOpacity);
+        this.link
+          .attr("stroke-opacity", lowOpacity)
+          .attr("opacity", lowOpacity);
+
+        // Then highlight the selected node and its neighborhood nodes and links
+        selectedNode.attr("opacity", highOpacity).style("stroke", "#000");
+        if (ingoing.length || outgoing.length) {
+          const neighborsNodeIds = [...ingoing, ...outgoing].map(
+            ({ id }) => `#${this.nodeId(id)}`
+          );
+          const neighborNodes = d3.selectAll(neighborsNodeIds.join(", "));
+          neighborNodes.attr("opacity", highOpacity);
+
+          const neighborsLinkIds = [
+            ...ingoing.map(
+              ({ id }) => `#${this.linkId({ source: id, target: d.id })}`
+            ),
+            ...outgoing.map(
+              ({ id }) => `#${this.linkId({ source: d.id, target: id })}`
+            )
+          ];
+          const neighborLinks = d3.selectAll(neighborsLinkIds.join(", "));
+          neighborLinks
+            .attr("stroke-opacity", highOpacity)
+            .attr("opacity", highOpacity);
+        }
+      }
     }
   }
 
@@ -266,12 +315,15 @@ export default class Graph {
     }
   }
 
-  mouseleave(node) {
+  mouseleave() {
     if (!this.isDragging) {
       this.vue.hideCourseTooltip();
-      d3.select(node)
-        .attr("opacity", this.nodeOpacity)
-        .style("stroke", this.nodeStroke);
+
+      const { nodeStroke, graphOpacity } = this;
+      this.node.attr("opacity", graphOpacity).style("stroke", nodeStroke);
+      this.link
+        .attr("stroke-opacity", graphOpacity)
+        .attr("opacity", graphOpacity);
     }
   }
 
@@ -343,6 +395,7 @@ export default class Graph {
           )
       )
       .attr("class", "link")
+      .attr("id", this.linkId.bind(this))
       .attr("stroke", this.linkStroke)
       .attr("stroke-opacity", this.graphOpacity)
       .attr("opacity", this.graphOpacity)
@@ -379,6 +432,7 @@ export default class Graph {
           )
       )
       .attr("class", "node")
+      .attr("id", d => this.nodeId(d.id))
       .attr("cursor", "grab")
       .attr("stroke", this.nodeStroke)
       .attr("stroke-width", this.nodeStrokeWidth)
@@ -392,31 +446,9 @@ export default class Graph {
           .on("drag", this.dragged.bind(this))
           .on("end", this.dragended.bind(this))
       )
-      .on(
-        "mouseover",
-        (graph => {
-          return function(d) {
-            // "this" refers to the node being moused over
-            return graph.mouseover.bind(graph, this)(d);
-          };
-        })(this)
-      )
-      .on(
-        "mousemove",
-        (graph => {
-          return function(d) {
-            return graph.mousemove.bind(graph, this)(d);
-          };
-        })(this)
-      )
-      .on(
-        "mouseleave",
-        (graph => {
-          return function(d) {
-            return graph.mouseleave.bind(graph, this)(d);
-          };
-        })(this)
-      )
+      .on("mouseover", this.mouseover.bind(this))
+      .on("mousemove", this.mousemove.bind(this))
+      .on("mouseleave", this.mouseleave.bind(this))
       .on("click", this.click.bind(this));
 
     this.restartSimulation(newNodes, newLinks);
