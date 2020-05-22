@@ -7,13 +7,11 @@
       <div class="d-flex">
         <v-switch
           v-model="ingoingToggled"
-          color="red"
           class="mx-2"
           label="Ingoing"
         ></v-switch>
         <v-switch
           v-model="outgoingToggled"
-          color="red"
           class="mx-2"
           label="Outgoing"
         ></v-switch>
@@ -23,8 +21,6 @@
           v-model="nodeSizeParam"
           :items="$options.nodeSizeParams"
           label="Node size"
-          color="red"
-          item-color="red"
           light
           dense
           hide-details
@@ -35,8 +31,6 @@
           v-model="nodeColorMapParam"
           :items="$options.nodeColorMapParams"
           label="Node color"
-          color="red"
-          item-color="red"
           light
           dense
           hide-details

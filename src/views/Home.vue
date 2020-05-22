@@ -93,8 +93,6 @@
                 :item-value="item => item"
                 :item-text="({ id, name }) => `${id} - ${name}`"
                 append-icon="mdi-magnify"
-                color="red"
-                item-color="red"
                 label=""
                 placeholder="Search filtered courses..."
                 menu-props="closeOnContentClick"

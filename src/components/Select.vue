@@ -4,8 +4,6 @@
     @change="$emit('update:value', mutableValue)"
     :items="items"
     :label="label"
-    color="red"
-    item-color="red"
     :disabled="!enabled"
     :autofocus="autofocus"
     light

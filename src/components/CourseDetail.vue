@@ -315,7 +315,8 @@ a {
   color: red;
 }
 
-a:hover {
+a:not(.v-btn):hover {
+  /* Don't underline v-btn */
   text-decoration: underline;
 }
 

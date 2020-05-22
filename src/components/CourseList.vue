@@ -1,5 +1,5 @@
 <template>
-  <v-row class="list" align="center">
+  <v-row class="list">
     <v-col align="center">
       <v-list dense rounded two-line flat width="100%">
         <v-pagination
@@ -8,10 +8,9 @@
           :length="pages"
           circle
           total-visible="10"
-          color="red"
         />
 
-        <v-list-item-group color="red">
+        <v-list-item-group>
           <v-row align="center">
             <v-col
               cols="12"
