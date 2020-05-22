@@ -4,7 +4,6 @@
       id="viz-toolbar"
       class="mb-3 mx-2 mr-md-4 px-4 px-md-0 py-1 d-flex flex-wrap justify-center justify-md-space-between align-center"
     >
-      <!-- Tools soon to be added -->
       <div class="d-flex">
         <v-switch
           v-model="ingoingToggled"
@@ -21,15 +20,27 @@
       </div>
       <div class="d-flex">
         <v-select
-          v-model="nodeSizeParameter"
-          :items="nodeSizeParameters"
-          label="Node size parameter"
+          v-model="nodeSizeParam"
+          :items="$options.nodeSizeParams"
+          label="Node size"
           color="red"
           item-color="red"
           light
           dense
           hide-details
-          class="node-size-select ml-2"
+          class="ml-2"
+        >
+        </v-select>
+        <v-select
+          v-model="nodeColorMapParam"
+          :items="$options.nodeColorMapParams"
+          label="Node color"
+          color="red"
+          item-color="red"
+          light
+          dense
+          hide-details
+          class="ml-2"
         >
         </v-select>
       </div>
@@ -61,6 +72,14 @@
 
 <script>
 import Graph from "@/d3/graph";
+import {
+  schemeCategory10,
+  schemeDark2,
+  schemePaired,
+  schemeSet1,
+  schemeTableau10
+} from "d3-scale-chromatic";
+import api from "@/services/api";
 
 export default {
   name: "CourseViz",
@@ -98,31 +117,64 @@ export default {
       touchInterface: false,
       outgoingToggled: true,
       ingoingToggled: true,
-      nodeSizeParameter: "credits",
-      nodeSizeParameters: [
-        {
-          value: "credits",
-          text: "Credits"
-        },
-        {
-          value: "registrations",
-          text: "Registrations"
-        },
-        {
-          value: "indegree",
-          text: "In-degree"
-        },
-        {
-          value: "outdegree",
-          text: "Out-degree"
-        }
-      ]
+      nodeSizeParam: null,
+      nodeColorMapParam: null
     };
   },
+  nodeSizeParams: [
+    {
+      value: null,
+      text: "Default"
+    },
+    {
+      value: "credits",
+      text: "Credits"
+    },
+    {
+      value: "registrations",
+      text: "Registrations"
+    },
+    {
+      value: "indegree",
+      text: "In-degree"
+    },
+    {
+      value: "outdegree",
+      text: "Out-degree"
+    }
+  ],
+  nodeColorMapParams: [
+    {
+      value: null,
+      text: "Default"
+    },
+    {
+      value: "credits",
+      text: "Credits"
+    },
+    {
+      value: "semester",
+      text: "Semester"
+    },
+    {
+      value: "section",
+      text: "Section"
+    }
+  ],
+  colors: [
+    // Slice grey colors
+    ...schemeCategory10.slice(0, -3),
+    ...schemeDark2.slice(0, -1),
+    ...schemePaired,
+    ...schemeSet1.slice(0, -1),
+    ...schemeTableau10.slice(0, -1)
+  ],
   mounted() {
     const graph = new Graph(this);
     this.$options.graph = graph;
 
+    this.createColorMaps();
+    this.nodeColorMap = this.$options.colorMaps[null];
     this.render();
 
     // Check for touch interface
@@ -154,7 +206,12 @@ export default {
     outgoingToggled() {
       this.render();
     },
-    nodeSizeParameter() {
+    nodeSizeParam() {
+      this.render();
+    },
+    nodeColorMapParam(param) {
+      // Color map is updated when user changes the node color param
+      this.nodeColorMap = this.$options.colorMaps[param];
       this.render();
     }
   },
@@ -192,7 +249,40 @@ export default {
 
       this.$options.graph.render(nodesUnique, links);
     },
-    showCourseTooltip({ id, name, credits, registrations, ingoing, outgoing }) {
+    createColorMaps() {
+      const { credits, sections, semesters } = api.getAllCourseFilterOptions();
+
+      // Rename plural to singular to match course prop key
+      this.$options.colorMaps = Object.fromEntries(
+        Object.entries({
+          credits,
+          section: sections,
+          semester: semesters
+        }).map(([param, values]) => [
+          param,
+          Object.fromEntries(
+            values.map((key, index) => [key, this.$options.colors[index]])
+          )
+        ])
+      );
+      // --> { credits: { 6: #color, 4: #color2, ... }, ...}
+
+      // Add the default color map, entering nodes colored green, updated orange
+      this.$options.colorMaps[null] = {
+        true: "green",
+        false: "orange"
+      };
+    },
+    showCourseTooltip({
+      id,
+      name,
+      credits,
+      registrations,
+      section,
+      semester,
+      ingoing,
+      outgoing
+    }) {
       const html = `
         <div>
           <strong>${id}</strong>
@@ -213,6 +303,12 @@ export default {
         </div>
         <div>
           Out-degree: ${outgoing.length}
+        </div>
+        <div>
+          Section: ${section}
+        </div>
+        <div>
+          Semester: ${semester}
         </div>
       `;
       this.courseTooltipHtml = html;
@@ -260,7 +356,7 @@ export default {
   pointer-events: auto;
 }
 
-.node-size-select {
+.v-select {
   max-width: 200px;
 }
 </style>

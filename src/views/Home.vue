@@ -361,7 +361,7 @@ export default {
       const subgraphNodes = api.getSubgraphNodes(this);
 
       // Clone array to keep track of which courses match the filters
-      this.nodesFiltered = [...subgraphNodes];
+      this.nodesFiltered = JSON.parse(JSON.stringify(subgraphNodes));
 
       if (!this.courseCherries.length) {
         // If there are no cherry picked courses,

@@ -12,7 +12,7 @@ export default class Graph {
   node;
   link;
   isDragging = false;
-  graphOpacity = 0.5;
+  graphOpacity = 0.65;
   nodeStrokeWidth = 1;
   nodeStroke = "#fff";
   linkStroke = "#999";
@@ -32,7 +32,7 @@ export default class Graph {
 
     const zoom = d3.zoom().on("zoom", this.zoomed.bind(this));
 
-    const initialScale = 0.175;
+    const initialScale = 0.1;
 
     // https://stackoverflow.com/questions/16178366/d3-js-set-initial-zoom-level
     const svg = container
@@ -71,12 +71,12 @@ export default class Graph {
 
     this.simulation = d3
       .forceSimulation()
-      .force("charge", d3.forceManyBody().strength(-120))
+      .force("charge", d3.forceManyBody().strength(-200))
       .force(
         "link",
         d3
           .forceLink()
-          .distance(50)
+          .distance(70)
           .strength(0.5)
           .id(d => d.id)
       )
@@ -93,9 +93,8 @@ export default class Graph {
   }
 
   computeNodeRadius({ credits, registrations, ingoing, outgoing }) {
-    switch (this.vue.nodeSizeParameter) {
-      case "credits":
-      default: {
+    switch (this.vue.nodeSizeParam) {
+      case "credits": {
         return Math.log(Math.pow(Number(credits), 10) + 30);
       }
       case "registrations": {
@@ -104,7 +103,7 @@ export default class Graph {
         if (registrations) {
           students = registrations["2019-2020"];
         }
-        return Math.log(Math.pow(students, 4) + 30);
+        return Math.log(Math.pow(students, 4) + 100);
       }
       case "indegree": {
         return Math.log(Math.pow(ingoing.length + 2, 10) + 30);
@@ -112,7 +111,26 @@ export default class Graph {
       case "outdegree": {
         return Math.log(Math.pow(outgoing.length + 2, 10) + 30);
       }
+      default: {
+        // Default size
+        return 15;
+      }
     }
+  }
+
+  computeNodeFill(isEntering, d) {
+    const { nodeColorMap: map, nodeColorMapParam: param } = this.vue;
+
+    if (d.ingoingNeighbor || d.outgoingNeighbor) {
+      return "grey";
+    }
+
+    if (!param) {
+      // Default colormap
+      return map[isEntering];
+    }
+
+    return map[d[param]];
   }
 
   linkClipHypotenuseFromSource(source, hypotenuse) {
@@ -422,17 +440,13 @@ export default class Graph {
         enter =>
           enter
             .append("circle")
-            .attr("fill", d =>
-              d.ingoingNeighbor || d.outgoingNeighbor ? "grey" : "green"
-            )
+            .attr("fill", this.computeNodeFill.bind(this, true))
             .attr("r", this.computeNodeRadius.bind(this)),
         update =>
           update.call(update =>
             update
               .transition(t)
-              .attr("fill", d =>
-                d.ingoingNeighbor || d.outgoingNeighbor ? "grey" : "orange"
-              )
+              .attr("fill", this.computeNodeFill.bind(this, false))
               .attr("r", this.computeNodeRadius.bind(this))
           ),
         exit =>
@@ -468,6 +482,7 @@ export default class Graph {
 
   restartSimulation(nodes, links) {
     this.simulation.nodes(nodes);
+    // Associate links to the link force
     this.simulation.force("link").links(links);
     this.simulation.alpha(1).restart();
   }

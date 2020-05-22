@@ -104,7 +104,7 @@ function getMasterspecsByProgram(program) {
 }
 
 /**
- * Gets filtering options for independent course filtering dropdown lists
+ * Gets dropdown options for global course filters
  * @param {Array} courses - currently displayed courses, array of [id, value] pairs, where value is Object
  * @returns {Object} object of arrays of distinct values for selected shared properties of all the courses
  */
@@ -115,6 +115,14 @@ function getCourseFilterOptions(courses) {
   );
   const semesters = Array.from(new Set(courses.map(c => c.semester)));
   return { sections, credits, semesters };
+}
+
+/**
+ * Gets all global course filter options
+ * @returns {Object}
+ */
+function getAllCourseFilterOptions() {
+  return getCourseFilterOptions(getCoursesByIds());
 }
 
 /**
@@ -328,6 +336,7 @@ export default {
   getProgramsByLevel,
   getMasterspecsByProgram,
   getCourseFilterOptions,
+  getAllCourseFilterOptions,
   getCourseById,
   getLinksAndNeighborhoods,
   getSubgraphNodes
