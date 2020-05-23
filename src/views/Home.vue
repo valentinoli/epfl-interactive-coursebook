@@ -6,142 +6,129 @@
 
     <SkeletonLoader v-else-if="loading" />
 
-    <v-row v-else class="home-content">
-      <div id="filter">
-        <v-app id="filter-toggle">
-          <v-sheet
-            height="400"
-            width="200"
-            class="overflow-hidden"
-            style="position: relative;"
-          >
-            <v-container class="fill-height">
-              <v-row align="center" justify="center">
-                <v-btn color="pink" dark @click.stop="drawer = !drawer">
-                  Filter
-                </v-btn>
-              </v-row>
-            </v-container>
+    <!-- <v-row v-else class="home-content">
+      <v-col cols="12" md="4" xl="3">
+        <v-sheet
+          style="position: relative;"
+        > -->
+    <!-- <v-container class="fill-height">
+            <v-row align="center" justify="center">
 
-            <v-navigation-drawer v-model="drawer" app temporary width="500">
-              <v-card>
-                <v-row class="flex-column" justify="center" align="center">
-                  <!-- Hierarchical filters -->
-                  <v-col
-                    cols="auto"
-                    sm="7"
-                    md="12"
-                    class="filters__hierarchical"
-                  >
-                    <p class="subtitle-1">
-                      Hierarchical filters
-                    </p>
-                    <Select
-                      :value.sync="selectedLevel"
-                      :items="$options.levels"
-                      :autofocus="true"
-                      label="Select level"
-                    />
+            </v-row>
+          </v-container> -->
 
-                    <Select
-                      :enabled="programEnabled"
-                      :value.sync="selectedProgram"
-                      :items="programs"
-                      :key="selectedLevel || `noprogram`"
-                      label="Select program"
-                    />
+    <v-navigation-drawer v-model="drawer" app temporary width="500">
+      <v-card>
+        <v-row class="flex-column" justify="center" align="center">
+          <!-- Hierarchical filters -->
+          <v-col cols="auto" sm="7" md="12" class="filters__hierarchical">
+            <p class="subtitle-1">
+              Hierarchical filters
+            </p>
+            <Select
+              :value.sync="selectedLevel"
+              :items="$options.levels"
+              :autofocus="true"
+              label="Select level"
+            />
 
-                    <Select
-                      :enabled="masterspecsEnabled"
-                      :value.sync="selectedMasterspec"
-                      :items="masterspecs"
-                      :key="selectedProgram || `nospec`"
-                      label="Select specialization"
-                    >
-                      <template v-slot:item-data="{ item }">
-                        <img class="spec-icon" :src="item.iconUrl" />
-                        <span>{{ item.text }}</span>
-                      </template>
-                      <template v-slot:selection-data="{ item }">
-                        <div class="d-flex align-start mt-2">
-                          <img class="spec-icon" :src="item.iconUrl" />
-                          <span>{{ item.text }}</span>
-                        </div>
-                      </template>
-                    </Select>
-                  </v-col>
+            <Select
+              :enabled="programEnabled"
+              :value.sync="selectedProgram"
+              :items="programs"
+              :key="selectedLevel || `noprogram`"
+              label="Select program"
+            />
 
-                  <!-- Global filters -->
-                  <v-col cols="auto" sm="7" md="12" class="filters__global">
-                    <p class="subtitle-1">
-                      Global filters
-                    </p>
-                    <Select
-                      :value.sync="selectedSection"
-                      :items="sections"
-                      :key="selectedSection || `nosection`"
-                      label="Select section"
-                    />
+            <Select
+              :enabled="masterspecsEnabled"
+              :value.sync="selectedMasterspec"
+              :items="masterspecs"
+              :key="selectedProgram || `nospec`"
+              label="Select specialization"
+            >
+              <template v-slot:item-data="{ item }">
+                <img class="spec-icon" :src="item.iconUrl" />
+                <span>{{ item.text }}</span>
+              </template>
+              <template v-slot:selection-data="{ item }">
+                <div class="d-flex align-start mt-2">
+                  <img class="spec-icon" :src="item.iconUrl" />
+                  <span>{{ item.text }}</span>
+                </div>
+              </template>
+            </Select>
+          </v-col>
 
-                    <Select
-                      :value.sync="selectedCredits"
-                      :items="credits"
-                      :key="selectedCredits || `nocredits`"
-                      label="Select credits"
-                    />
+          <!-- Global filters -->
+          <v-col cols="auto" sm="7" md="12" class="filters__global">
+            <p class="subtitle-1">
+              Global filters
+            </p>
+            <Select
+              :value.sync="selectedSection"
+              :items="sections"
+              :key="selectedSection || `nosection`"
+              label="Select section"
+            />
 
-                    <Select
-                      :value.sync="selectedSemester"
-                      :items="semesters"
-                      :key="selectedSemester || `nosemester`"
-                      label="Select semester"
-                    />
-                  </v-col>
+            <Select
+              :value.sync="selectedCredits"
+              :items="credits"
+              :key="selectedCredits || `nocredits`"
+              label="Select credits"
+            />
 
-                  <v-col
-                    cols="auto"
-                    sm="7"
-                    md="12"
-                    class="filters__autocompletes"
-                  >
-                    <p class="subtitle-1">
-                      Search tools
-                    </p>
-                    <!-- Course cherry-picker -->
-                    <v-autocomplete
-                      v-model="courseCherries"
-                      :items="nodesFiltered"
-                      :item-value="item => item"
-                      :item-text="({ id, name }) => `${id} - ${name}`"
-                      append-icon="mdi-magnify"
-                      label=""
-                      placeholder="Search filtered courses..."
-                      menu-props="closeOnContentClick"
-                      multiple
-                      hide-no-data
-                      hide-details
-                      outlined
-                    >
-                      <template v-slot:selection="{ item }">
-                        <v-chip
-                          outlined
-                          close
-                          @click:close="removeCourseCherry(item.id)"
-                          :title="item.name"
-                        >
-                          {{ item.id }}
-                        </v-chip>
-                      </template>
-                    </v-autocomplete>
-                  </v-col>
-                </v-row>
-              </v-card>
-            </v-navigation-drawer>
-          </v-sheet>
-        </v-app>
-      </div>
-      <v-col cols="12" md="8" xl="9" class="view-pane d-flex flex-column">
+            <Select
+              :value.sync="selectedSemester"
+              :items="semesters"
+              :key="selectedSemester || `nosemester`"
+              label="Select semester"
+            />
+          </v-col>
+
+          <v-col cols="auto" sm="7" md="12" class="filters__autocompletes">
+            <p class="subtitle-1">
+              Search tools
+            </p>
+            <!-- Course cherry-picker -->
+            <v-autocomplete
+              v-model="courseCherries"
+              :items="nodesFiltered"
+              :item-value="item => item"
+              :item-text="({ id, name }) => `${id} - ${name}`"
+              append-icon="mdi-magnify"
+              label=""
+              placeholder="Search filtered courses..."
+              menu-props="closeOnContentClick"
+              multiple
+              hide-no-data
+              hide-details
+              outlined
+            >
+              <template v-slot:selection="{ item }">
+                <v-chip
+                  outlined
+                  close
+                  @click:close="removeCourseCherry(item.id)"
+                  :title="item.name"
+                >
+                  {{ item.id }}
+                </v-chip>
+              </template>
+            </v-autocomplete>
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-navigation-drawer>
+    <!-- </v-sheet>
+      </v-col> -->
+    <v-row>
+      <v-col cols="12" class="view-pane d-flex flex-column">
         <div class="d-flex flex-column flex-md-row mb-2 view-pane__tabs">
+          <v-btn color="pink" dark @click.stop="drawer = !drawer">
+            Filter
+          </v-btn>
           <v-tabs
             v-model="mainTab"
             hide-slider
@@ -203,7 +190,6 @@ import SkeletonLoader from "@/components/SkeletonLoader";
 
 export default {
   name: "Home",
-  el: "#filter",
   components: {
     CourseViz,
     CourseList,
