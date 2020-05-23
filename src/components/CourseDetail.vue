@@ -101,7 +101,7 @@
     <v-row>
       <v-col cols="12" md="9" class="d-flex flex-column">
         <!-- Registrations -->
-        <registrations-chart v-bind:registrations="registrations"/>
+        <registrations-chart v-bind:registrations="registrations" />
       </v-col>
     </v-row>
   </div>
@@ -162,7 +162,7 @@ export default {
     }
   },
   components: {
-    'registrations-chart' : RegistrationsChart
+    "registrations-chart": RegistrationsChart
   },
   computed: {
     generalInfo() {
