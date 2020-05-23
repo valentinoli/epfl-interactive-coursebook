@@ -240,9 +240,7 @@ export default {
           semester: semesters
         }).map(([param, values]) => [
           param,
-          Object.fromEntries(
-            values.map((key, index) => [key, colors[index]])
-          )
+          Object.fromEntries(values.map((key, index) => [key, colors[index]]))
         ])
       );
       // --> { credits: { 6: #color, 4: #color2, ... }, ...}

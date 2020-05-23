@@ -152,7 +152,7 @@ export default {
     outgoing: {
       type: Array,
       default: () => []
-    },
+    }
 
     // Registrations
     // registrations: {

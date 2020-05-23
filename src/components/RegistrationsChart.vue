@@ -12,7 +12,7 @@ export default {
   mounted() {
     console.log("mounted");
     const datacollection = this.getDataCollection();
-    const options = this.getOptions();
+    const options = this.getOptions(datacollection.datasets);
     this.renderChart(datacollection, options);
   },
   methods: {
@@ -28,14 +28,18 @@ export default {
           return [];
         }
 
-        return Object.entries(reg).filter(reg => reg[0] !== "total").map(([program, count]) => ({
-          year,
-          program,
-          count
-        }));
+        return Object.entries(reg)
+          .filter(reg => reg[0] !== "total")
+          .map(([program, count]) => ({
+            year,
+            program,
+            count
+          }));
       });
 
-      const programs = [...new Set(dataTransformed.map(item => item.program))].sort();
+      const programs = [
+        ...new Set(dataTransformed.map(item => item.program))
+      ].sort();
 
       const datasets = programs.map((program, index) => ({
         label: program,
@@ -45,7 +49,9 @@ export default {
 
       years.forEach(year => {
         datasets.forEach(({ label, data }) => {
-          const found = dataTransformed.find(item => item.year === year && item.program === label);
+          const found = dataTransformed.find(
+            item => item.year === year && item.program === label
+          );
           if (!found) {
             data.push(0);
           } else {
@@ -60,7 +66,7 @@ export default {
       };
       return datacollection;
     },
-    getOptions() {
+    getOptions(datasets) {
       const options = {
         scales: {
           yAxes: [
@@ -94,12 +100,11 @@ export default {
           enabled: true,
           mode: "single",
           callbacks: {
-            title: function([ item ], data) {
-              console.log(item, data);
+            beforeTitle: function([{ datasetIndex }]) {
+              return datasets[datasetIndex].label;
             },
-            label: function(tooltipItems) {
-              console.log(tooltipItems);
-              return tooltipItems.yLabel + " students";
+            label: function({ yLabel }) {
+              return `${yLabel} students`;
             }
           }
         },
