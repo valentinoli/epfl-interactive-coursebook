@@ -11,6 +11,7 @@
         <v-app id="filter-toggle">
           <v-sheet
             height="400"
+            width="200"
             class="overflow-hidden"
             style="position: relative;"
           >
@@ -22,16 +23,16 @@
               </v-row>
             </v-container>
 
-            <v-navigation-drawer v-model="drawer" app temporary>
+            <v-navigation-drawer v-model="drawer" app temporary width="500">
               <v-card>
-                <v-row
-                  class="flex-column"
-                  justify="center"
-                  align="center"
-                  no-gutters
-                >
+                <v-row class="flex-column" justify="center" align="center">
                   <!-- Hierarchical filters -->
-                  <v-col cols="12" sm="7" md="12" class="filters__hierarchical">
+                  <v-col
+                    cols="auto"
+                    sm="7"
+                    md="12"
+                    class="filters__hierarchical"
+                  >
                     <p class="subtitle-1">
                       Hierarchical filters
                     </p>
@@ -71,7 +72,7 @@
                   </v-col>
 
                   <!-- Global filters -->
-                  <v-col cols="12" sm="7" md="12" class="filters__global">
+                  <v-col cols="auto" sm="7" md="12" class="filters__global">
                     <p class="subtitle-1">
                       Global filters
                     </p>
@@ -98,7 +99,7 @@
                   </v-col>
 
                   <v-col
-                    cols="12"
+                    cols="auto"
                     sm="7"
                     md="12"
                     class="filters__autocompletes"
@@ -202,7 +203,7 @@ import SkeletonLoader from "@/components/SkeletonLoader";
 
 export default {
   name: "Home",
-  el: '#filter',
+  el: "#filter",
   components: {
     CourseViz,
     CourseList,
