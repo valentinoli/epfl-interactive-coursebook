@@ -118,6 +118,7 @@ export default {
       const datacollection = this.getDataCollection();
       const options = this.getOptions(datacollection.datasets);
       this.renderChart(datacollection, options);
+      this.styles = { height: "500px" };
     }
   }
 };
