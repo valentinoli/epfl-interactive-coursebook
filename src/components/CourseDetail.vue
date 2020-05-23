@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row class="course-detail">
-      <v-col cols="12" md="3" class="d-flex flex-column">
+      <v-col cols="12" md="6" class="d-flex flex-column">
         <!-- General -->
         <v-card>
           <v-card-title class="d-flex justify-space-between">
@@ -56,7 +56,7 @@
           {{ `Limited number of places: ${number_of_places}` }}
         </v-alert>
       </v-col>
-      <v-col cols="12" md="3" class="d-flex flex-column">
+      <v-col cols="12" md="6" class="d-flex flex-column">
         <!-- Lecturers -->
         <v-card v-if="lecturers.length > 0" class="lecturers">
           <v-card-title>Lecturers</v-card-title>
@@ -82,8 +82,7 @@
           </v-list>
         </v-card>
       </v-col>
-      <v-col cols="12" md="3" class="d-flex flex-column">
-        <!-- Programs -->
+      <!-- <v-col cols="12" md="3" class="d-flex flex-column">
         <v-card v-if="in_the_programs.length > 0">
           <v-card-title>Programs</v-card-title>
           <v-card-text>
@@ -96,12 +95,12 @@
             </div>
           </v-card-text>
         </v-card>
-      </v-col>
+      </v-col> -->
     </v-row>
     <v-row>
-      <v-col cols="12" md="9" class="d-flex flex-column">
+      <v-col cols="12" class="d-flex flex-column">
         <!-- Registrations -->
-        <registrations-chart v-bind:registrations="registrations" />
+        <RegistrationsChart :id="id" />
       </v-col>
     </v-row>
   </div>
@@ -156,13 +155,13 @@ export default {
     },
 
     // Registrations
-    registrations: {
-      type: Object,
-      default: () => ({})
-    }
+    // registrations: {
+    //   type: Object,
+    //   default: () => ({})
+    // }
   },
   components: {
-    "registrations-chart": RegistrationsChart
+    RegistrationsChart
   },
   computed: {
     generalInfo() {
@@ -208,13 +207,7 @@ export default {
             (!Array.isArray(entry[1]) || entry[1].length > 0)
         )
       );
-    },
-    logdata() {
-      console.log(this.registrations);
-    } /*,
-    render() {
-      this.$options.histogram.render(???);
-    }*/
+    }
   }
 };
 </script>

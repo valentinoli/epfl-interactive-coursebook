@@ -326,6 +326,11 @@ function getSubgraphNodes({
   return nodes;
 }
 
+function getCourseRegistrations(id) {
+  const isa = getItem("isa");
+  return isa[id];
+}
+
 export default {
   loadAllData,
   getAllLevels,
@@ -335,5 +340,6 @@ export default {
   getAllCourseFilterOptions,
   getCourseById,
   getLinksAndNeighborhoods,
-  getSubgraphNodes
+  getSubgraphNodes,
+  getCourseRegistrations
 };

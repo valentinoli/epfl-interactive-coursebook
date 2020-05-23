@@ -66,13 +66,7 @@
 
 <script>
 import Graph from "@/d3/graph";
-import {
-  schemeCategory10,
-  schemeDark2,
-  schemePaired,
-  schemeSet1,
-  schemeTableau10
-} from "d3-scale-chromatic";
+import colors from "@/d3/colors";
 import api from "@/services/api";
 
 export default {
@@ -154,14 +148,6 @@ export default {
       value: "section",
       text: "Section"
     }
-  ],
-  colors: [
-    // Slice grey colors
-    ...schemeCategory10.slice(0, -3),
-    ...schemeDark2.slice(0, -1),
-    ...schemePaired,
-    ...schemeSet1.slice(0, -1),
-    ...schemeTableau10.slice(0, -1)
   ],
   mounted() {
     const graph = new Graph(this);
@@ -255,7 +241,7 @@ export default {
         }).map(([param, values]) => [
           param,
           Object.fromEntries(
-            values.map((key, index) => [key, this.$options.colors[index]])
+            values.map((key, index) => [key, colors[index]])
           )
         ])
       );
