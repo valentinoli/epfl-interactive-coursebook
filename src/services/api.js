@@ -46,8 +46,7 @@ async function loadAllData() {
     ...v
   }));
 
-  setItem("courses", coursesObject);
-  setItem("coursesArray", coursesArray);
+  setItem("courses", coursesArray);
 }
 
 /**
@@ -131,11 +130,8 @@ function getAllCourseFilterOptions() {
  * @returns {Object} matched course
  */
 function getCourseById(id) {
-  const coursesObject = getItem("courses");
-  return {
-    id,
-    ...coursesObject[id]
-  };
+  const coursesArray = getItem("courses");
+  return coursesArray.find(c => c.id === id);
 }
 
 /**
@@ -144,7 +140,7 @@ function getCourseById(id) {
  * @returns {Array} filtered array of course Objects
  */
 function getCoursesByIds(ids) {
-  const coursesArray = getItem("coursesArray");
+  const coursesArray = getItem("courses");
 
   if (!ids) {
     // All courses if ids is not provided

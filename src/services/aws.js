@@ -1,12 +1,10 @@
 import AWS from "aws-sdk";
-// import dotenv from 'dotenv'
-// dotenv.config()
 
 const {
-  VUE_APP_CLOUDCUBE_ACCESS_KEY_ID: accessKeyId,
-  VUE_APP_CLOUDCUBE_SECRET_ACCESS_KEY: secretAccessKey,
-  VUE_APP_BUCKETNAME: bucketName,
-  VUE_APP_CUBENAME: cubeName
+  VUE_APP_BUCKETEER_AWS_ACCESS_KEY_ID: accessKeyId,
+  VUE_APP_BUCKETEER_AWS_SECRET_ACCESS_KEY: secretAccessKey,
+  VUE_APP_BUCKETEER_BUCKET_NAME: bucketName,
+  VUE_APP_BUCKETEER_AWS_REGION: region
 } = process.env;
 
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Credentials.html
@@ -14,7 +12,8 @@ AWS.config.credentials = new AWS.Credentials(accessKeyId, secretAccessKey);
 
 // Create a new service object
 const s3 = new AWS.S3({
-  apiVersion: "2006-03-01"
+  apiVersion: "2006-03-01",
+  region
 });
 
 /**
@@ -29,7 +28,7 @@ const getObject = key => {
     s3.getObject(
       {
         Bucket: bucketName,
-        Key: `${cubeName}/${key}`
+        Key: `dviz/${key}`
       },
       (err, data) => {
         if (err) reject(err);
