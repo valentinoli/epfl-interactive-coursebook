@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-row class="course-detail">
-      <v-col cols="12" md="6" class="d-flex flex-column">
+    <v-row class="course-detail mx-1">
+      <v-col cols="12" md="2" xl="3" class="d-flex flex-column">
         <!-- General -->
         <v-card>
           <v-card-title class="d-flex justify-space-between">
@@ -28,7 +28,7 @@
           </v-list>
         </v-card>
       </v-col>
-      <v-col cols="12" md="6" class="d-flex flex-column">
+      <v-col cols="12" md="2" xl="3" class="d-flex flex-column">
         <!-- Notes -->
         <v-alert v-if="note" type="info">
           {{ noteCleaned }}
@@ -82,23 +82,7 @@
           </v-list>
         </v-card>
       </v-col>
-      <!-- <v-col cols="12" md="3" class="d-flex flex-column">
-        <v-card v-if="in_the_programs.length > 0">
-          <v-card-title>Programs</v-card-title>
-          <v-card-text>
-            <div
-              class="text--primary"
-              v-for="(val, idx) in in_the_programs"
-              :key="idx"
-            >
-              {{ val.join(", ") }}
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col> -->
-    </v-row>
-    <v-row>
-      <v-col cols="12" class="d-flex flex-column">
+      <v-col cols="12" md="8" xl="6" class="d-flex flex-column">
         <!-- Registrations -->
         <RegistrationsChart :id="id" />
       </v-col>

@@ -1,5 +1,5 @@
 <template>
-  <v-row class="list">
+  <v-row class="list mx-1">
     <v-col align="center">
       <v-list dense rounded two-line flat width="100%">
         <v-pagination
@@ -8,14 +8,15 @@
           :length="pages"
           circle
           total-visible="10"
+          class="mb-4"
         />
 
         <v-list-item-group>
           <v-row align="center">
             <v-col
               cols="12"
-              sm="6"
-              md="4"
+              sm="4"
+              md="3"
               lg="3"
               xl="2"
               v-for="{ id, name, specs } in coursesDisplayed"
@@ -44,6 +45,14 @@
           </v-row>
         </v-list-item-group>
       </v-list>
+      <v-pagination
+        v-if="courses.length > 0 && $vuetify.breakpoint.smAndDown"
+        v-model="page"
+        :length="pages"
+        circle
+        total-visible="10"
+        class="mb-4"
+      />
       <div>
         {{ pageInfo }}
       </div>

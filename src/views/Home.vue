@@ -6,132 +6,133 @@
 
     <SkeletonLoader v-else-if="loading" />
 
-    <!-- <v-row v-else class="home-content">
-      <v-col cols="12" md="4" xl="3">
-        <v-sheet
-          style="position: relative;"
-        > -->
-    <!-- <v-container class="fill-height">
-            <v-row align="center" justify="center">
+    <v-slide-x-transition>
+      <v-btn
+        v-if="showDrawerChevron"
+        @mouseover="drawer = true"
+        color="white"
+        height="60"
+        class="drawer-chevron pr-0"
+      >
+        <v-icon large right color="red">mdi-chevron-right</v-icon>
+      </v-btn>
+    </v-slide-x-transition>
 
-            </v-row>
-          </v-container> -->
+    <v-navigation-drawer
+      v-model="drawer"
+      app
+      temporary
+      width="375"
+      :overlay-opacity="0.1"
+    >
+      <div class="pa-5">
+        <p class="subtitle-1">
+          Hierarchical filters
+        </p>
+        <Select
+          :value.sync="selectedLevel"
+          :items="$options.levels"
+          :autofocus="true"
+          label="Select level"
+        />
 
-    <v-navigation-drawer v-model="drawer" app temporary width="500">
-      <v-card>
-        <v-row class="flex-column" justify="center" align="center">
-          <!-- Hierarchical filters -->
-          <v-col cols="auto" sm="7" md="12" class="filters__hierarchical">
-            <p class="subtitle-1">
-              Hierarchical filters
-            </p>
-            <Select
-              :value.sync="selectedLevel"
-              :items="$options.levels"
-              :autofocus="true"
-              label="Select level"
-            />
+        <Select
+          :enabled="programEnabled"
+          :value.sync="selectedProgram"
+          :items="programs"
+          :key="selectedLevel || `noprogram`"
+          label="Select program"
+        />
 
-            <Select
-              :enabled="programEnabled"
-              :value.sync="selectedProgram"
-              :items="programs"
-              :key="selectedLevel || `noprogram`"
-              label="Select program"
-            />
+        <Select
+          :enabled="masterspecsEnabled"
+          :value.sync="selectedMasterspec"
+          :items="masterspecs"
+          :key="selectedProgram || `nospec`"
+          label="Select specialization"
+        >
+          <template v-slot:item-data="{ item }">
+            <img class="spec-icon" :src="item.iconUrl" />
+            <span>{{ item.text }}</span>
+          </template>
+          <template v-slot:selection-data="{ item }">
+            <div class="d-flex align-start mt-2">
+              <img class="spec-icon" :src="item.iconUrl" />
+              <span>{{ item.text }}</span>
+            </div>
+          </template>
+        </Select>
 
-            <Select
-              :enabled="masterspecsEnabled"
-              :value.sync="selectedMasterspec"
-              :items="masterspecs"
-              :key="selectedProgram || `nospec`"
-              label="Select specialization"
-            >
-              <template v-slot:item-data="{ item }">
-                <img class="spec-icon" :src="item.iconUrl" />
-                <span>{{ item.text }}</span>
-              </template>
-              <template v-slot:selection-data="{ item }">
-                <div class="d-flex align-start mt-2">
-                  <img class="spec-icon" :src="item.iconUrl" />
-                  <span>{{ item.text }}</span>
-                </div>
-              </template>
-            </Select>
-          </v-col>
+        <p class="subtitle-1">
+          Global filters
+        </p>
+        <Select
+          :value.sync="selectedSection"
+          :items="sections"
+          :key="selectedSection || `nosection`"
+          label="Select section"
+        />
 
-          <!-- Global filters -->
-          <v-col cols="auto" sm="7" md="12" class="filters__global">
-            <p class="subtitle-1">
-              Global filters
-            </p>
-            <Select
-              :value.sync="selectedSection"
-              :items="sections"
-              :key="selectedSection || `nosection`"
-              label="Select section"
-            />
+        <Select
+          :value.sync="selectedCredits"
+          :items="credits"
+          :key="selectedCredits || `nocredits`"
+          label="Select credits"
+        />
 
-            <Select
-              :value.sync="selectedCredits"
-              :items="credits"
-              :key="selectedCredits || `nocredits`"
-              label="Select credits"
-            />
+        <Select
+          :value.sync="selectedSemester"
+          :items="semesters"
+          :key="selectedSemester || `nosemester`"
+          label="Select semester"
+        />
 
-            <Select
-              :value.sync="selectedSemester"
-              :items="semesters"
-              :key="selectedSemester || `nosemester`"
-              label="Select semester"
-            />
-          </v-col>
-
-          <v-col cols="auto" sm="7" md="12" class="filters__autocompletes">
-            <p class="subtitle-1">
-              Search tools
-            </p>
-            <!-- Course cherry-picker -->
-            <v-autocomplete
-              v-model="courseCherries"
-              :items="nodesFiltered"
-              :item-value="item => item"
-              :item-text="({ id, name }) => `${id} - ${name}`"
-              append-icon="mdi-magnify"
-              label=""
-              placeholder="Search filtered courses..."
-              menu-props="closeOnContentClick"
-              multiple
-              hide-no-data
-              hide-details
+        <p class="subtitle-1">
+          Search tools
+        </p>
+        <v-autocomplete
+          v-model="courseCherries"
+          :items="nodesFiltered"
+          :item-value="item => item"
+          :item-text="({ id, name }) => `${id} ${name}`"
+          append-icon="mdi-magnify"
+          label=""
+          placeholder="Search filtered courses..."
+          menu-props="closeOnContentClick"
+          multiple
+          hide-no-data
+          hide-details
+          outlined
+        >
+          <template v-slot:selection="{ item }">
+            <v-chip
               outlined
+              close
+              @click:close="removeCourseCherry(item.id)"
+              :title="item.name"
             >
-              <template v-slot:selection="{ item }">
-                <v-chip
-                  outlined
-                  close
-                  @click:close="removeCourseCherry(item.id)"
-                  :title="item.name"
-                >
-                  {{ item.id }}
-                </v-chip>
-              </template>
-            </v-autocomplete>
-          </v-col>
-        </v-row>
-      </v-card>
+              {{ item.id }}
+            </v-chip>
+          </template>
+        </v-autocomplete>
+      </div>
     </v-navigation-drawer>
-    <!-- </v-sheet>
-      </v-col> -->
+
     <v-row>
       <v-col cols="12" class="view-pane d-flex flex-column">
-        <div class="d-flex flex-column flex-md-row mb-2 view-pane__tabs">
-          <v-btn color="pink" dark @click.stop="drawer = !drawer">
-            Filter
+        <div
+          class="d-flex flex-column flex-md-row align-center mb-2 pl-4 view-pane__tabs"
+        >
+          <v-btn
+            @click.stop="drawer = true"
+            outlined
+            color="red"
+            class="mb-2 mb-md-0 mr-md-5"
+          >
+            <v-icon left>mdi-filter-outline</v-icon> Filters
           </v-btn>
           <v-tabs
             v-model="mainTab"
-            hide-slider
             optional
             :centered="$vuetify.breakpoint.smAndDown"
             class="mb-2 mb-md-0"
@@ -201,6 +202,8 @@ export default {
     return {
       currentComponent: "CourseViz",
       drawer: null,
+      showDrawerChevron: false,
+
       // Tab indices
       mainTab: 0,
       courseTab: undefined,
@@ -269,6 +272,14 @@ export default {
     } finally {
       this.loading = false;
     }
+
+    window.addEventListener("mousemove", ({ clientX }) => {
+      if (clientX < 10) {
+        this.showDrawerChevron = true;
+      } else {
+        this.showDrawerChevron = false;
+      }
+    });
   },
   watch: {
     selectedLevel() {
@@ -516,6 +527,18 @@ export default {
 .filters-pane .v-select,
 .filters-pane .v-autocomplete {
   width: 100%;
+}
+
+.drawer-chevron {
+  margin-left: -35px;
+
+  position: fixed;
+  left: 0;
+  top: 50%;
+  z-index: 2;
+
+  border-top-right-radius: 50%;
+  border-bottom-right-radius: 50%;
 }
 </style>
 
