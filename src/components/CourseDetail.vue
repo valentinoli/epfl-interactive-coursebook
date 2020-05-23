@@ -27,6 +27,16 @@
             </v-list-item>
           </v-list>
         </v-card>
+      </v-col>
+      <v-col cols="12" md="6" class="d-flex flex-column">
+        <!-- Notes -->
+        <v-alert v-if="note" type="info">
+          {{ noteCleaned }}
+        </v-alert>
+
+        <v-alert v-if="number_of_places" type="info">
+          {{ `Limited number of places: ${number_of_places}` }}
+        </v-alert>
 
         <!-- Ingoing/Outgoing prerequisites -->
         <template
@@ -47,16 +57,6 @@
           </v-card>
         </template>
 
-        <!-- Notes -->
-        <v-alert v-if="note" type="info">
-          {{ noteCleaned }}
-        </v-alert>
-
-        <v-alert v-if="number_of_places" type="info">
-          {{ `Limited number of places: ${number_of_places}` }}
-        </v-alert>
-      </v-col>
-      <v-col cols="12" md="6" class="d-flex flex-column">
         <!-- Lecturers -->
         <v-card v-if="lecturers.length > 0" class="lecturers">
           <v-card-title>Lecturers</v-card-title>
@@ -152,13 +152,13 @@ export default {
     outgoing: {
       type: Array,
       default: () => []
-    }
+    },
 
     // Registrations
-    // registrations: {
-    //   type: Object,
-    //   default: () => ({})
-    // }
+    registrations: {
+      type: Object,
+      default: () => ({})
+    }
   },
   components: {
     RegistrationsChart

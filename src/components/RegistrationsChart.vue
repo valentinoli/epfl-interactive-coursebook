@@ -9,15 +9,16 @@ export default {
   props: {
     id: String
   },
+  watch: {
+    id() {
+      this.render();
+    }
+  },
   mounted() {
-    console.log("mounted");
-    const datacollection = this.getDataCollection();
-    const options = this.getOptions(datacollection.datasets);
-    this.renderChart(datacollection, options);
+    this.render();
   },
   methods: {
     getDataCollection() {
-      // mapping key:value to {year: key, registrations: value}
       const registrations = api.getCourseRegistrations(this.id);
       const entries = Object.entries(registrations).slice(-6, -1);
       const years = Object.keys(registrations).slice(-6, -1);
@@ -109,10 +110,14 @@ export default {
           }
         },
         responsive: true,
-        maintainAspectRatio: false,
-        height: 200
+        maintainAspectRatio: false
       };
       return options;
+    },
+    render() {
+      const datacollection = this.getDataCollection();
+      const options = this.getOptions(datacollection.datasets);
+      this.renderChart(datacollection, options);
     }
   }
 };
