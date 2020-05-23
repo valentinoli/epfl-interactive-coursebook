@@ -95,7 +95,7 @@ export default {
         },
         legend: {
           display: true,
-          position: "top"
+          position: "bottom"
         },
         tooltips: {
           enabled: true,
@@ -110,8 +110,7 @@ export default {
           }
         },
         responsive: true,
-        maintainAspectRatio: false,
-        height: 200
+        maintainAspectRatio: false
       };
       return options;
     },

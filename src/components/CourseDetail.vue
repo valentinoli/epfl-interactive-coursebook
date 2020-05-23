@@ -37,7 +37,7 @@
         <v-alert v-if="number_of_places" type="info">
           {{ `Limited number of places: ${number_of_places}` }}
         </v-alert>
-        
+
         <!-- Ingoing/Outgoing prerequisites -->
         <template
           v-for="{ courses, title } in [
@@ -152,13 +152,13 @@ export default {
     outgoing: {
       type: Array,
       default: () => []
-    }
+    },
 
     // Registrations
-    // registrations: {
-    //   type: Object,
-    //   default: () => ({})
-    // }
+    registrations: {
+      type: Object,
+      default: () => ({})
+    }
   },
   components: {
     RegistrationsChart
