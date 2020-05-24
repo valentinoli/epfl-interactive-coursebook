@@ -66,7 +66,7 @@
 
 <script>
 import Graph from "@/d3/graph";
-import colors from "@/d3/colors";
+import {programColors: colors} from "@/d3/colors";
 import api from "@/services/api";
 
 export default {
