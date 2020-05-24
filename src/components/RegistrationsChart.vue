@@ -2,6 +2,7 @@
 import { Bar } from "vue-chartjs";
 import api from "@/services/api";
 import colors from "@/d3/colors";
+console.log(colors);
 
 export default {
   extends: Bar,
@@ -11,10 +12,16 @@ export default {
   },
   watch: {
     id() {
+      if (this.$data._chart) {
+        this.$data._chart.destroy();
+      }
       this.render();
     }
   },
   mounted() {
+    if (this.$data._chart) {
+      this.$data._chart.destroy();
+    }
     this.render();
   },
   methods: {
@@ -44,8 +51,12 @@ export default {
 
       const datasets = programs.map((program, index) => ({
         label: program,
-        backgroundColor: colors[index],
-        data: []
+        hoverBackgroundColor: colors[index],
+        backgroundColor: "#455A64",
+        borderColor: "#455A64",
+        data: [],
+        borderWidth: 0,
+        borderSkipped: 'bottom'
       }));
 
       years.forEach(year => {
@@ -94,9 +105,15 @@ export default {
           ]
         },
         legend: {
-          display: true,
+          display: false,
           position: "bottom"
         },
+        elements: {
+            arc: {
+                borderWidth: 0
+            }
+        },
+        segmentShowStroke: false,
         tooltips: {
           enabled: true,
           mode: "single",
@@ -107,7 +124,8 @@ export default {
             label: function({ yLabel }) {
               return `${yLabel} students`;
             }
-          }
+          },
+          displayColors: false
         },
         responsive: true,
         maintainAspectRatio: false
