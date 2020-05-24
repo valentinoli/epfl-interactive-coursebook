@@ -66,7 +66,7 @@
 
 <script>
 import Graph from "@/d3/graph";
-import {programColors: colors} from "@/d3/colors";
+import { categoricalColors } from "@/d3/colors";
 import api from "@/services/api";
 
 export default {
@@ -240,7 +240,9 @@ export default {
           semester: semesters
         }).map(([param, values]) => [
           param,
-          Object.fromEntries(values.map((key, index) => [key, colors[index]]))
+          Object.fromEntries(
+            values.map((key, index) => [key, categoricalColors[index]])
+          )
         ])
       );
       // --> { credits: { 6: #color, 4: #color2, ... }, ...}

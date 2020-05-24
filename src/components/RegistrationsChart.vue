@@ -1,7 +1,7 @@
 <script>
 import { Bar } from "vue-chartjs";
 import api from "@/services/api";
-import {programColors} from "@/d3/colors";
+import { categoricalColors } from "@/d3/colors";
 
 export default {
   extends: Bar,
@@ -50,12 +50,12 @@ export default {
 
       const datasets = programs.map((program, index) => ({
         label: program,
-        hoverBackgroundColor: programColors[index],
+        hoverBackgroundColor: categoricalColors[index],
         backgroundColor: "#424242",
         borderColor: "#424242",
         data: [],
         borderWidth: 0,
-        borderSkipped: 'bottom'
+        borderSkipped: "bottom"
       }));
 
       years.forEach(year => {
@@ -108,9 +108,9 @@ export default {
           position: "bottom"
         },
         elements: {
-            arc: {
-                borderWidth: 0
-            }
+          arc: {
+            borderWidth: 0
+          }
         },
         segmentShowStroke: false,
         tooltips: {
