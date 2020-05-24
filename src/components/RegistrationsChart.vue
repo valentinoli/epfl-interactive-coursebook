@@ -1,8 +1,7 @@
 <script>
 import { Bar } from "vue-chartjs";
 import api from "@/services/api";
-import colors from "@/d3/colors";
-console.log(colors);
+import {programColors} from "@/d3/colors";
 
 export default {
   extends: Bar,
@@ -51,9 +50,9 @@ export default {
 
       const datasets = programs.map((program, index) => ({
         label: program,
-        hoverBackgroundColor: colors[index],
-        backgroundColor: "#455A64",
-        borderColor: "#455A64",
+        hoverBackgroundColor: programColors[index],
+        backgroundColor: "#424242",
+        borderColor: "#424242",
         data: [],
         borderWidth: 0,
         borderSkipped: 'bottom'
