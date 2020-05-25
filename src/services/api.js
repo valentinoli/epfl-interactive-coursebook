@@ -26,6 +26,10 @@ function isDataLoaded() {
  */
 async function loadAllData() {
   const loaded = isDataLoaded();
+
+  // Remove deprecated coursesArray key to avoid QuotaExceededError
+  window.localStorage.removeItem("coursesArray");
+
   if (!loaded) {
     // Clear local storage before loading
     window.localStorage.clear();

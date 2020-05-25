@@ -31,10 +31,10 @@
 
     <v-content>
       <template v-if="error">
-        <v-row>
-          <v-col>
-            <v-alert type="error">
-              Data loading failed
+        <v-row class="justify-center">
+          <v-col cols="12" md="8" xl="6">
+            <v-alert type="warning" class="ma-5">
+              {{ error }}
             </v-alert>
           </v-col>
         </v-row>
@@ -93,14 +93,30 @@ export default {
     SkeletonLoader
   },
   async beforeCreate() {
-    console.log("before create");
     try {
       // Load all data to local storage
       // if it hasn't been loaded already
       await api.loadAllData();
     } catch (err) {
+      if (err instanceof DOMException && err.name === "SecurityError") {
+        this.error = `
+          Your browser is configured to block cookies and other site data.
+          This site relies on your browser's local storage and can't be viewed
+          unless you allow it to save and read data.
+        `;
+      } else if (err instanceof DOMException && (err.name === "QuotaExceededError" || err.code === 22)) {
+        window.localStorage.clear();
+        this.error = `
+          Your browser's local storage has exceeded its quota.
+          Please try refreshing your browser.
+        `;
+      } else {
+        this.error = `
+          Some error occured when loading site data.
+          Please try again later or contact the site administrator.
+        `;
+      }
       console.error(err);
-      this.error = err;
     } finally {
       this.loading = false;
     }
