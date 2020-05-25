@@ -149,6 +149,12 @@ export default {
       text: "Section"
     }
   ],
+  created() {
+    // Fetch course filter options
+    // Need to call this in created lifecycle hook to make
+    // sure data has been loaded into local storage
+    this.courseFilterOptions = api.getAllCourseFilterOptions();
+  },
   mounted() {
     const graph = new Graph(this);
     this.$options.graph = graph;
@@ -230,7 +236,9 @@ export default {
       this.$options.graph.render(nodesUnique, links);
     },
     createColorMaps() {
-      const { credits, sections, semesters } = api.getAllCourseFilterOptions();
+      const {
+        courseFilterOptions: { credits, sections, semesters }
+      } = this;
 
       // Rename plural to singular to match course prop key
       this.$options.colorMaps = Object.fromEntries(
