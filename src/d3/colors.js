@@ -39,14 +39,13 @@ export const categoricalColors = [
   ...schemeTableau10.slice(0, -1)
 ];
 
-
 //fall: brown darken-1
 //spring: amber darken-1
 //fall/spring: cyan darken-1
 //inapplicable: blue-grey darken-1
 export const semesterColors = {
-  'Fall': '#6D4C41',
-  'Spring': '#FFB300',
-  'Fall/Spring': '#00ACC1',
-  'Inapplicable': '#546E7A'
+  Fall: "#6D4C41",
+  Spring: "#FFB300",
+  "Fall/Spring": "#00ACC1",
+  Inapplicable: "#546E7A"
 };

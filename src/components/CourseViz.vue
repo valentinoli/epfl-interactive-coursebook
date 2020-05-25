@@ -250,10 +250,9 @@ export default {
           param,
           Object.fromEntries(
             values.map((key, index) => {
-              if(param === 'credits'){
-                return [key, creditColors[index%creditColors.length].value];
-              }
-              else if(param === 'section'){
+              if (param === "credits") {
+                return [key, creditColors[index % creditColors.length].value];
+              } else if (param === "section") {
                 return [key, categoricalColors[index]];
               }
               //assume semester

@@ -104,7 +104,10 @@ export default {
           This site relies on your browser's local storage and can't be viewed
           unless you allow it to save and read data.
         `;
-      } else if (err instanceof DOMException && (err.name === "QuotaExceededError" || err.code === 22)) {
+      } else if (
+        err instanceof DOMException &&
+        (err.name === "QuotaExceededError" || err.code === 22)
+      ) {
         window.localStorage.clear();
         this.error = `
           Your browser's local storage has exceeded its quota.
