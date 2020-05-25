@@ -1,11 +1,5 @@
 <template>
   <v-container fluid class="home">
-    <v-row v-if="error">
-      <v-col>{{ error }}</v-col>
-    </v-row>
-
-    <SkeletonLoader v-else-if="loading" />
-
     <v-slide-x-transition>
       <v-btn
         v-if="showDrawerChevron"
@@ -187,7 +181,6 @@ import CourseViz from "@/components/CourseViz";
 import CourseList from "@/components/CourseList";
 import CourseDetail from "@/components/CourseDetail";
 import Select from "@/components/Select";
-import SkeletonLoader from "@/components/SkeletonLoader";
 
 export default {
   name: "Home",
@@ -195,8 +188,7 @@ export default {
     CourseViz,
     CourseList,
     CourseDetail,
-    Select,
-    SkeletonLoader
+    Select
   },
   data() {
     return {
@@ -259,19 +251,13 @@ export default {
       name: "List"
     }
   ],
-  async created() {
-    try {
-      await api.loadAllData();
-      // Don't need getters and setters for the levels
-      this.$options.levels = api.getAllLevels();
-      this.updateCourseGraph();
+  created() {
+    console.log("created");
+    // Don't need getters and setters for the levels
+    this.$options.levels = api.getAllLevels();
+    this.updateCourseGraph();
 
-      this.updateCourseFilters();
-    } catch (err) {
-      this.error = err;
-    } finally {
-      this.loading = false;
-    }
+    this.updateCourseFilters();
 
     window.addEventListener("mousemove", ({ clientX }) => {
       if (clientX < 10) {

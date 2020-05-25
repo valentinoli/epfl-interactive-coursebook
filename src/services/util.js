@@ -26,19 +26,12 @@ export const replaceUnderscore = str => str.replace(/_/g, " ");
 /**
  * Gets an item from browser's local storage
  * and parses it into a JS object.
- * If the item doesn't exist, the user is alerted and page is reloaded.
+ * Assumes all data has been loaded into storage
  * @param {string} key
  * @returns {Object} parsed object
  */
 export function getItem(key) {
   const val = item(key);
-
-  if (!val) {
-    window.alert(
-      "This site relies on your browser's local storage and needs to be refreshed"
-    );
-    window.location.reload();
-  }
 
   try {
     return JSON.parse(val);

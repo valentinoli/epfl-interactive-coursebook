@@ -8,45 +8,61 @@ import {
   specIconExt
 } from "./util";
 
+function isDataLoaded() {
+  const keys = [
+    "studyplans",
+    "links",
+    "isa",
+    "courses",
+    "programs",
+    "masterspecs"
+  ];
+
+  return keys.reduce((acc, key) => acc && key in localStorage, true);
+}
+
 /**
  * Fetch data from AWS and load it into browser's local storage
  */
 async function loadAllData() {
-  // Fetch data from AWS
-  const data = await getObject("master.json");
+  const loaded = isDataLoaded();
+  if (!loaded) {
+    // Clear local storage before loading
+    window.localStorage.clear();
 
-  // Cache data in localStorage
-  Object.entries(data).forEach(([key, val]) => {
-    setItem(key, val);
-  });
+    // Fetch data from AWS
+    const data = await getObject("master.json");
 
-  const links = getItem("links");
+    // Cache data in localStorage
+    Object.entries(data).forEach(([key, val]) => {
+      setItem(key, val);
+    });
 
-  // Store the courses as an array of objects too
-  // to have two different formats for convenience (and performance?)
-  const coursesObject = getItem("courses");
+    const courses = getItem("courses");
+    const links = getItem("links");
 
-  // Add ingoing and outgoing neighbor fields
-  Object.values(coursesObject).forEach(val => {
-    val.ingoing = [];
-    val.outgoing = [];
-  });
+    // Add ingoing and outgoing neighbor fields
+    Object.values(courses).forEach(val => {
+      val.ingoing = [];
+      val.outgoing = [];
+    });
 
-  // Populate ingoing and outgoing neighbors
-  links.forEach(({ source, target }) => {
-    const sourceCourse = coursesObject[source];
-    const targetCourse = coursesObject[target];
-    sourceCourse.outgoing.push({ id: target, name: targetCourse.name });
-    targetCourse.ingoing.push({ id: source, name: sourceCourse.name });
-  });
+    // Populate ingoing and outgoing neighbors
+    links.forEach(({ source, target }) => {
+      const sourceCourse = courses[source];
+      const targetCourse = courses[target];
+      sourceCourse.outgoing.push({ id: target, name: targetCourse.name });
+      targetCourse.ingoing.push({ id: source, name: sourceCourse.name });
+    });
 
-  // Object of key: Object pairs --> Array of Objects
-  const coursesArray = Object.entries(coursesObject).map(([id, v]) => ({
-    id,
-    ...v
-  }));
+    // Object of key: Object pairs --> Array of Objects
+    const coursesArray = Object.entries(courses).map(([id, v]) => ({
+      id,
+      ...v
+    }));
 
-  setItem("courses", coursesArray);
+    setItem("courses", coursesArray);
+  }
 }
 
 /**

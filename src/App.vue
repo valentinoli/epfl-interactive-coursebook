@@ -16,36 +16,37 @@
 
       <v-spacer></v-spacer>
 
-      <div class="d-none d-sm-none d-md-flex">
-        <v-btn to="/" exact text>
-          <span class="mr-2">Home</span>
-        </v-btn>
+      <div class="nav d-none d-sm-none d-md-flex">
+        <v-btn to="/" exact text> <v-icon left>mdi-home</v-icon> Home </v-btn>
 
         <v-btn to="/story" text>
-          <span class="mr-2">Story</span>
+          <v-icon left>mdi-book-open-page-variant</v-icon> Story
         </v-btn>
 
         <v-btn to="/about" text>
-          <span class="mr-2">About</span>
-        </v-btn>
-
-        <v-btn
-          href="https://github.com/com-480-data-visualization/com-480-project-vizcachas"
-          target="_blank"
-          text
-        >
-          <span class="mr-2">View on GitHub</span>
-          <img src="./assets/GitHub-Mark-32px.png" alt="Github Logo" />
+          <v-icon left>mdi-information-variant</v-icon> About
         </v-btn>
       </div>
     </v-app-bar>
 
     <v-content>
-      <transition name="fade">
+      <template v-if="error">
+        <v-row>
+          <v-col>
+            <v-alert type="error">
+              Data loading failed
+            </v-alert>
+          </v-col>
+        </v-row>
+      </template>
+      <template v-else-if="loading">
+        <SkeletonLoader />
+      </template>
+      <template v-else>
         <keep-alive>
           <router-view />
         </keep-alive>
-      </transition>
+      </template>
     </v-content>
 
     <v-footer
@@ -65,38 +66,65 @@
             target="_blank"
             class="contact-link"
           >
-            Contact
-          </a>
-        </span>
+            Contact</a
+          ></span
+        >
+        <v-btn
+          href="https://github.com/com-480-data-visualization/com-480-project-vizcachas"
+          target="_blank"
+          text
+          icon
+          title="View on GitHub"
+        >
+          <v-icon>mdi-github</v-icon>
+        </v-btn>
       </div>
     </v-footer>
   </v-app>
 </template>
 
 <script>
+import SkeletonLoader from "@/components/SkeletonLoader";
+import api from "@/services/api";
+
 export default {
   name: "App",
-
+  components: {
+    SkeletonLoader
+  },
+  async beforeCreate() {
+    console.log("before create");
+    try {
+      // Load all data to local storage
+      // if it hasn't been loaded already
+      await api.loadAllData();
+    } catch (err) {
+      console.error(err);
+      this.error = err;
+    } finally {
+      this.loading = false;
+    }
+  },
   data: () => ({
-    //
+    loading: true,
+    error: false
   })
 };
 </script>
 
 <style>
-.theme--light.v-btn--active::before {
+.theme--light.v-btn--router.v-btn--active::before {
   /* Override default style for active nav router link element */
   opacity: 0 !important;
 }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
+.nav .v-btn:not(:last-child) {
+  margin-right: 5px;
 }
 
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
+.nav .theme--light.v-btn--router.v-btn--active {
+  background-color: rgba(255, 0, 0, 0.7);
+  color: white;
 }
 
 .contact-link {
