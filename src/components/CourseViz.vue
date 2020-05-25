@@ -66,7 +66,7 @@
 
 <script>
 import Graph from "@/d3/graph";
-import { categoricalColors } from "@/d3/colors";
+import { categoricalColors, creditColors } from "@/d3/colors";
 import api from "@/services/api";
 
 export default {
@@ -241,7 +241,18 @@ export default {
         }).map(([param, values]) => [
           param,
           Object.fromEntries(
-            values.map((key, index) => [key, categoricalColors[index]])
+            values.map((key, index) => {
+              if(param === 'credits'){
+                return [key, creditColors[index%creditColors.length].value];
+              }
+              else if(param === 'section'){
+                return [key, categoricalColors[index]];
+              }
+              //assume semester
+              else {
+                return [key, categoricalColors[index]];
+              }
+            })
           )
         ])
       );
