@@ -7,7 +7,8 @@ export default {
   extends: Bar,
   name: "RegistrationsChart",
   props: {
-    id: String
+    id: String,
+    styles: { height: "500px" }
   },
   watch: {
     id() {
@@ -127,7 +128,15 @@ export default {
           displayColors: false
         },
         responsive: true,
-        maintainAspectRatio: false
+        maintainAspectRatio: false,
+        title: {
+            display: true,
+            text: 'Registrations per year',
+            fontFamily: "'Roboto', sans-serif",
+            fontSize: '20',
+            fontColor: 'black',
+            fontStyle: '500'
+        }
       };
       return options;
     },
@@ -135,8 +144,10 @@ export default {
       const datacollection = this.getDataCollection();
       const options = this.getOptions(datacollection.datasets);
       this.renderChart(datacollection, options);
-      this.styles = { height: "500px" };
     }
   }
 };
 </script>
+<style>
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+</style>
