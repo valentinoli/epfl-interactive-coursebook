@@ -134,7 +134,7 @@ export default {
             fontFamily: "'Roboto', sans-serif",
             fontSize: '20',
             fontColor: 'black',
-            fontStyle: 'normal'
+            fontStyle: '500'
         }
       };
       return options;
