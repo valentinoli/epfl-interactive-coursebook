@@ -124,11 +124,11 @@ export default {
     },
     {
       value: "indegree",
-      text: "In-degree"
+      text: "Requirements"
     },
     {
       value: "outdegree",
-      text: "Out-degree"
+      text: "Preparation for"
     }
   ],
   nodeColorMapParams: [
@@ -298,10 +298,10 @@ export default {
           }
         </div>
         <div>
-          In-degree: ${ingoing.length}
+          Requirements: ${ingoing.length}
         </div>
         <div>
-          Out-degree: ${outgoing.length}
+          Preparation for: ${outgoing.length}
         </div>
         <div>
           Section: ${section}
