@@ -66,7 +66,7 @@
 
 <script>
 import Graph from "@/d3/graph";
-import { categoricalColors, creditColors } from "@/d3/colors";
+import { categoricalColors, creditColors, semesterColors } from "@/d3/colors";
 import api from "@/services/api";
 
 export default {
@@ -258,7 +258,7 @@ export default {
               }
               //assume semester
               else {
-                return [key, categoricalColors[index]];
+                return [key, semesterColors[key]];
               }
             })
           )
