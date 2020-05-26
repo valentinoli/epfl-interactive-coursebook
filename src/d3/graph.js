@@ -11,6 +11,7 @@ export default class Graph {
   simulation;
   node;
   link;
+  zoom;
   isDragging = false;
   graphOpacity = 0.65;
   nodeStrokeWidth = 1;
@@ -29,9 +30,8 @@ export default class Graph {
 
     const minX = -width / 2;
     const minY = -height / 2;
-    //  const initialScale = 0.8;
 
-    const zoom = d3.zoom().on("zoom", this.zoomed.bind(this));
+    this.zoom = d3.zoom().on("zoom", this.zoomed.bind(this));
 
     // https://stackoverflow.com/questions/16178366/d3-js-set-initial-zoom-level
     const svg = container
@@ -39,17 +39,12 @@ export default class Graph {
       .attr("id", "graph_svg")
       .attr("cursor", "move")
       .attr("viewBox", [minX, minY, width, height])
-      .call(zoom);
+      .call(this.zoom);
 
     this.svg = svg
       // append a <g> to apply the transform globally on all elements
       .append("g")
       .attr("id", "graph_g");
-    // Set initial zoom level
-    //.attr("transform", `scale(${initialScale}, ${initialScale})`);
-
-    // Set initial zoom level, calls this.zoomed()
-    //svg.call(zoom.transform, d3.zoomIdentity.scale(initialScale));
 
     // Arrow markers for directed edges
     const { arrowMarkerWidth: mWidth } = this;
@@ -88,11 +83,14 @@ export default class Graph {
     this.node = this.svg.append("g").selectAll("circle");
   }
 
-  centerGraph(size) {
-    const initialScale = 1/Math.log(size);
-    const zoom = d3.zoom().on("zoom", this.zoomed.bind(this));
+  centerGraph() {
+    // Set initial scale depending on the number of links in the graph
+    const numLinks = this.link._groups[0].length;
+    const initialScale = 1 / Math.log(numLinks);
+
     d3.select("#graph_svg").call(
-      zoom.transform,
+      // Set initial zoom level, calls this.zoomed()
+      this.zoom.transform,
       d3.zoomIdentity.scale(initialScale)
     );
   }

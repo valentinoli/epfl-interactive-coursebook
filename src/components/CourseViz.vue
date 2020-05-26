@@ -17,14 +17,6 @@
         ></v-switch>
       </div>
       <div class="d-flex">
-        <v-btn
-          @click="centerGraph()"
-          outlined
-          color="red"
-          class="mb-2 mb-md-0 mr-md-5"
-        >
-          Center
-        </v-btn>
         <v-select
           v-model="nodeSizeParam"
           :items="$options.nodeSizeParams"
@@ -48,7 +40,23 @@
       </div>
     </div>
 
-    <div id="viz-svg" class="flex-grow-1"></div>
+    <div id="viz-svg" class="flex-grow-1">
+      <v-tooltip left>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            v-on="on"
+            @click="centerGraph()"
+            absolute
+            top
+            right
+            icon
+          >
+            <v-icon>mdi-crosshairs-gps</v-icon>
+          </v-btn>
+        </template>
+        <span>Reset position</span>
+      </v-tooltip>
+    </div>
     <v-tooltip
       v-model="courseTooltip"
       attach="#app"
@@ -170,8 +178,6 @@ export default {
     this.createColorMaps();
     this.nodeColorMap = this.$options.colorMaps["semester"];
     this.render();
-    this.centerGraph();
-
 
     // Check for touch interface
     // We want to offer a friendly experience to touch device users
@@ -195,44 +201,25 @@ export default {
   watch: {
     subgraphNodes() {
       this.render();
-      this.centerGraph();
     },
     ingoingToggled() {
       this.render();
-      this.centerGraph();
     },
     outgoingToggled() {
       this.render();
-      this.centerGraph();
     },
     nodeSizeParam() {
       this.render();
-      this.centerGraph();
     },
     nodeColorMapParam(param) {
       // Color map is updated when user changes the node color param
       this.nodeColorMap = this.$options.colorMaps[param];
       this.render();
-      this.centerGraph();
     }
   },
   methods: {
     centerGraph() {
-      const {
-        subgraphLinks,
-        ingoingLinks,
-        outgoingLinks,
-        ingoingToggled,
-        outgoingToggled
-      } = this;
-
-      const links = [
-        ...subgraphLinks,
-        ...(ingoingToggled ? ingoingLinks : []),
-        ...(outgoingToggled ? outgoingLinks : [])
-      ];
-
-      this.$options.graph.centerGraph(links.length);
+      this.$options.graph.centerGraph();
     },
     render() {
       const {
@@ -266,6 +253,9 @@ export default {
       ];
 
       this.$options.graph.render(nodesUnique, links);
+
+      // Center graph on render
+      this.centerGraph();
     },
     createColorMaps() {
       const {
@@ -388,6 +378,7 @@ export default {
 #viz-svg {
   width: 100%;
   margin: 0 3px;
+  position: relative;
 }
 
 #viz-toolbar {
