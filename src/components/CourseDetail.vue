@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row class="course-detail mx-1">
-      <v-col cols="12" md="2" xl="3" class="d-flex flex-column">
+      <v-col cols="12" md="3" xl="4" class="d-flex flex-column">
         <!-- General -->
         <v-card>
           <v-card-title class="d-flex justify-space-between">
@@ -28,7 +28,7 @@
           </v-list>
         </v-card>
       </v-col>
-      <v-col cols="12" md="2" xl="3" class="d-flex flex-column">
+      <v-col cols="12" md="3" xl="4" class="d-flex flex-column">
         <!-- Notes -->
         <v-alert v-if="note" type="info">
           {{ noteCleaned }}
@@ -61,7 +61,10 @@
         <v-card v-if="lecturers.length > 0" class="lecturers">
           <v-card-title>Lecturers</v-card-title>
           <v-card-text>
-            <div v-for="[name, url] in lecturers" :key="url">
+            <div v-for="[name, url, src] in lecturers" :key="url" class="mb-3">
+              <v-avatar color="grey" size="40" class="mr-2">
+                <img :src="`https://people.epfl.ch${src}`" :alt="name" />
+              </v-avatar>
               <a :href="url" target="_blank">{{ name }}</a
               >&nbsp;
               <v-icon x-small>mdi-open-in-new</v-icon>
@@ -82,7 +85,7 @@
           </v-list>
         </v-card>
       </v-col>
-      <v-col cols="12" md="8" xl="6" class="d-flex flex-column">
+      <v-col cols="12" md="6" xl="4" class="d-flex flex-column">
         <!-- Registrations -->
         <RegistrationsChart :id="id" />
       </v-col>

@@ -43,14 +43,7 @@
     <div id="viz-svg" class="flex-grow-1">
       <v-tooltip left>
         <template v-slot:activator="{ on }">
-          <v-btn
-            v-on="on"
-            @click="centerGraph()"
-            absolute
-            top
-            right
-            icon
-          >
+          <v-btn v-on="on" @click="centerGraph()" absolute top right icon>
             <v-icon>mdi-crosshairs-gps</v-icon>
           </v-btn>
         </template>
