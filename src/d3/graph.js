@@ -1,9 +1,20 @@
-import * as d3 from "d3";
+// Import d3.event as d3event to avoid conflicts with the window.event global
+import { select, selectAll, mouse, event as d3event } from "d3-selection";
+import {
+  forceManyBody,
+  forceX,
+  forceY,
+  forceSimulation,
+  forceLink
+} from "d3-force";
+import { zoom, zoomIdentity } from "d3-zoom";
+import { transition } from "d3-transition";
+import { easeLinear } from "d3-ease";
+import { drag } from "d3-drag";
 
-const t = d3
-  .transition()
+const t = transition()
   .duration(1000)
-  .ease(d3.easeLinear);
+  .ease(easeLinear);
 
 export default class Graph {
   vue;
@@ -11,7 +22,7 @@ export default class Graph {
   simulation;
   node;
   link;
-  zoom;
+  zoomBehavior;
   isDragging = false;
   graphOpacity = 0.65;
   nodeStrokeWidth = 1;
@@ -24,14 +35,14 @@ export default class Graph {
     // We want access to the vue component
     this.vue = vue;
 
-    const container = d3.select("#viz-svg");
+    const container = select("#viz-svg");
     const width = parseFloat(container.style("width"));
     const height = parseFloat(container.style("height"));
 
     const minX = -width / 2;
     const minY = -height / 2;
 
-    this.zoom = d3.zoom().on("zoom", this.zoomed.bind(this));
+    this.zoomBehavior = zoom().on("zoom", this.zoomed.bind(this));
 
     // https://stackoverflow.com/questions/16178366/d3-js-set-initial-zoom-level
     const svg = container
@@ -39,7 +50,7 @@ export default class Graph {
       .attr("id", "graph_svg")
       .attr("cursor", "move")
       .attr("viewBox", [minX, minY, width, height])
-      .call(this.zoom);
+      .call(this.zoomBehavior);
 
     this.svg = svg
       // append a <g> to apply the transform globally on all elements
@@ -64,19 +75,17 @@ export default class Graph {
       .attr("fill", this.linkStroke)
       .style("stroke", "none");
 
-    this.simulation = d3
-      .forceSimulation()
-      .force("charge", d3.forceManyBody().strength(-200))
+    this.simulation = forceSimulation()
+      .force("charge", forceManyBody().strength(-200))
       .force(
         "link",
-        d3
-          .forceLink()
+        forceLink()
           .distance(70)
           .strength(0.5)
           .id(d => d.id)
       )
-      .force("x", d3.forceX().strength(0.07))
-      .force("y", d3.forceY().strength(0.07))
+      .force("x", forceX().strength(0.07))
+      .force("y", forceY().strength(0.07))
       .on("tick", this.ticked.bind(this));
 
     this.link = this.svg.append("g").selectAll("line");
@@ -88,15 +97,15 @@ export default class Graph {
     const numLinks = this.link._groups[0].length;
     const initialScale = 1 / Math.log(numLinks);
 
-    d3.select("#graph_svg").call(
+    select("#graph_svg").call(
       // Set initial zoom level, calls this.zoomed()
-      this.zoom.transform,
-      d3.zoomIdentity.scale(initialScale)
+      this.zoomBehavior.transform,
+      zoomIdentity.scale(initialScale)
     );
   }
 
   zoomed() {
-    this.svg.attr("transform", d3.event.transform);
+    this.svg.attr("transform", d3event.transform);
   }
 
   computeNodeRadius({ credits, registrations, ingoing, outgoing }) {
@@ -314,7 +323,7 @@ export default class Graph {
       this.vue.showCourseTooltip(d);
 
       const selectedId = this.nodeId(d.id);
-      const selectedNode = d3.select(`#${selectedId}`);
+      const selectedNode = select(`#${selectedId}`);
       const {
         ingoing,
         outgoing,
@@ -339,7 +348,7 @@ export default class Graph {
           const neighborsNodeIds = [...ingoing, ...outgoing].map(
             ({ id }) => `#${this.nodeId(id)}`
           );
-          const neighborNodes = d3.selectAll(neighborsNodeIds.join(", "));
+          const neighborNodes = selectAll(neighborsNodeIds.join(", "));
           neighborNodes.attr("opacity", highOpacity);
 
           const neighborsLinkIds = [
@@ -350,7 +359,7 @@ export default class Graph {
               ({ id }) => `#${this.linkId({ source: d.id, target: id })}`
             )
           ];
-          const neighborLinks = d3.selectAll(neighborsLinkIds.join(", "));
+          const neighborLinks = selectAll(neighborsLinkIds.join(", "));
           neighborLinks
             .attr("stroke-opacity", highOpacity)
             .attr("opacity", highOpacity);
@@ -363,11 +372,11 @@ export default class Graph {
     if (!this.isDragging) {
       // The tooltip is attached to the root element #app, so
       // we need to find the position of the mouse relative to this root
-      const position = d3.mouse(d3.select("#app").node());
+      const position = mouse(select("#app").node());
 
       // We use the window position of the mouse to determine
       // positioning of the tooltip relative to the window to avoid overflow
-      const { clientX, clientY } = d3.event;
+      const { clientX, clientY } = d3event;
       this.vue.updateCourseTooltipPosition(position, [clientX, clientY]);
     }
   }
@@ -386,7 +395,7 @@ export default class Graph {
 
   // Drag events for nodes
   dragstarted(d) {
-    if (!d3.event.active) {
+    if (!d3event.active) {
       // I don't know what this does, I just copied it
       this.simulation.alphaTarget(0.3).restart();
     }
@@ -401,12 +410,12 @@ export default class Graph {
   }
 
   dragged(d) {
-    d.fx = d3.event.x;
-    d.fy = d3.event.y;
+    d.fx = d3event.x;
+    d.fy = d3event.y;
   }
 
   dragended(d) {
-    if (!d3.event.active) {
+    if (!d3event.active) {
       // I don't know what this does, I just copied it
       this.simulation.alphaTarget(0);
     }
@@ -479,8 +488,7 @@ export default class Graph {
 
     this.node
       .call(
-        d3
-          .drag()
+        drag()
           .on("start", this.dragstarted.bind(this))
           .on("drag", this.dragged.bind(this))
           .on("end", this.dragended.bind(this))
