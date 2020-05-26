@@ -8,7 +8,17 @@ import {
   specIconExt
 } from "./util";
 
+const LATEST_VERSION_DATE = "26/05/2020";
+
+function isDataUpdated() {
+  // Checks if the data is up to date
+  const date = getItem("latestVersionDate");
+  return date === LATEST_VERSION_DATE;
+}
+
 function isDataLoaded() {
+  // Checks if all keys from the master.json
+  // are present in the local storage
   const keys = [
     "studyplans",
     "links",
@@ -26,11 +36,9 @@ function isDataLoaded() {
  */
 async function loadAllData() {
   const loaded = isDataLoaded();
+  const updated = isDataUpdated();
 
-  // Remove deprecated coursesArray key to avoid QuotaExceededError
-  window.localStorage.removeItem("coursesArray");
-
-  if (!loaded) {
+  if (!loaded || !updated) {
     // Clear local storage before loading
     window.localStorage.clear();
 
@@ -41,6 +49,8 @@ async function loadAllData() {
     Object.entries(data).forEach(([key, val]) => {
       setItem(key, val);
     });
+
+    setItem("latestVersionDate", LATEST_VERSION_DATE);
 
     const courses = getItem("courses");
     const links = getItem("links");
