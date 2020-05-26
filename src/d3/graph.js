@@ -32,7 +32,7 @@ export default class Graph {
 
     const zoom = d3.zoom().on("zoom", this.zoomed.bind(this));
 
-    const initialScale = 0.1;
+    const initialScale = 0.8;
 
     // https://stackoverflow.com/questions/16178366/d3-js-set-initial-zoom-level
     const svg = container

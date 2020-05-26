@@ -105,14 +105,14 @@ export default {
       touchInterface: false,
       outgoingToggled: true,
       ingoingToggled: true,
-      nodeSizeParam: null,
-      nodeColorMapParam: null
+      nodeSizeParam: 'credits',
+      nodeColorMapParam: 'semester'
     };
   },
   nodeSizeParams: [
     {
       value: null,
-      text: "Default"
+      text: "Uniform"
     },
     {
       value: "credits",
@@ -134,7 +134,7 @@ export default {
   nodeColorMapParams: [
     {
       value: null,
-      text: "Default"
+      text: "Uniform"
     },
     {
       value: "credits",
@@ -160,7 +160,7 @@ export default {
     this.$options.graph = graph;
 
     this.createColorMaps();
-    this.nodeColorMap = this.$options.colorMaps[null];
+    this.nodeColorMap = this.$options.colorMaps['semester'];
     this.render();
 
     // Check for touch interface
