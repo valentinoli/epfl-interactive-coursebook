@@ -16,9 +16,13 @@
       v-model="drawer"
       app
       temporary
-      width="375"
+      :width="$vuetify.breakpoint.xsOnly ? '100%' : '375'"
+      height="100%"
       :overlay-opacity="0.1"
     >
+      <v-btn @click.stop="drawer = false" absolute top right icon>
+        <v-icon>mdi-close-circle</v-icon>
+      </v-btn>
       <div class="pa-5">
         <p class="subtitle-1">
           Hierarchical filters
@@ -118,7 +122,7 @@
           class="d-flex flex-column flex-md-row align-center mb-2 pl-4 view-pane__tabs"
         >
           <div
-            class="d-flex justify-space-between justify-md-flex-start align-center"
+            class="d-flex flex-column flex-sm-row justify-space-between justify-md-flex-start align-center"
             :style="$vuetify.breakpoint.smAndDown ? 'width: 100%' : ''"
           >
             <v-btn
@@ -254,7 +258,7 @@ export default {
     {
       component: "CourseViz",
       name: "Network",
-      icon: "graph"
+      icon: "graph-outline"
     },
     {
       component: "CourseList",
