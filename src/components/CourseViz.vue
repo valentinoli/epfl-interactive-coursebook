@@ -194,6 +194,7 @@ export default {
   watch: {
     subgraphNodes() {
       this.render();
+      this.centerGraph();
     },
     ingoingToggled() {
       this.render();
@@ -246,9 +247,6 @@ export default {
       ];
 
       this.$options.graph.render(nodesUnique, links);
-
-      // Center graph on render
-      this.centerGraph();
     },
     createColorMaps() {
       const {
