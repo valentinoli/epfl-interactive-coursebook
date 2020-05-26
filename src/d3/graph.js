@@ -354,8 +354,14 @@ export default class Graph {
 
   mousemove() {
     if (!this.isDragging) {
+      // The tooltip is attached to the root element #app, so
+      // we need to find the position of the mouse relative to this root
       const position = d3.mouse(d3.select("#app").node());
-      this.vue.updateCourseTooltipPosition(position);
+
+      // We use the window position of the mouse to determine
+      // positioning of the tooltip relative to the window to avoid overflow
+      const { clientX, clientY } = d3.event;
+      this.vue.updateCourseTooltipPosition(position, [clientX, clientY]);
     }
   }
 

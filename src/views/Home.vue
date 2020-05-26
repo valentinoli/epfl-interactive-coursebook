@@ -252,7 +252,6 @@ export default {
     }
   ],
   created() {
-    console.log("created");
     // Don't need getters and setters for the levels
     this.$options.levels = api.getAllLevels();
     this.programs = api.getProgramsByLevel(this.selectedLevel);
@@ -270,7 +269,6 @@ export default {
   },
   watch: {
     selectedLevel() {
-      console.log(this.selectedLevel);
       this.programs = api.getProgramsByLevel(this.selectedLevel);
 
       this.selectedProgram = "";
@@ -282,7 +280,6 @@ export default {
       if (this.selectedLevel === "master") {
         this.masterspecs = api.getMasterspecsByProgram(this.selectedProgram);
       }
-      console.log(this.selectedProgram);
       this.selectedMasterspec = "";
       this.setCourseFiltersAndUpdateCourseGraph();
     },
