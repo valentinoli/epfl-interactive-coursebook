@@ -112,7 +112,7 @@ export default {
   nodeSizeParams: [
     {
       value: null,
-      text: "Default"
+      text: "Uniform"
     },
     {
       value: "credits",
@@ -134,7 +134,7 @@ export default {
   nodeColorMapParams: [
     {
       value: null,
-      text: "Default"
+      text: "Uniform"
     },
     {
       value: "credits",
