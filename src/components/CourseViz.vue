@@ -113,14 +113,14 @@ export default {
       touchInterface: false,
       outgoingToggled: true,
       ingoingToggled: true,
-      nodeSizeParam: null,
-      nodeColorMapParam: null
+      nodeSizeParam: "credits",
+      nodeColorMapParam: "semester"
     };
   },
   nodeSizeParams: [
     {
       value: null,
-      text: "Default"
+      text: "Uniform"
     },
     {
       value: "credits",
@@ -142,7 +142,7 @@ export default {
   nodeColorMapParams: [
     {
       value: null,
-      text: "Default"
+      text: "Uniform"
     },
     {
       value: "credits",
@@ -168,7 +168,7 @@ export default {
     this.$options.graph = graph;
 
     this.createColorMaps();
-    this.nodeColorMap = this.$options.colorMaps[null];
+    this.nodeColorMap = this.$options.colorMaps["semester"];
     this.render();
 
     // Check for touch interface
@@ -324,11 +324,28 @@ export default {
       this.courseTooltipCourseId = id;
       this.courseTooltip = true;
     },
-    updateCourseTooltipPosition([x, y]) {
+    updateCourseTooltipPosition([x, y], [clientX, clientY]) {
       if (this.courseTooltip) {
         const tooltip = document.querySelector(".viz-course-tooltip");
-        tooltip.style.top = `${y}px`;
-        tooltip.style.left = `${x + 20}px`;
+        const xOffset = 20;
+
+        // We check the window position of the mouse to avoid overflow
+        const { innerWidth, innerHeight } = window;
+        if (clientX > innerWidth / 2) {
+          tooltip.style.left = "initial";
+          tooltip.style.right = `${innerWidth - x + xOffset}px`;
+        } else {
+          tooltip.style.left = `${x + xOffset}px`;
+          tooltip.style.right = "initial";
+        }
+
+        if (clientY > innerHeight / 2) {
+          tooltip.style.top = "initial";
+          tooltip.style.bottom = `${innerHeight - y}px`;
+        } else {
+          tooltip.style.top = `${y}px`;
+          tooltip.style.bottom = "initial";
+        }
       }
     },
     hideCourseTooltip() {

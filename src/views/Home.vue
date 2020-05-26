@@ -219,8 +219,8 @@ export default {
       semesters: [],
 
       // Dropdowns: selected values
-      selectedLevel: "",
-      selectedProgram: "",
+      selectedLevel: "master",
+      selectedProgram: "Data Science",
       selectedMasterspec: "",
       selectedSection: "",
       selectedCredits: "",
@@ -252,12 +252,12 @@ export default {
     }
   ],
   created() {
-    console.log("created");
     // Don't need getters and setters for the levels
     this.$options.levels = api.getAllLevels();
-    this.updateCourseGraph();
+    this.programs = api.getProgramsByLevel(this.selectedLevel);
+    this.masterspecs = api.getMasterspecsByProgram(this.selectedProgram);
 
-    this.updateCourseFilters();
+    this.setCourseFiltersAndUpdateCourseGraph();
 
     window.addEventListener("mousemove", ({ clientX }) => {
       if (clientX < 10) {
@@ -280,9 +280,7 @@ export default {
       if (this.selectedLevel === "master") {
         this.masterspecs = api.getMasterspecsByProgram(this.selectedProgram);
       }
-
       this.selectedMasterspec = "";
-
       this.setCourseFiltersAndUpdateCourseGraph();
     },
     selectedMasterspec() {
