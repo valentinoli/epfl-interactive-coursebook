@@ -17,6 +17,14 @@
         ></v-switch>
       </div>
       <div class="d-flex">
+        <v-btn
+          @click="centerGraph()"
+          outlined
+          color="red"
+          class="mb-2 mb-md-0 mr-md-5"
+        >
+          Center
+        </v-btn>
         <v-select
           v-model="nodeSizeParam"
           :items="$options.nodeSizeParams"
@@ -202,6 +210,9 @@ export default {
     }
   },
   methods: {
+    centerGraph() {
+      this.$options.graph.centerGraph();
+    },
     render() {
       const {
         subgraphNodes,
@@ -250,10 +261,9 @@ export default {
           param,
           Object.fromEntries(
             values.map((key, index) => {
-              if(param === 'credits'){
-                return [key, creditColors[index%creditColors.length].value];
-              }
-              else if(param === 'section'){
+              if (param === "credits") {
+                return [key, creditColors[index % creditColors.length].value];
+              } else if (param === "section") {
                 return [key, categoricalColors[index]];
               }
               //assume semester

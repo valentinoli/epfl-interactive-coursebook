@@ -17,6 +17,7 @@ export default class Graph {
   nodeStroke = "#fff";
   linkStroke = "#999";
   arrowMarkerWidth = 10;
+  initialScale = 0.1;
   arrowMarkerId = "arrowmarker";
 
   constructor(vue) {
@@ -32,11 +33,10 @@ export default class Graph {
 
     const zoom = d3.zoom().on("zoom", this.zoomed.bind(this));
 
-    const initialScale = 0.1;
-
     // https://stackoverflow.com/questions/16178366/d3-js-set-initial-zoom-level
     const svg = container
       .append("svg")
+      .attr("id", "graph_svg")
       .attr("cursor", "move")
       .attr("viewBox", [minX, minY, width, height])
       .call(zoom);
@@ -44,12 +44,13 @@ export default class Graph {
     this.svg = svg
       // append a <g> to apply the transform globally on all elements
       .append("g")
+      .attr("id", "graph_g")
       // Set initial zoom level
-      .attr("transform", `scale(${initialScale}, ${initialScale})`);
+      .attr("transform", `scale(${this.initialScale}, ${this.initialScale})`);
 
     svg
       // Set initial zoom level, calls this.zoomed()
-      .call(zoom.transform, d3.zoomIdentity.scale(initialScale));
+      .call(zoom.transform, d3.zoomIdentity.scale(this.initialScale));
 
     // Arrow markers for directed edges
     const { arrowMarkerWidth: mWidth } = this;
@@ -86,6 +87,19 @@ export default class Graph {
 
     this.link = this.svg.append("g").selectAll("line");
     this.node = this.svg.append("g").selectAll("circle");
+  }
+
+  centerGraph() {
+    //d3.event.stopPropagation();
+    const dcx = (window.innerWidth / 2) * this.initialScale;
+    const dcy = (window.innerHeight / 2) * this.initialScale;
+    const zoom = d3.zoom().on("zoom", this.zoomed.bind(this));
+
+    d3.select("#graph_svg").call(
+      zoom.transform,
+      d3.zoomIdentity.scale(this.initialScale)
+    );
+    zoom.translate([dcx, dcy]);
   }
 
   zoomed() {

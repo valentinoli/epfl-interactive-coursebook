@@ -130,12 +130,12 @@ export default {
         responsive: true,
         maintainAspectRatio: false,
         title: {
-            display: true,
-            text: 'Registrations per year',
-            fontFamily: "'Roboto', sans-serif",
-            fontSize: '20',
-            fontColor: 'black',
-            fontStyle: '500'
+          display: true,
+          text: "Registrations per year",
+          fontFamily: "'Roboto', sans-serif",
+          fontSize: "20",
+          fontColor: "black",
+          fontStyle: "500"
         }
       };
       return options;
@@ -149,5 +149,5 @@ export default {
 };
 </script>
 <style>
-@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url("https://fonts.googleapis.com/css?family=Roboto");
 </style>
