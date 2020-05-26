@@ -8,7 +8,8 @@ import {
   specIconExt
 } from "./util";
 
-const LATEST_VERSION_DATE = "26/05/2020";
+// Pattern: <version-num-on-date>_<dd.MM.yyyy>
+const LATEST_VERSION_DATE = "2_26.05.2020";
 
 function isDataUpdated() {
   // Checks if the data is up to date
