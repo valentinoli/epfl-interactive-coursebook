@@ -170,6 +170,8 @@ export default {
     this.createColorMaps();
     this.nodeColorMap = this.$options.colorMaps["semester"];
     this.render();
+    this.centerGraph();
+
 
     // Check for touch interface
     // We want to offer a friendly experience to touch device users
@@ -193,25 +195,44 @@ export default {
   watch: {
     subgraphNodes() {
       this.render();
+      this.centerGraph();
     },
     ingoingToggled() {
       this.render();
+      this.centerGraph();
     },
     outgoingToggled() {
       this.render();
+      this.centerGraph();
     },
     nodeSizeParam() {
       this.render();
+      this.centerGraph();
     },
     nodeColorMapParam(param) {
       // Color map is updated when user changes the node color param
       this.nodeColorMap = this.$options.colorMaps[param];
       this.render();
+      this.centerGraph();
     }
   },
   methods: {
     centerGraph() {
-      this.$options.graph.centerGraph();
+      const {
+        subgraphLinks,
+        ingoingLinks,
+        outgoingLinks,
+        ingoingToggled,
+        outgoingToggled
+      } = this;
+
+      const links = [
+        ...subgraphLinks,
+        ...(ingoingToggled ? ingoingLinks : []),
+        ...(outgoingToggled ? outgoingLinks : [])
+      ];
+
+      this.$options.graph.centerGraph(links.length);
     },
     render() {
       const {
