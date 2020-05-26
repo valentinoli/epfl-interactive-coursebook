@@ -93,8 +93,8 @@ export default class Graph {
   }
 
   centerGraph() {
-    // Set initial scale depending on the number of links in the graph
-    const numLinks = this.link._groups[0].length;
+    // Set initial scale depending on the number of nodes in the graph
+    const numLinks = this.node._groups[0].length;
     const initialScale = 1 / Math.log(numLinks);
 
     select("#graph_svg").call(
