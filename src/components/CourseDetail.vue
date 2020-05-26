@@ -63,7 +63,7 @@
           <v-card-text>
             <div v-for="[name, url, src] in lecturers" :key="url" class="mb-3">
               <v-avatar color="grey" size="40" class="mr-2">
-                <img :src="`https://people.epfl.ch${src}`" :alt="name" />
+                <v-img :src="`https://people.epfl.ch${src}`" :alt="name"></v-img>
               </v-avatar>
               <a :href="url" target="_blank">{{ name }}</a
               >&nbsp;
