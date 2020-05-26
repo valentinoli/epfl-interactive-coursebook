@@ -19,6 +19,7 @@
       :width="$vuetify.breakpoint.xsOnly ? '100%' : '375'"
       height="100%"
       :overlay-opacity="0.1"
+      class="filters-pane"
     >
       <v-btn @click.stop="drawer = false" absolute top right icon>
         <v-icon>mdi-close-circle</v-icon>
@@ -518,11 +519,6 @@ export default {
   overflow-x: auto;
 }
 
-.filters-pane > .v-card {
-  padding: 30px;
-  height: 100%;
-}
-
 .filters-pane .v-select,
 .filters-pane .v-autocomplete {
   width: 100%;
@@ -549,6 +545,8 @@ export default {
 }
 
 .v-autocomplete.v-select--is-menu-active .v-input__icon--append .v-icon {
+  /* Override style to avoid rotation of icon */
+  /* https://stackoverflow.com/questions/57822959/how-to-stop-rotation-of-icons-in-the-v-autocomplete-component/61805903#61805903 */
   transform: none;
 }
 </style>
