@@ -117,24 +117,33 @@
         <div
           class="d-flex flex-column flex-md-row align-center mb-2 pl-4 view-pane__tabs"
         >
-          <v-btn
-            @click.stop="drawer = true"
-            outlined
-            color="red"
-            class="mb-2 mb-md-0 mr-md-5"
+          <div
+            class="d-flex justify-space-between justify-md-flex-start align-center"
+            :style="$vuetify.breakpoint.smAndDown ? 'width: 100%' : ''"
           >
-            <v-icon left>mdi-filter-outline</v-icon> Filters
-          </v-btn>
-          <v-tabs
-            v-model="mainTab"
-            optional
-            :centered="$vuetify.breakpoint.smAndDown"
-            class="mb-2 mb-md-0"
-          >
-            <v-tab v-for="({ name }, idx) in $options.mainTabs" :key="idx">
-              {{ name }}
-            </v-tab>
-          </v-tabs>
+            <v-btn
+              @click.stop="drawer = true"
+              outlined
+              color="red"
+              class="mb-2 mb-md-0 mr-md-5"
+            >
+              <v-icon left>mdi-filter-outline</v-icon> Filters
+            </v-btn>
+            <v-tabs
+              v-model="mainTab"
+              optional
+              :right="$vuetify.breakpoint.smAndDown"
+              class="mb-2 mb-md-0"
+            >
+              <v-tab
+                v-for="({ name, icon }, idx) in $options.mainTabs"
+                :key="idx"
+              >
+                <v-icon left>mdi-{{ icon }}</v-icon
+                >{{ name }}
+              </v-tab>
+            </v-tabs>
+          </div>
           <v-tabs
             v-if="courseTabs.length > 0"
             v-model="courseTab"
@@ -244,11 +253,13 @@ export default {
   mainTabs: [
     {
       component: "CourseViz",
-      name: "Network"
+      name: "Network",
+      icon: "graph"
     },
     {
       component: "CourseList",
-      name: "List"
+      name: "List",
+      icon: "format-list-bulleted-square"
     }
   ],
   created() {
@@ -260,7 +271,7 @@ export default {
     this.setCourseFiltersAndUpdateCourseGraph();
 
     window.addEventListener("mousemove", ({ clientX }) => {
-      if (clientX < 10) {
+      if (clientX < 50) {
         this.showDrawerChevron = true;
       } else {
         this.showDrawerChevron = false;

@@ -24,7 +24,7 @@
         </v-btn>
 
         <v-btn to="/about" text>
-          <v-icon left>mdi-information-variant</v-icon> About
+          <v-icon left>mdi-information-outline</v-icon> About
         </v-btn>
       </div>
     </v-app-bar>
