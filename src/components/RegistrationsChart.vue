@@ -2,6 +2,8 @@
 import { Bar } from "vue-chartjs";
 import api from "@/services/api";
 import { categoricalColors } from "@/d3/colors";
+import ChartJsPluginDataLabels from 'chartjs-plugin-datalabels';
+
 
 export default {
   extends: Bar,
@@ -9,6 +11,9 @@ export default {
   props: {
     id: String,
     styles: { height: "500px" }
+  },
+  components: {
+    ChartJsPluginDataLabels
   },
   watch: {
     id() {
@@ -79,6 +84,14 @@ export default {
       return datacollection;
     },
     getOptions(datasets) {
+      let aggData = [0,0,0,0,0];
+      datasets.forEach((item) => {
+        item.data.forEach((dataPoint, i) => {
+          aggData[i] += dataPoint;
+        });
+        ;
+      });
+
       const options = {
         scales: {
           yAxes: [
@@ -136,8 +149,33 @@ export default {
           fontSize: "20",
           fontColor: "black",
           fontStyle: "500"
+        },
+        plugins: {
+          datalabels: {
+            anchor: 'end',
+            align: 'end',
+            offset: 4,
+            display: function(context) {
+              if(context.datasetIndex == datasets.length-1) {
+                return true;
+              } else {
+                return false;
+              }
+            },
+            font: {
+              family: "'Roboto', sans-serif",
+              color: 'black',
+              weight: '500'
+            },
+            formatter: function(value, context) {
+              //this tells the column
+              const column = context.dataIndex;
+              //console.log(value);
+              return aggData[column];
+            }
+          }
         }
-      };
+    };
       return options;
     },
     render() {
