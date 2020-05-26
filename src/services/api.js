@@ -60,10 +60,12 @@ async function loadAllData() {
     });
 
     // Object of key: Object pairs --> Array of Objects
-    const coursesArray = Object.entries(courses).map(([id, v]) => ({
-      id,
-      ...v
-    }));
+    const coursesArray = Object.entries(courses)
+      .map(([id, v]) => ({
+        id,
+        ...v
+      }))
+      .sort((a, b) => (a.name > b.name ? 1 : -1));
 
     setItem("courses", coursesArray);
   }
