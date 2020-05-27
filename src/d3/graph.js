@@ -136,10 +136,23 @@ export default class Graph {
   }
 
   computeNodeFill(isEntering, d) {
-    const { nodeColorMap: map, nodeColorMapParam: param } = this.vue;
+    const {
+      nodeColorMap: map,
+      nodeColorMapParam: param,
+      nodeColorMapNeighborhood: mapHood
+    } = this.vue;
 
-    if (d.ingoingNeighbor || d.outgoingNeighbor) {
-      return "grey";
+    let hoodKey = "";
+    if (d.ingoingNeighbor && d.outgoingNeighbor) {
+      hoodKey = "both";
+    } else if (d.ingoingNeighbor) {
+      hoodKey = "ingoing";
+    } else if (d.outgoingNeighbor) {
+      hoodKey = "outgoing";
+    }
+
+    if (hoodKey) {
+      return mapHood[hoodKey].color;
     }
 
     // if (!param) {
@@ -147,7 +160,7 @@ export default class Graph {
     //   return map[isEntering];
     // }
 
-    return map[d[param]];
+    return map[d[param]].color;
   }
 
   linkClipHypotenuseFromSource(source, hypotenuse) {
