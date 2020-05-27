@@ -1,5 +1,10 @@
 // Import d3.event as d3event to avoid conflicts with the window.event global
-import { select, selectAll, mouse, event as d3event } from "d3-selection";
+import {
+  select,
+  selectAll,
+  mouse,
+  event as d3event
+} from "d3-selection";
 import {
   forceManyBody,
   forceX,
@@ -425,7 +430,53 @@ export default class Graph {
     this.isDragging = false;
   }
 
+  addLegend() {
+    const color = this.vue.nodeColorMap;
+    const keys = Object.keys(color);
+    const svg = select("#viz-legend");
+    console.log(this.vue.$options.subgraphNodes);
+    console.log(this.vue.$options);
+    svg.selectAll("*").remove();
+
+    svg.style("width", 300 + 'px')
+       .style("height", 25*(keys.length+1) + 'px');
+    // Add one dot in the legend for each name.
+    svg
+      .selectAll("mydots")
+      .data(keys)
+      .enter()
+      .append("circle")
+      .attr("cx", 100)
+      .attr("cy", function(d, i) {
+        return 10 + i * 25;
+      }) // 100 is where the first dot appears. 25 is the distance between dots
+      .attr("r", 7)
+      .style("fill", function(d) {
+        return color[d];
+      });
+
+    // Add one dot in the legend for each name.
+    svg
+      .selectAll("mylabels")
+      .data(keys)
+      .enter()
+      .append("text")
+      .attr("x", 120)
+      .attr("y", function(d, i) {
+        return 10 + i * 25;
+      }) // 100 is where the first dot appears. 25 is the distance between dots
+      .style("fill", function(d) {
+        return color[d];
+      })
+      .text(function(d) {
+        return d;
+      })
+      .attr("text-anchor", "left")
+      .style("alignment-baseline", "middle");
+  }
+
   render(nodes, links) {
+    this.addLegend();
     // Make a shallow copy to protect against mutation, while
     // recycling old nodes to preserve position and velocity.
     const old = new Map(this.node.data().map(d => [d.id, d]));

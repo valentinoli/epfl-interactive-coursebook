@@ -50,6 +50,9 @@
         <span>Reset position</span>
       </v-tooltip>
     </div>
+    <div>
+      <svg id="viz-legend" height="300" width="450"></svg>
+    </div>
     <v-tooltip
       v-model="courseTooltip"
       attach="#app"
