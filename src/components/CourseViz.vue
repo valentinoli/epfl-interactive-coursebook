@@ -115,7 +115,8 @@ export default {
       outgoingToggled: true,
       ingoingToggled: true,
       nodeSizeParam: "credits",
-      nodeColorMapParam: "semester"
+      nodeColorMapParam: "semester",
+      nodeColorMap: null
     };
   },
   nodeSizeParams: [
@@ -171,6 +172,7 @@ export default {
     this.createColorMaps();
     this.nodeColorMap = this.$options.colorMaps["semester"];
     this.render();
+    this.centerGraph();
 
     // Check for touch interface
     // We want to offer a friendly experience to touch device users
