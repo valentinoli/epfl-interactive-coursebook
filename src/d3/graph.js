@@ -24,7 +24,8 @@ export default class Graph {
   link;
   zoomBehavior;
   isDragging = false;
-  graphOpacity = 0.65;
+  graphOpacity = 0.7;
+  graphOpacityOffset = 0.25;
   nodeStrokeWidth = 1;
   nodeStroke = "#fff";
   linkStroke = "#999";
@@ -318,7 +319,7 @@ export default class Graph {
   }
 
   // Mouse events for nodes
-  mouseover(d) {
+  mouseenter(d) {
     if (!this.isDragging) {
       this.vue.showCourseTooltip(d);
 
@@ -333,8 +334,8 @@ export default class Graph {
 
       // If the node is part of the subgraph, we highlight its neighborhood
       if (!ingoingNeighbor && !outgoingNeighbor) {
-        const highOpacity = this.graphOpacity + 0.25;
-        const lowOpacity = this.graphOpacity - 0.25;
+        const highOpacity = this.graphOpacity + this.graphOpacityOffset;
+        const lowOpacity = this.graphOpacity - this.graphOpacityOffset;
 
         // First we lower opacity of all nodes and links
         this.node.attr("opacity", lowOpacity);
@@ -493,7 +494,7 @@ export default class Graph {
           .on("drag", this.dragged.bind(this))
           .on("end", this.dragended.bind(this))
       )
-      .on("mouseover", this.mouseover.bind(this))
+      .on("mouseenter", this.mouseenter.bind(this))
       .on("mousemove", this.mousemove.bind(this))
       .on("mouseleave", this.mouseleave.bind(this))
       .on("click", this.click.bind(this));

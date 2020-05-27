@@ -50,6 +50,43 @@
         <span>Reset position</span>
       </v-tooltip>
     </div>
+
+    <v-expansion-panels popout :value="0">
+      <v-expansion-panel>
+        <v-expansion-panel-header>
+          <div><v-icon left>mdi-map-legend</v-icon> Legend</div>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content eager>
+          <div class="legend mx-4">
+            <v-row>
+              <v-col
+                v-for="(val, key) in nodeColorMap"
+                :key="key"
+                cols="6"
+                sm="3"
+                md="2"
+                xl="1"
+              >
+                <div
+                  @mouseenter.self="colorLegendMouseenter($event, key)"
+                  @mouseleave.self="colorLegendMouseleave($event)"
+                  class="legend__item d-flex align-center"
+                >
+                  <div
+                    class="legend__item-circle d-flex justify-center align-center"
+                    :style="
+                      `background-color: ${val}; opacity: ${$options.graph.graphOpacity};`
+                    "
+                  ></div>
+                  <div class="ml-4">{{ key }}</div>
+                </div>
+              </v-col>
+            </v-row>
+          </div>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
+
     <v-tooltip
       v-model="courseTooltip"
       attach="#app"
@@ -116,7 +153,8 @@ export default {
       ingoingToggled: true,
       nodeSizeParam: "credits",
       nodeColorMapParam: "semester",
-      nodeColorMap: null
+      nodeColorMap: {},
+      nodeColorMapCounts: {}
     };
   },
   nodeSizeParams: [
@@ -170,7 +208,7 @@ export default {
     this.$options.graph = graph;
 
     this.createColorMaps();
-    this.nodeColorMap = this.$options.colorMaps["semester"];
+    this.updateColorMap();
     this.render();
     this.centerGraph();
 
@@ -195,21 +233,24 @@ export default {
   },
   watch: {
     subgraphNodes() {
+      this.updateColorMap();
       this.render();
       this.centerGraph();
     },
     ingoingToggled() {
+      this.updateColorMap();
       this.render();
     },
     outgoingToggled() {
+      this.updateColorMap();
       this.render();
     },
     nodeSizeParam() {
       this.render();
     },
-    nodeColorMapParam(param) {
+    nodeColorMapParam() {
       // Color map is updated when user changes the node color param
-      this.nodeColorMap = this.$options.colorMaps[param];
+      this.updateColorMap();
       this.render();
     }
   },
@@ -285,6 +326,48 @@ export default {
         true: "green",
         false: "orange"
       };
+    },
+    updateColorMap() {
+      const param = this.nodeColorMapParam;
+      const options = api.getCourseFilterOptions(this.subgraphNodes);
+
+      // Replace last character of the parameter name with an "s" to get plural
+      const paramPlural = !param || param.endsWith("s") ? param : `${param}s`;
+
+      const map = this.$options.colorMaps[param];
+
+      // Update the dynamic color map, filter out keys which are not present
+      // in the graph (and consequently in the course filter options)
+      this.nodeColorMap = Object.fromEntries(
+        Object.entries(map).filter(colorEntry =>
+          options[paramPlural].includes(colorEntry[0])
+        )
+      );
+
+      this.nodeColorMapCounts = Object.fromEntries(
+        Object.entries(map).map(colorEntry => [
+          colorEntry[0],
+          this.subgraphNodes.reduce(
+            // Compute how often the color appears in the graph
+            (acc, { [param]: p }) => (p === colorEntry[0] ? acc + 1 : acc),
+            0
+          )
+        ])
+      );
+    },
+    colorLegendMouseenter({ target }, key) {
+      const circle = target.firstChild;
+      const { graphOpacity, graphOpacityOffset } = this.$options.graph;
+      circle.style.opacity = graphOpacity + graphOpacityOffset;
+      circle.style.border = "1px solid #000";
+
+      circle.innerHTML = this.nodeColorMapCounts[key];
+    },
+    colorLegendMouseleave({ target }) {
+      const circle = target.firstChild;
+      circle.style.opacity = this.$options.graph.graphOpacity;
+      circle.style.border = "none";
+      circle.innerHTML = "";
     },
     showCourseTooltip({
       id,
@@ -389,5 +472,19 @@ export default {
 
 .v-select {
   max-width: 200px;
+}
+
+.legend__item {
+  cursor: pointer;
+}
+
+.legend__item-circle {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.v-expansion-panel[aria-expanded="false"] {
+  max-width: 350px;
 }
 </style>

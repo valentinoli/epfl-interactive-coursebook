@@ -118,7 +118,7 @@
     </v-navigation-drawer>
 
     <v-row>
-      <v-col cols="12" class="view-pane d-flex flex-column">
+      <v-col cols="12" class="view-pane d-flex flex-column pb-0">
         <div
           class="d-flex flex-column flex-md-row align-center mb-2 pl-4 view-pane__tabs"
         >
