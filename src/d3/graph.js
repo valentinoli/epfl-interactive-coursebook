@@ -331,19 +331,23 @@ export default class Graph {
     return `${this.nodeId(source)}--${this.nodeId(target)}`;
   }
 
+  selectNodeById(id) {
+    return select(`#${this.nodeId(id)}`);
+  }
+
   // Mouse events for nodes
   mouseenter(d) {
     if (!this.isDragging) {
       this.vue.showCourseTooltip(d);
-
-      const selectedId = this.nodeId(d.id);
-      const selectedNode = select(`#${selectedId}`);
       const {
+        id,
         ingoing,
         outgoing,
         ingoingNeighbor,
         outgoingNeighbor
-      } = selectedNode.datum();
+      } = d;
+
+      const selectedNode = this.selectNodeById(id);
 
       // If the node is part of the subgraph, we highlight its neighborhood
       if (!ingoingNeighbor && !outgoingNeighbor) {
@@ -414,6 +418,9 @@ export default class Graph {
       this.simulation.alphaTarget(0.3).restart();
     }
 
+    const selectedNode = this.selectNodeById(d.id);
+    selectedNode.attr("cursor", "grabbing");
+
     // Hide the info tooltip on drag
     this.vue.hideCourseTooltip();
 
@@ -435,6 +442,9 @@ export default class Graph {
     }
     d.fx = null;
     d.fy = null;
+
+    const selectedNode = this.selectNodeById(d.id);
+    selectedNode.attr("cursor", "grab");
 
     this.isDragging = false;
   }
