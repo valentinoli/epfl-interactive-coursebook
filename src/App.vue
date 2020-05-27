@@ -19,9 +19,9 @@
       <div class="nav d-none d-sm-none d-md-flex">
         <v-btn to="/" exact text> <v-icon left>mdi-home</v-icon> Home </v-btn>
 
-        <v-btn to="/story" text>
+        <!-- <v-btn to="/story" text>
           <v-icon left>mdi-book-open-page-variant</v-icon> Story
-        </v-btn>
+        </v-btn> -->
 
         <v-btn to="/about" text>
           <v-icon left>mdi-information-outline</v-icon> About
