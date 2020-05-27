@@ -116,7 +116,7 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
-<!-- </div> -->
+
     <v-tooltip
       v-model="courseTooltip"
       attach="#app"

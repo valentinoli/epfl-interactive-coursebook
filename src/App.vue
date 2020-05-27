@@ -85,7 +85,7 @@
 
 <script>
 import SkeletonLoader from "@/components/SkeletonLoader";
-import api from "@/services/api";
+import loadData from "@/services/load-data";
 
 export default {
   name: "App",
@@ -96,7 +96,7 @@ export default {
     try {
       // Load all data to local storage
       // if it hasn't been loaded already
-      await api.loadAllData();
+      await loadData();
     } catch (err) {
       if (err instanceof DOMException && err.name === "SecurityError") {
         this.error = `
