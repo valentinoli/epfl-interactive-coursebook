@@ -180,10 +180,10 @@ export default {
     }
   ],
   nodeColorMapParams: [
-    {
-      value: null,
-      text: "Uniform"
-    },
+    // {
+    //   value: null,
+    //   text: "Uniform"
+    // },
     {
       value: "credits",
       text: "Credits"
@@ -322,10 +322,10 @@ export default {
       // --> { credits: { 6: #color, 4: #color2, ... }, ...}
 
       // Add the default color map, entering nodes colored green, updated orange
-      this.$options.colorMaps[null] = {
-        true: "green",
-        false: "orange"
-      };
+      // this.$options.colorMaps[null] = {
+      //   true: "green",
+      //   false: "orange"
+      // };
     },
     updateColorMap() {
       const param = this.nodeColorMapParam;

@@ -142,10 +142,10 @@ export default class Graph {
       return "grey";
     }
 
-    if (!param) {
-      // Default colormap
-      return map[isEntering];
-    }
+    // if (!param) {
+    //   // Default colormap
+    //   return map[isEntering];
+    // }
 
     return map[d[param]];
   }
