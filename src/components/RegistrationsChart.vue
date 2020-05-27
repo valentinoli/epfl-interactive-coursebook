@@ -2,8 +2,7 @@
 import { Bar } from "vue-chartjs";
 import api from "@/services/api";
 import { categoricalColors } from "@/d3/colors";
-import ChartJsPluginDataLabels from 'chartjs-plugin-datalabels';
-
+import ChartJsPluginDataLabels from "chartjs-plugin-datalabels";
 
 export default {
   extends: Bar,
@@ -84,12 +83,11 @@ export default {
       return datacollection;
     },
     getOptions(datasets) {
-      let aggData = [0,0,0,0,0];
-      datasets.forEach((item) => {
+      let aggData = [0, 0, 0, 0, 0];
+      datasets.forEach(item => {
         item.data.forEach((dataPoint, i) => {
           aggData[i] += dataPoint;
         });
-        ;
       });
 
       const options = {
@@ -152,11 +150,11 @@ export default {
         },
         plugins: {
           datalabels: {
-            anchor: 'end',
-            align: 'end',
+            anchor: "end",
+            align: "end",
             offset: 4,
             display: function(context) {
-              if(context.datasetIndex == datasets.length-1) {
+              if (context.datasetIndex == datasets.length - 1) {
                 return true;
               } else {
                 return false;
@@ -164,8 +162,8 @@ export default {
             },
             font: {
               family: "'Roboto', sans-serif",
-              color: 'black',
-              weight: '500'
+              color: "black",
+              weight: "500"
             },
             formatter: function(value, context) {
               //this tells the column
@@ -175,7 +173,7 @@ export default {
             }
           }
         }
-    };
+      };
       return options;
     },
     render() {
