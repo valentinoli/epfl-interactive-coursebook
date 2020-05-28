@@ -6,6 +6,9 @@
 [**VIEW THE SCREENCAST**](
 https://youtu.be/FY7176yZnPM)
 
+## Browse EPFL courses on a graph!
+![](sketches/gif1.gif)
+
 ## Milestone 1 (Friday 3rd April, 5pm)
 [Read here](milestone1.md)
 
