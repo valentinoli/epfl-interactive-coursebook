@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="home">
+  <v-container fluid class="home py-0">
     <v-slide-x-transition>
       <v-btn
         v-if="showDrawerChevron"
@@ -492,10 +492,6 @@ export default {
 <style scoped>
 .spec-icon {
   margin-right: 5px;
-}
-
-.home {
-  padding: 0;
 }
 
 .home,
