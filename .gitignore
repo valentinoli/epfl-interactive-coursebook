@@ -2,6 +2,7 @@
 node_modules/
 # don't track the data
 data/
+public/master.json
 
 # ipython notebook checkpoints
 .ipynb_checkpoints/

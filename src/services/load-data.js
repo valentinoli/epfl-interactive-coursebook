@@ -25,6 +25,18 @@ function isDataLoaded() {
   return keys.reduce((acc, key) => acc && key in localStorage, true);
 }
 
+async function fetchData() {
+  if (process.env.NODE_ENV === "production") {
+    // Fetch data from AWS in production
+    return await getObject("master.json");
+  }
+
+  // In development we fetch the data from the public/ directory
+  const response = await fetch("master.json");
+  const data = await response.json();
+  return data;
+}
+
 /**
  * Fetch data from AWS and load it into browser's local storage
  */
@@ -36,8 +48,8 @@ export default async function loadAllData() {
     // Clear local storage before loading
     window.localStorage.clear();
 
-    // Fetch data from AWS
-    const data = await getObject("master.json");
+    const data = await fetchData();
+    console.log(data);
 
     // Cache data in localStorage
     Object.entries(data).forEach(([key, val]) => {
