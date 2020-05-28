@@ -137,7 +137,7 @@
       <template v-if="touchInterface">
         <v-btn
           small
-          @click="$emit('selectCourse', courseTooltipCourseId)"
+          @touchstart="$emit('selectCourse', courseTooltipCourseId)"
           class="mt-2 mb-1"
         >
           <v-icon left>mdi-eye</v-icon>
@@ -183,7 +183,8 @@ export default {
   },
   data() {
     return {
-      courseTooltip: false,
+      // set true to render the tooltip in order to find it in the DOM early
+      courseTooltip: true,
       courseTooltipHtml: "",
       courseTooltipCourseId: null,
       touchInterface: false,
@@ -246,23 +247,32 @@ export default {
     this.renderGraph();
     this.centerGraph();
 
-    // Check for touch interface
+    // Hide the tooltip by default
+    this.courseTooltip = false;
+
+    // Attempt to check for touch interface
+    // See http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
     // We want to offer a friendly experience to touch device users
+    // Caveats with the following approach:
+    // 1. It requires interaction before you can know the result
+    // 2. The event still won't fire for browsers which don't support the
+    //    Touch Events API... which is a lot of them
     const onTouchStart = () => {
-      if (this.touchInterface) {
-        document.removeEventListener("touchstart", onTouchStart);
-      }
       this.touchInterface = true;
 
       // Tooltip should be clickable
       const tooltipEl = document.querySelector(".viz-course-tooltip");
-      tooltipEl.addEventListener("click", evt => {
-        evt.stopPropagation();
+      tooltipEl.addEventListener("touchstart", evt => {
+        // Prevent default on a touchstart prevents the corresponding
+        // mouse events from firing, i.e. click event won't fire and thereby
+        // closing the tooltip
+        evt.preventDefault();
         this.courseTooltip = true;
       });
+      document.removeEventListener("touchstart", onTouchStart, true);
     };
 
-    document.addEventListener("touchstart", onTouchStart);
+    document.addEventListener("touchstart", onTouchStart, true);
   },
   watch: {
     subgraphNodes() {
