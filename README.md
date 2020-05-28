@@ -3,14 +3,15 @@
 
 [**VIEW THE APP**](http://epfl.space)
 
-[**VIEW THE SCREENCAST**](
-https://youtu.be/FY7176yZnPM)
+[**VIEW THE SCREENCAST**](https://youtu.be/FY7176yZnPM)
 
-## Browse courses on a graph!
+[**READ THE PROCESS BOOK**](process-book.pdf)
+
+**Browse courses on a graph!**
 
 ![](sketches/gif1.gif)
 
-## ...or in a list!
+**...or from a list!**
 
 ![](sketches/gif2.gif)
 
@@ -21,7 +22,7 @@ https://youtu.be/FY7176yZnPM)
 [Read here](milestone2.pdf)
 
 ## Milestone 3 (Thursday 28th May, 5pm)
-[Read here](milestone3.pdf)
+[Read here](process-book.pdf)
 
 ## Repo structure
 
@@ -34,7 +35,7 @@ https://youtu.be/FY7176yZnPM)
 You can find the data on [Google Drive](https://drive.google.com/file/d/1nTmosly1uZh_QjDW_yg-4B1QVKLlhSJR/view?usp=sharing)
 
 ## Local setup and development
-The project requires [NPM](https://npmjs.com/).
+The project requires [NPM](https://npmjs.com/)
 
 Installs all modules
 ```
