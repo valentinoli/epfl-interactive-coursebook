@@ -68,6 +68,7 @@
                   :src="`https://people.epfl.ch${src}`"
                   :alt="name"
                 ></v-img>
+                <v-icon v-else dark>mdi-account-circle</v-icon>
               </v-avatar>
               <a :href="url" target="_blank">{{ name }}</a
               >&nbsp;
