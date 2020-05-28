@@ -648,7 +648,7 @@ export default {
 .legend .col {
   /* min-width according to the largest observed legend item */
   flex-grow: 0;
-  min-width: 160px;
+  min-width: 167px;
 }
 
 .legend:last-of-type .col:last-child {

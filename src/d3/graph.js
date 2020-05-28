@@ -339,13 +339,7 @@ export default class Graph {
   mouseenter(d) {
     if (!this.isDragging) {
       this.vue.showCourseTooltip(d);
-      const {
-        id,
-        ingoing,
-        outgoing,
-        ingoingNeighbor,
-        outgoingNeighbor
-      } = d;
+      const { id, ingoing, outgoing, ingoingNeighbor, outgoingNeighbor } = d;
 
       const selectedNode = this.selectNodeById(id);
 
