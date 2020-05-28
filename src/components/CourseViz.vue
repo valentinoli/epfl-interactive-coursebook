@@ -86,32 +86,40 @@
                 </div>
               </v-col>
             </v-row>
-            <div class="mt-6 mb-2">
-              <strong>Graph neighborhood</strong>
-            </div>
-            <v-row>
-              <v-col
-                v-for="({ label, color, textColor },
-                key) in nodeColorMapNeighborhood"
-                :key="key"
-              >
-                <div
-                  @mouseenter.self="colorLegendMouseenter($event, key, true)"
-                  @mouseleave.self="colorLegendMouseleave($event)"
-                  class="legend__item d-flex align-center"
+            <template
+              v-if="
+                ingoingNodesDisplayed.length ||
+                  outgoingNodesDisplayed.length ||
+                  ingoingOutgoingNodesDisplayed.length
+              "
+            >
+              <div class="mt-6 mb-2">
+                <strong>Graph neighborhood</strong>
+              </div>
+              <v-row>
+                <v-col
+                  v-for="({ label, color, textColor },
+                  key) in nodeColorMapNeighborhood"
+                  :key="key"
                 >
                   <div
-                    class="legend__item-circle d-flex justify-center align-center"
-                    :style="
-                      `background-color: ${color}; opacity: ${
-                        graph.graphOpacity
-                      }; color: ${textColor || 'black'};`
-                    "
-                  ></div>
-                  <div class="ml-4">{{ label }}</div>
-                </div>
-              </v-col>
-            </v-row>
+                    @mouseenter.self="colorLegendMouseenter($event, key, true)"
+                    @mouseleave.self="colorLegendMouseleave($event)"
+                    class="legend__item d-flex align-center"
+                  >
+                    <div
+                      class="legend__item-circle d-flex justify-center align-center"
+                      :style="
+                        `background-color: ${color}; opacity: ${
+                          graph.graphOpacity
+                        }; color: ${textColor || 'black'};`
+                      "
+                    ></div>
+                    <div class="ml-4">{{ label }}</div>
+                  </div>
+                </v-col>
+              </v-row>
+            </template>
           </div>
         </v-expansion-panel-content>
       </v-expansion-panel>
