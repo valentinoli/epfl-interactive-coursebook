@@ -12,14 +12,21 @@ import { scaleSequentialQuantile } from "d3-scale";
 
 const credits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 20, 22, 30];
 
-const color = scaleSequentialQuantile([...credits], interpolateCool);
+var creditColor = scaleSequentialQuantile([...credits], interpolateCool);
+
+/*
+// code to reverse color range if needed
+const interpolator = creditColor.interpolator();
+const mirror = t => interpolator(1 - t);
+creditColor = creditColor.interpolator(mirror);
+*/
 
 var creditColorsHelper = [];
 
 credits.forEach((item, i) => {
   creditColorsHelper.push({
     key: item,
-    value: color(i)
+    value: creditColor(i)
   });
 });
 
