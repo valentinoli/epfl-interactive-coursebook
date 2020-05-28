@@ -56,11 +56,10 @@ export default {
       const datasets = programs.map((program, index) => ({
         label: program,
         hoverBackgroundColor: categoricalColors[index],
-        backgroundColor: "#424242",
-        borderColor: "#424242",
+        backgroundColor: "#FF5252",
+        borderColor: "#ffffff",
         data: [],
-        borderWidth: 0,
-        borderSkipped: "bottom"
+        borderWidth: 0.5
       }));
 
       years.forEach(year => {
@@ -146,13 +145,14 @@ export default {
           fontFamily: "'Roboto', sans-serif",
           fontSize: "20",
           fontColor: "black",
-          fontStyle: "500"
+          fontStyle: "500",
+          padding: 20
         },
         plugins: {
           datalabels: {
             anchor: "end",
             align: "end",
-            offset: 4,
+            offset: 0,
             display: function(context) {
               if (context.datasetIndex == datasets.length - 1) {
                 return true;
