@@ -3,24 +3,23 @@ import {
   schemeDark2,
   schemePaired,
   schemeSet1,
-  schemeTableau10
+  schemeTableau10,
+  interpolateCool
 } from "d3-scale-chromatic";
-import { scaleLinear } from "d3-scale";
+import { scaleSequentialQuantile } from "d3-scale";
 // all from material color
 // https://vuetifyjs.com/en/styles/colors/
 
 const credits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 20, 22, 30];
-// range from red lighten-3 to red darken-4
-const creditRange = scaleLinear()
-  .domain([0, 16])
-  .range(["#EF9A9A", "#B71C1C"]);
+
+const color = scaleSequentialQuantile([...credits], interpolateCool);
 
 var creditColorsHelper = [];
 
 credits.forEach((item, i) => {
   creditColorsHelper.push({
     key: item,
-    value: creditRange(i)
+    value: color(i)
   });
 });
 
