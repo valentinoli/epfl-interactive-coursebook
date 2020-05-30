@@ -31,36 +31,30 @@ export default class Graph {
   linkStroke = "#999";
   arrowMarkerWidth = 10;
   arrowMarkerId = "arrowmarker";
+  container = select(".svg-container");
 
   constructor(vue) {
     // We want access to the vue component
     this.vue = vue;
 
-    const container = select("#viz-svg");
-    const width = parseFloat(container.style("width"));
-    const height = parseFloat(container.style("height"));
-
-    const minX = -width / 2;
-    const minY = -height / 2;
-
     this.zoomBehavior = zoom().on("zoom", this.zoomed.bind(this));
 
     // https://stackoverflow.com/questions/16178366/d3-js-set-initial-zoom-level
-    const svg = container
+    this.svg = this.container
       .append("svg")
-      .attr("id", "graph_svg")
+      .attr("class", "svg")
       .attr("cursor", "move")
-      .attr("viewBox", [minX, minY, width, height])
       .call(this.zoomBehavior);
 
-    this.svg = svg
-      // append a <g> to apply the transform globally on all elements
-      .append("g")
-      .attr("id", "graph_g");
+    this.setSVGViewBox();
+
+    // append a <g> to apply the zoom transform globally on all elements,
+    // see zoomed() function
+    this.svg_g = this.svg.append("g");
 
     // Arrow markers for directed edges
     const { arrowMarkerWidth: mWidth } = this;
-    this.svg
+    this.svg_g
       .append("defs")
       .append("marker")
       .attr("id", this.arrowMarkerId)
@@ -89,16 +83,32 @@ export default class Graph {
       .force("y", forceY().strength(0.07))
       .on("tick", this.ticked.bind(this));
 
-    this.link = this.svg.append("g").selectAll("line");
-    this.node = this.svg.append("g").selectAll("circle");
+    this.link = this.svg_g.append("g").selectAll("line");
+    this.node = this.svg_g.append("g").selectAll("circle");
+  }
+
+  setSVGViewBox() {
+    const { container } = this;
+
+    const width = parseFloat(container.style("width"));
+
+    // Set the height of the container to the window inner height
+    const height = window.innerHeight;
+    container.style("height", `${height}px`);
+
+    const minX = -width / 2;
+    const minY = -height / 2;
+
+    // Fit SVG into the container
+    this.svg.attr("viewBox", [minX, minY, width, height]);
   }
 
   centerGraph() {
     // Set initial scale depending on the number of nodes in the graph
-    const numLinks = this.node._groups[0].length;
-    const initialScale = 1 / Math.log(numLinks);
+    const numNodes = this.node._groups[0].length;
+    const initialScale = 1 / Math.log(numNodes);
 
-    select("#graph_svg").call(
+    this.svg.call(
       // Set initial zoom level, calls this.zoomed()
       this.zoomBehavior.transform,
       zoomIdentity.scale(initialScale)
@@ -106,7 +116,7 @@ export default class Graph {
   }
 
   zoomed() {
-    this.svg.attr("transform", d3event.transform);
+    this.svg_g.attr("transform", d3event.transform);
   }
 
   computeNodeRadius({ credits, registrations, ingoing, outgoing }) {

@@ -1,8 +1,8 @@
 <template>
-  <div id="viz-container" class="flex-grow-1 d-flex flex-column">
+  <div class="d-flex flex-column">
+    <!-- Toolbar -->
     <div
-      id="viz-toolbar"
-      class="mb-3 mx-2 mr-md-4 px-4 px-md-0 py-1 d-flex flex-wrap justify-center justify-md-space-between align-center"
+      class="viz-toolbar mb-3 mx-2 mr-md-4 px-4 px-md-0 py-1 d-flex flex-wrap justify-center justify-md-space-between align-center"
     >
       <div class="d-flex">
         <v-switch
@@ -40,10 +40,11 @@
       </div>
     </div>
 
-    <div id="viz-svg" class="flex-grow-1">
+    <!-- SVG -->
+    <div class="svg-container">
       <v-tooltip left>
         <template v-slot:activator="{ on }">
-          <v-btn v-on="on" @click="centerGraph()" absolute top right icon>
+          <v-btn v-on="on" @click="centerGraph" absolute top right icon>
             <v-icon>mdi-crosshairs-gps</v-icon>
           </v-btn>
         </template>
@@ -51,6 +52,7 @@
       </v-tooltip>
     </div>
 
+    <!-- Legend -->
     <v-expansion-panels popout class="legend-panel">
       <v-expansion-panel>
         <v-expansion-panel-header>
@@ -125,6 +127,7 @@
       </v-expansion-panel>
     </v-expansion-panels>
 
+    <!-- Course (node) tooltip -->
     <v-tooltip
       v-model="courseTooltip"
       attach="#app"
@@ -152,6 +155,7 @@
 import Graph from "@/d3/graph";
 import { categoricalColors, creditColors, semesterColors } from "@/d3/colors";
 import api from "@/services/api";
+import debounce from "lodash.debounce";
 
 export default {
   name: "CourseViz",
@@ -246,6 +250,19 @@ export default {
 
     this.renderGraph();
     this.centerGraph();
+
+    window.addEventListener(
+      "resize",
+      debounce(() => {
+        // Reset SVG view box on resize
+        this.graph.setSVGViewBox();
+
+        // Note: attempted to call this.centerGraph() to center the graph on
+        // window resize. However, the resize event is triggered when the
+        // navigation drawer component is updated (the filters sidebar),
+        // and it did not look nice to center the graph every time that happens
+      }, 300)
+    );
 
     // Hide the tooltip by default
     this.courseTooltip = false;
@@ -636,27 +653,23 @@ export default {
 </script>
 
 <style scoped>
-#viz-svg {
+.svg-container {
   width: 100%;
+  height: 100vh;
   margin: 0 3px;
   position: relative;
 }
 
 .viz-course-tooltip {
-  /* position tooltip content absolutely */
+  /* Position tooltip content absolutely */
   position: absolute;
 
-  /* Override default Vuetify */
+  /* Override Vuetify default, enable pointer events */
   pointer-events: auto;
 }
 
 .v-select {
   max-width: 200px;
-}
-
-.legend-panel {
-  /* position: absolute; */
-  bottom: 0;
 }
 
 .legend-panel .v-expansion-panel[aria-expanded="false"] {
