@@ -120,7 +120,7 @@
     <v-row>
       <v-col cols="12" class="view-pane d-flex flex-column pb-0">
         <div
-          class="d-flex flex-column flex-md-row align-center mb-2 pl-4 view-pane__tabs"
+          class="d-flex flex-column flex-md-row align-center mb-2 pl-0 pl-sm-4 view-pane__tabs"
         >
           <div
             class="d-flex flex-column flex-sm-row justify-space-between justify-md-flex-start align-center"

@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-app-bar app color="white" light>
-      <v-btn to="/" exact text>
+      <v-btn to="/" exact text class="pl-0 pl-sm-4" :small="isXS">
         <v-img
           alt="EPFL Logo"
           class="shrink mr-2"
@@ -16,15 +16,19 @@
 
       <v-spacer></v-spacer>
 
-      <div class="nav d-none d-sm-none d-md-flex">
-        <v-btn to="/" exact text> <v-icon left>mdi-home</v-icon> Home </v-btn>
+      <div class="nav d-flex">
+        <v-btn to="/" exact text :icon="isXS" :small="isXS">
+          <v-icon :left="!isXS" :small="isXS">mdi-home</v-icon>
+          <span v-if="!isXS">Home</span>
+        </v-btn>
 
         <!-- <v-btn to="/story" text>
           <v-icon left>mdi-book-open-page-variant</v-icon> Story
         </v-btn> -->
 
-        <v-btn to="/about" text>
-          <v-icon left>mdi-information-outline</v-icon> About
+        <v-btn to="/about" text :icon="isXS" :small="isXS">
+          <v-icon :left="!isXS" :small="isXS">mdi-information-outline</v-icon>
+          <span v-if="!isXS">About</span>
         </v-btn>
       </div>
     </v-app-bar>
@@ -127,7 +131,12 @@ export default {
   data: () => ({
     loading: true,
     error: false
-  })
+  }),
+  computed: {
+    isXS() {
+      return this.$vuetify.breakpoint.xsOnly;
+    }
+  }
 };
 </script>
 
