@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-app-bar app color="white" light>
-      <v-btn to="/" exact text class="pl-0 pl-sm-4" :small="isXS">
+      <v-btn to="/" exact text class="logo px-1 px-sm-4" :small="isXS">
         <v-img
           alt="EPFL Logo"
           class="shrink mr-2"
@@ -144,6 +144,11 @@ export default {
 .theme--light.v-btn--router.v-btn--active::before {
   /* Override default style for active nav router link element */
   opacity: 0 !important;
+}
+
+.logo.theme--light.v-btn:hover::before {
+  /* Override default opacity */
+  opacity: 0;
 }
 
 .nav .v-btn:not(:last-child) {
