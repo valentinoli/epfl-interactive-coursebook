@@ -53,7 +53,7 @@
     </div>
 
     <!-- Legend -->
-    <v-expansion-panels popout class="legend-panel">
+    <v-expansion-panels v-model="legend" class="legend-panel">
       <v-expansion-panel>
         <v-expansion-panel-header>
           <div><v-icon left>mdi-map-legend</v-icon> Legend</div>
@@ -196,7 +196,8 @@ export default {
       ingoingToggled: true,
       nodeSizeParam: "credits",
       nodeColorMapParam: "semester",
-      graph: {}
+      graph: {},
+      legend: null  // initial value
     };
   },
   nodeSizeParams: [
@@ -254,6 +255,9 @@ export default {
     window.addEventListener(
       "resize",
       debounce(() => {
+        // Reset legend:
+        this.legend = null;
+
         // Reset SVG view box on resize
         this.graph.setSVGViewBox();
 
@@ -261,7 +265,7 @@ export default {
         // window resize. However, the resize event is triggered when the
         // navigation drawer component is updated (the filters sidebar),
         // and it did not look nice to center the graph every time that happens
-      }, 300)
+      }, 100)
     );
 
     // Hide the tooltip by default
@@ -292,6 +296,33 @@ export default {
     document.addEventListener("touchstart", onTouchStart, true);
   },
   watch: {
+    legend(newVal, oldVal) {
+      // Legend is being opened if v-model is 0
+      if (newVal === 0) {
+        const notScrollable = document.body.scrollHeight === window.innerHeight;
+        const openedFirstTime = oldVal === null;
+        window.setTimeout(
+          () => {
+            // Force scroll to page bottom when legend is opened:
+            // Note that this scrolling is redundant when scrolling is possible
+            // and the legend has been opened before (small viewport height)
+            // since the page is automatically scrolled in that case (idk why).
+            // Also, we don't want to programmatically scroll if the page has
+            // already scrolled since it will cause a flicker.
+
+            console.log(notScrollable, openedFirstTime);
+            if (notScrollable || openedFirstTime) {
+              // Force scroll
+              this.$vuetify.goTo(
+                document.body.scrollHeight,
+                { duration: 500, easing: "easeInOutCubic" }
+              );
+            }
+          },
+          100
+        );
+      }
+    },
     subgraphNodes() {
       this.renderGraph();
 
@@ -655,7 +686,6 @@ export default {
 <style scoped>
 .svg-container {
   width: 100%;
-  height: 100vh;
   margin: 0 3px;
   position: relative;
 }

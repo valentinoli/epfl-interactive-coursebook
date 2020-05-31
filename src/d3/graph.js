@@ -92,8 +92,25 @@ export default class Graph {
 
     const width = parseFloat(container.style("width"));
 
-    // Set the height of the container to the window inner height
-    const height = window.innerHeight;
+    const minHeight = 400;
+
+    // Compute position of svg container relative to
+    // the top-left corner of the document:
+    // https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
+    const containerTop =
+      container.node().getBoundingClientRect().top + window.scrollY;
+
+    // Take into account legend and footer heights:
+    const legendHeight = parseFloat(select(".legend-panel .v-expansion-panel-header").style("height"));
+    const footerHeight = parseFloat(select(".v-footer").style("height"));
+
+    // Fix the height of the container relative to the window's inner height
+    // to make scrolling disabled unless the viewport is small
+    // in which case minHeight is applied:
+    const height = Math.max(
+      minHeight,
+      window.innerHeight - containerTop - legendHeight - footerHeight
+    );
     container.style("height", `${height}px`);
 
     const minX = -width / 2;

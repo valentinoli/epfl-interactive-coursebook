@@ -499,9 +499,9 @@ export default {
   height: 100%;
 }
 
-.view-pane {
+/* .view-pane {
   min-height: 100vh;
-}
+} */
 
 .view-pane__tabs {
   width: 100%;
