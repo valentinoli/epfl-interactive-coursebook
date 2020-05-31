@@ -55,10 +55,10 @@
     <!-- Legend -->
     <v-expansion-panels v-model="legend" class="legend-panel">
       <v-expansion-panel>
-        <v-expansion-panel-header>
+        <v-expansion-panel-header ref="legendHeader">
           <div><v-icon left>mdi-map-legend</v-icon> Legend</div>
         </v-expansion-panel-header>
-        <v-expansion-panel-content eager>
+        <v-expansion-panel-content>
           <div class="legend mx-4">
             <div class="mb-2">
               <strong>{{
@@ -197,7 +197,8 @@ export default {
       nodeSizeParam: "credits",
       nodeColorMapParam: "semester",
       graph: {},
-      legend: null  // initial value
+      legend: undefined,
+      didScroll: false
     };
   },
   nodeSizeParams: [
@@ -252,12 +253,20 @@ export default {
     this.renderGraph();
     this.centerGraph();
 
+    window.addEventListener("scroll", () => {
+      this.didScroll = true;
+    });
+
+    // Check regularly if page was recently scrolling
+    window.setInterval(() => {
+      if (this.didScroll) {
+        this.didScroll = false;
+      }
+    }, 500);
+
     window.addEventListener(
       "resize",
       debounce(() => {
-        // Reset legend:
-        this.legend = null;
-
         // Reset SVG view box on resize
         this.graph.setSVGViewBox();
 
@@ -296,31 +305,27 @@ export default {
     document.addEventListener("touchstart", onTouchStart, true);
   },
   watch: {
-    legend(newVal, oldVal) {
+    legend(val) {
       // Legend is being opened if v-model is 0
-      if (newVal === 0) {
-        const notScrollable = document.body.scrollHeight === window.innerHeight;
-        const openedFirstTime = oldVal === null;
-        window.setTimeout(
-          () => {
-            // Force scroll to page bottom when legend is opened:
-            // Note that this scrolling is redundant when scrolling is possible
-            // and the legend has been opened before (small viewport height)
-            // since the page is automatically scrolled in that case (idk why).
-            // Also, we don't want to programmatically scroll if the page has
-            // already scrolled since it will cause a flicker.
+      if (val === 0) {
+        window.setTimeout(() => {
+          // Force scrolling to the legend header when the legend is opened:
+          // Note that this scrolling is redundant when page has scrolled
+          // automatically. This typically happens if the legend has been
+          // opened before once or twice (idk why).
+          // Also, we don't want to programmatically scroll if the page has
+          // already scrolled since that will cause the legend to flicker.
+          // However, there is no clear way to avoid flickering that seems to
+          // happen when the previous legend had greater height.
 
-            console.log(notScrollable, openedFirstTime);
-            if (notScrollable || openedFirstTime) {
-              // Force scroll
-              this.$vuetify.goTo(
-                document.body.scrollHeight,
-                { duration: 500, easing: "easeInOutCubic" }
-              );
-            }
-          },
-          100
-        );
+          if (!this.didScroll) {
+            // Force scroll to legend if automatic scroll did not happen
+            this.$vuetify.goTo(this.$refs.legendHeader, {
+              duration: 500,
+              easing: "easeInOutCubic"
+            });
+          }
+        }, 50);
       }
     },
     subgraphNodes() {

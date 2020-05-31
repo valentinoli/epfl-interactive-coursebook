@@ -101,7 +101,9 @@ export default class Graph {
       container.node().getBoundingClientRect().top + window.scrollY;
 
     // Take into account legend and footer heights:
-    const legendHeight = parseFloat(select(".legend-panel .v-expansion-panel-header").style("height"));
+    const legendHeight = parseFloat(
+      select(".legend-panel .v-expansion-panel-header").style("height")
+    );
     const footerHeight = parseFloat(select(".v-footer").style("height"));
 
     // Fix the height of the container relative to the window's inner height
