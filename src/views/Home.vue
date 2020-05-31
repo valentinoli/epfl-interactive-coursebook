@@ -276,7 +276,7 @@ export default {
     this.setCourseFiltersAndUpdateCourseGraph();
 
     window.addEventListener("mousemove", ({ clientX }) => {
-      if (clientX < 50) {
+      if (clientX < 50 && this.$vuetify.breakpoint.smAndUp) {
         this.showDrawerChevron = true;
       } else {
         this.showDrawerChevron = false;
