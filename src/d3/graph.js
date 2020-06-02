@@ -147,8 +147,8 @@ export default class Graph {
     }
 
     if (this.vue.nodeGroupParam) {
-      // Update voronoi cell data
-      this.updateVoronoi();
+      // Re-render voronoi cell
+      this.renderVoronoi();
     }
   }
 
