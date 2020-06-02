@@ -2,7 +2,7 @@
   <div class="d-flex flex-column">
     <!-- Toolbar -->
     <div
-      class="viz-toolbar mb-3 mx-2 mr-md-4 px-4 px-md-0 py-1 d-flex flex-wrap justify-center justify-md-space-between align-center"
+      class="viz-toolbar mb-3 mx-0 mx-md-2 mr-md-4 px-1 px-md-0 py-1 d-flex flex-wrap justify-center justify-md-space-between align-center"
     >
       <div class="d-flex">
         <v-switch
@@ -17,6 +17,16 @@
         ></v-switch>
       </div>
       <div class="d-flex">
+        <v-select
+          v-model="nodeGroupParam"
+          :items="$options.nodeGroupParams"
+          label="Node group"
+          light
+          dense
+          hide-details
+          class="ml-2"
+        >
+        </v-select>
         <v-select
           v-model="nodeSizeParam"
           :items="$options.nodeSizeParams"
@@ -60,34 +70,70 @@
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <div class="legend mx-4">
-            <div class="mb-2">
-              <strong>{{
-                nodeColorMapParam.charAt(0).toUpperCase() +
-                  nodeColorMapParam.slice(1)
-              }}</strong>
-            </div>
-            <v-row>
-              <v-col
-                v-for="({ color, textColor }, key) in nodeColorMap"
-                :key="key"
-              >
-                <div
-                  @mouseenter.self="colorLegendMouseenter($event, key)"
-                  @mouseleave.self="colorLegendMouseleave($event)"
-                  class="legend__item d-flex align-center"
+            <template
+              v-if="nodeGroupParam"
+            >
+              <div class="title mb-1">
+                <strong>Groups</strong>
+              </div>
+              <div class="mb-2">
+                <strong>{{ capitalize(nodeGroupParam) }}</strong>
+              </div>
+              <v-row>
+                <v-col
+                  v-for="({ color, textColor }, key) in nodeGroupColorMap"
+                  :key="`group-${key}`"
                 >
                   <div
-                    class="legend__item-circle d-flex justify-center align-center"
-                    :style="
-                      `background-color: ${color}; opacity: ${
-                        graph.graphOpacity
-                      }; color: ${textColor || 'black'};`
-                    "
-                  ></div>
-                  <div class="ml-4">{{ key }}</div>
-                </div>
-              </v-col>
-            </v-row>
+                    @mouseenter.self="colorLegendMouseenter($event, key, true)"
+                    @mouseleave.self="colorLegendMouseleave($event, true)"
+                    class="legend__item d-flex align-center"
+                  >
+                    <div
+                      class="legend__item-square d-flex justify-center align-center"
+                      :style="
+                        `background-color: ${color}; opacity: ${
+                          graph.nodeGroupOpacity
+                        }; color: ${textColor || 'black'};`
+                      "
+                    ></div>
+                    <div class="ml-4">{{ key }}</div>
+                  </div>
+                </v-col>
+              </v-row>
+            </template>
+            <template>
+              <div class="title mb-1 mt-6">
+                <strong>Nodes</strong>
+              </div>
+              <div class="mb-2">
+                <strong>{{
+                  capitalize(nodeColorMapParam)
+                }}</strong>
+              </div>
+              <v-row>
+                <v-col
+                  v-for="({ color, textColor }, key) in nodeColorMap"
+                  :key="key"
+                >
+                  <div
+                    @mouseenter.self="colorLegendMouseenter($event, key)"
+                    @mouseleave.self="colorLegendMouseleave($event)"
+                    class="legend__item d-flex align-center"
+                  >
+                    <div
+                      class="legend__item-circle d-flex justify-center align-center"
+                      :style="
+                        `background-color: ${color}; opacity: ${
+                          graph.graphOpacity
+                        }; color: ${textColor || 'black'};`
+                      "
+                    ></div>
+                    <div class="ml-4">{{ key }}</div>
+                  </div>
+                </v-col>
+              </v-row>
+            </template>
             <template
               v-if="
                 ingoingNodesDisplayed.length ||
@@ -96,7 +142,7 @@
               "
             >
               <div class="mt-6 mb-2">
-                <strong>Graph neighborhood</strong>
+                <strong>Neighborhood</strong>
               </div>
               <v-row>
                 <v-col
@@ -105,7 +151,7 @@
                   :key="key"
                 >
                   <div
-                    @mouseenter.self="colorLegendMouseenter($event, key, true)"
+                    @mouseenter.self="colorLegendMouseenter($event, key, false, true)"
                     @mouseleave.self="colorLegendMouseleave($event)"
                     class="legend__item d-flex align-center"
                   >
@@ -156,6 +202,7 @@ import Graph from "@/d3/graph";
 import { categoricalColors, creditColors, semesterColors } from "@/d3/colors";
 import api from "@/services/api";
 import debounce from "lodash.debounce";
+import { capitalize } from "@/services/util";
 
 export default {
   name: "CourseViz",
@@ -196,11 +243,30 @@ export default {
       ingoingToggled: true,
       nodeSizeParam: "credits",
       nodeColorMapParam: "semester",
+      nodeGroupParam: "",
       graph: {},
       legend: undefined,
       didScroll: false
     };
   },
+  nodeGroupParams: [
+    {
+      value: "",
+      text: "None"
+    },
+    {
+      value: "credits",
+      text: "Credits"
+    },
+    {
+      value: "semester",
+      text: "Semester"
+    },
+    {
+      value: "section",
+      text: "Section"
+    }
+  ],
   nodeSizeParams: [
     {
       value: null,
@@ -224,10 +290,6 @@ export default {
     }
   ],
   nodeColorMapParams: [
-    // {
-    //   value: null,
-    //   text: "Uniform"
-    // },
     {
       value: "credits",
       text: "Credits"
@@ -340,6 +402,9 @@ export default {
     outgoingToggled() {
       this.renderGraph();
     },
+    nodeGroupParam() {
+      this.renderGraph();
+    },
     nodeSizeParam() {
       this.renderGraph();
     },
@@ -430,50 +495,26 @@ export default {
 
       return links;
     },
-    nodeColorMapParamPlural() {
-      // Simple workaround
-      // Replace last character of the parameter name with an "s" to get plural
-      const { nodeColorMapParam: param } = this;
-      return !param || param.endsWith("s") ? param : `${param}s`;
-    },
-    courseFilterOptions() {
-      return api.getCourseFilterOptions(this.subgraphNodes);
-    },
     nodeColorMap() {
-      const {
-        nodeColorMapParam: param,
-        courseFilterOptions: options,
-        nodeColorMapParamPlural: paramPlural
-      } = this;
-
-      const map = this.$options.colorMaps[param];
-
-      // Update the dynamic color map, filter out keys which are not present
-      // in the graph (and consequently in the course filter options)
-      const filteredMap = Object.fromEntries(
-        Object.entries(map)
-          .filter(colorEntry => options[paramPlural].includes(colorEntry[0]))
-          // Add legend text color
-          .map(([k, v]) => [k, { textColor: this.textColor(v), color: v }])
+      return this.getFilteredColorMap(
+        this.nodeColorMapParam,
+        this.subgraphNodes
       );
+    },
+    nodeGroupColorMap() {
+      if (this.nodeGroupParam) {
+        return this.getFilteredColorMap(this.nodeGroupParam, this.nodes);
+      }
 
-      return filteredMap;
+      return {};
     },
     nodeColorMapCounts() {
       const { nodeColorMapParam: param, nodeColorMap, subgraphNodes } = this;
-
-      const counts = Object.fromEntries(
-        Object.entries(nodeColorMap).map(colorEntry => [
-          colorEntry[0],
-          subgraphNodes.reduce(
-            // Compute how often the color appears in the graph
-            (acc, { [param]: p }) => (p === colorEntry[0] ? acc + 1 : acc),
-            0
-          )
-        ])
-      );
-
-      return counts;
+      return this.getColorMapCounts(param, nodeColorMap, subgraphNodes);
+    },
+    nodeGroupColorMapCounts() {
+      const { nodeGroupParam: param, nodeGroupColorMap, nodes } = this;
+      return this.getColorMapCounts(param, nodeGroupColorMap, nodes);
     },
     nodeColorMapNeighborhood() {
       const {
@@ -519,10 +560,47 @@ export default {
   },
   methods: {
     centerGraph() {
-      this.graph.centerGraph();
+      this.graph.centerGraph(this.nodes.length);
     },
     renderGraph() {
       this.graph.render(this.nodes, this.links);
+    },
+    colorMapParamPlural(param) {
+      // Simple workaround
+      // Replace last character of the parameter name with an "s" to get plural
+      return !param || param.endsWith("s") ? param : `${param}s`;
+    },
+    getFilteredColorMap(param, nodes) {
+      const paramPlural = this.colorMapParamPlural(param);
+      const map = this.$options.colorMaps[param];
+
+      const courseFilterOptions = api.getCourseFilterOptions(nodes);
+      const paramOptions = courseFilterOptions[paramPlural];
+
+      // Update the dynamic color map, filter out keys which are not present
+      // in the graph (and consequently in the course filter options)
+      const filteredMap = Object.fromEntries(
+        Object.entries(map)
+          .filter(colorEntry => paramOptions.includes(colorEntry[0]))
+          // Add legend text color
+          .map(([k, v]) => [k, { textColor: this.textColor(v), color: v }])
+      );
+
+      return filteredMap;
+    },
+    getColorMapCounts(param, colorMap, nodes) {
+      const counts = Object.fromEntries(
+        Object.entries(colorMap).map(colorEntry => [
+          colorEntry[0],
+          nodes.reduce(
+            // Compute how often the color appears in the graph
+            (acc, { [param]: p }) => (p === colorEntry[0] ? acc + 1 : acc),
+            0
+          )
+        ])
+      );
+
+      return counts;
     },
     createColorMaps({ credits, sections, semesters }) {
       // Rename plural to singular to match course prop key
@@ -540,7 +618,7 @@ export default {
               } else if (param === "section") {
                 return [key, categoricalColors[index]];
               }
-              //assume semester
+              // assume semester
               else {
                 return [key, semesterColors[key]];
               }
@@ -549,12 +627,6 @@ export default {
         ])
       );
       // --> { credits: { 6: #color, 4: #color2, ... }, ...}
-
-      // Add the default color map, entering nodes colored green, updated orange
-      // this.$options.colorMaps[null] = {
-      //   true: "green",
-      //   false: "orange"
-      // };
     },
     hexToRgb(hex) {
       // https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb#answer-5624139
@@ -589,23 +661,29 @@ export default {
 
       return "#ffffff";
     },
-    colorLegendMouseenter({ target }, key, isNeighbor = false) {
-      const circle = target.firstChild;
-      const { graphOpacity, graphOpacityOffset } = this.graph;
-      circle.style.opacity = graphOpacity + graphOpacityOffset;
+    colorLegendMouseenter({ target }, key, isGroupLegend = false, isNeighbor = false) {
+      const el = target.firstChild;
+      if (!isGroupLegend) {
+        const { graphOpacity, graphOpacityOffset } = this.graph;
+        el.style.opacity = graphOpacity + graphOpacityOffset;
+      }
 
       if (isNeighbor) {
-        circle.innerHTML = this.nodeColorMapNeighborhoodCounts[key];
+        el.innerHTML = this.nodeColorMapNeighborhoodCounts[key];
+      } else if(isGroupLegend) {
+        el.innerHTML = this.nodeGroupColorMapCounts[key];
       } else {
-        circle.style.border = "1px solid #000000";
-        circle.innerHTML = this.nodeColorMapCounts[key];
+        el.style.border = "1px solid #000000";
+        el.innerHTML = this.nodeColorMapCounts[key];
       }
     },
-    colorLegendMouseleave({ target }) {
-      const circle = target.firstChild;
-      circle.style.opacity = this.graph.graphOpacity;
-      circle.style.border = "none";
-      circle.innerHTML = "";
+    colorLegendMouseleave({ target }, isGroupLegend = false) {
+      const el = target.firstChild;
+      if (!isGroupLegend) {
+        el.style.opacity = this.graph.graphOpacity;
+      }
+      el.style.border = "none";
+      el.innerHTML = "";
     },
     showCourseTooltip({
       id,
@@ -683,7 +761,8 @@ export default {
         // Emit the selectCourse event to the parent component
         this.$emit("selectCourse", id);
       }
-    }
+    },
+    capitalize,
   }
 };
 </script>
@@ -691,7 +770,6 @@ export default {
 <style scoped>
 .svg-container {
   width: 100%;
-  margin: 0 3px;
   position: relative;
 }
 
@@ -726,9 +804,13 @@ export default {
   cursor: pointer;
 }
 
+.legend__item-square,
 .legend__item-circle {
-  border-radius: 50%;
   width: 40px;
   height: 40px;
+}
+
+.legend__item-circle {
+  border-radius: 50%;
 }
 </style>

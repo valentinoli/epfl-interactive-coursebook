@@ -7,8 +7,10 @@ import {
   forceSimulation,
   forceLink
 } from "d3-force";
+import { parseSvg } from "d3-interpolate/src/transform/parse";
 import { zoom, zoomIdentity } from "d3-zoom";
 import { transition } from "d3-transition";
+import { Delaunay } from "d3-delaunay";
 import { easeLinear } from "d3-ease";
 import { drag } from "d3-drag";
 
@@ -23,7 +25,11 @@ export default class Graph {
   node;
   link;
   zoomBehavior;
+  voronoi;
+  voronoiCell;
+  voronoiExtent;
   isDragging = false;
+  nodeGroupOpacity = 0.45; // must be smaller than graphOpacity
   graphOpacity = 0.7;
   graphOpacityOffset = 0.25;
   nodeStrokeWidth = 1;
@@ -37,9 +43,9 @@ export default class Graph {
     // We want access to the vue component
     this.vue = vue;
 
+    // https://stackoverflow.com/questions/16178366/d3-js-set-initial-zoom-level
     this.zoomBehavior = zoom().on("zoom", this.zoomed.bind(this));
 
-    // https://stackoverflow.com/questions/16178366/d3-js-set-initial-zoom-level
     this.svg = this.container
       .append("svg")
       .attr("class", "svg")
@@ -51,6 +57,10 @@ export default class Graph {
     // append a <g> to apply the zoom transform globally on all elements,
     // see zoomed() function
     this.svg_g = this.svg.append("g");
+
+    this.voronoiCell = this.svg_g
+      .append("g")
+      .selectAll("path");
 
     // Arrow markers for directed edges
     const { arrowMarkerWidth: mWidth } = this;
@@ -71,16 +81,20 @@ export default class Graph {
       .style("stroke", "none");
 
     this.simulation = forceSimulation()
-      .force("charge", forceManyBody().strength(-200))
       .force(
-        "link",
-        forceLink()
-          .distance(70)
-          .strength(0.5)
-          .id(d => d.id)
+        "charge",
+        forceManyBody()
+          .strength(-200)
+          .distanceMax(1000)
       )
       .force("x", forceX().strength(0.07))
       .force("y", forceY().strength(0.07))
+      .force(
+        "link",
+        forceLink()
+          .id(node => node.id) // set node id accessor
+          .distance(70) // increase default distance
+      )
       .on("tick", this.ticked.bind(this));
 
     this.link = this.svg_g.append("g").selectAll("line");
@@ -118,14 +132,38 @@ export default class Graph {
     const minX = -width / 2;
     const minY = -height / 2;
 
+    const viewBox = [minX, minY, width, height];
+
     // Fit SVG into the container
-    this.svg.attr("viewBox", [minX, minY, width, height]);
+    this.svg.attr("viewBox", viewBox);
+
+    if (this.voronoiExtent) {
+      // Recompute the voronoi extent when the svg is resized
+      // https://stackoverflow.com/questions/38224875/replacing-d3-transform-in-d3-v4#answer-42063664
+      const { scaleX: k, translateX: x, translateY: y } = parseSvg(
+        this.svg_g.attr("transform")
+      );
+      this.setVoronoiExtent({ k, x, y });
+    }
+
+    if (this.vue.nodeGroupParam) {
+      // Update voronoi cell data
+      this.updateVoronoi();
+    }
   }
 
-  centerGraph() {
+  getSVGViewBox() {
+    return this.svg
+      .attr("viewBox")
+      .split(",")
+      .map(Number);
+  }
+
+  centerGraph(numNodes) {
     // Set initial scale depending on the number of nodes in the graph
-    const numNodes = this.node._groups[0].length;
-    const initialScale = 1 / Math.log(numNodes);
+    // + 1 to avoid division by zero in case
+    // there is only one node since log(1) === 0
+    const initialScale = 1 / Math.log(numNodes + 1);
 
     this.svg.call(
       // Set initial zoom level, calls this.zoomed()
@@ -135,9 +173,19 @@ export default class Graph {
   }
 
   zoomed() {
+    // Apply transform on all the svg elements
     this.svg_g.attr("transform", d3event.transform);
+
+    // Reset voronoi diagram extent
+    this.setVoronoiExtent(d3event.transform);
+
+    if (this.vue.nodeGroupParam) {
+      // Re-render the voronoi cells if grouping is applied
+      this.renderVoronoi();
+    }
   }
 
+  /* Node radius and fill */
   computeNodeRadius({ credits, registrations, ingoing, outgoing }) {
     switch (this.vue.nodeSizeParam) {
       case "credits": {
@@ -164,7 +212,7 @@ export default class Graph {
     }
   }
 
-  computeNodeFill(isEntering, d) {
+  computeNodeFill(d) {
     const {
       nodeColorMap: map,
       nodeColorMapParam: param,
@@ -184,14 +232,10 @@ export default class Graph {
       return mapHood[hoodKey].color;
     }
 
-    // if (!param) {
-    //   // Default colormap
-    //   return map[isEntering];
-    // }
-
     return map[d[param]].color;
   }
 
+  /* Link coordinates */
   linkClipHypotenuseFromSource(source, hypotenuse) {
     const nodeRadius = this.computeNodeRadius(source);
     const offset = nodeRadius + this.nodeStrokeWidth / 2;
@@ -205,11 +249,11 @@ export default class Graph {
     return hypotenuse - offset;
   }
 
-  /**
-   * Computes hypothetical hypotenuse (line length) between
-   * node centers using the Pythagorean theorem and an angle
-   */
   linkAngleHypotenuse(source, target) {
+    /**
+     * Computes hypothetical hypotenuse (line length) between
+     * node centers using the Pythagorean theorem and an angle
+     */
     const xDiff = Math.abs(source.x - target.x);
     const yDiff = Math.abs(source.y - target.y);
 
@@ -300,6 +344,7 @@ export default class Graph {
     }
   }
 
+  /* Collision detection */
   nodeCollision({ source, target }) {
     // Checks the closeness of source and target, and returns a boolean
     // indicating whether the link should be visible
@@ -314,37 +359,7 @@ export default class Graph {
     return hypotenuse < limit;
   }
 
-  ticked() {
-    this.link
-      .attr("x1", this.linkX1.bind(this))
-      .attr("y1", this.linkY1.bind(this))
-      .attr("x2", this.linkX2.bind(this))
-      .attr("y2", this.linkY2.bind(this))
-      .attr("stroke", d => {
-        const collision = this.nodeCollision.bind(this)(d);
-        if (collision) {
-          return null;
-        }
-
-        return this.linkStroke;
-      })
-      .style("marker-end", d => {
-        const collision = this.nodeCollision.bind(this)(d);
-        if (collision) {
-          return null;
-        }
-
-        return `url(#${this.arrowMarkerId})`;
-      });
-
-    this.node.attr("cx", d => d.x).attr("cy", d => d.y);
-  }
-
-  // Click event for node
-  click({ id }) {
-    this.vue.onNodeClick(id);
-  }
-
+  /* Node and link id functions and selection helpers */
   nodeId(id) {
     return id.replace(/[()]/g, "_");
   }
@@ -364,7 +379,12 @@ export default class Graph {
     return select(`#${this.nodeId(id)}`);
   }
 
-  // Mouse events for nodes
+  /* Click event for node */
+  click({ id }) {
+    this.vue.onNodeClick(id);
+  }
+
+  /* Mouse events for nodes */
   mouseenter(d) {
     if (!this.isDragging) {
       this.vue.showCourseTooltip(d);
@@ -434,7 +454,7 @@ export default class Graph {
     }
   }
 
-  // Drag events for nodes
+  /* Drag events for nodes */
   dragstarted(d) {
     if (!d3event.active) {
       // I don't know what this does, I just copied it
@@ -472,16 +492,189 @@ export default class Graph {
     this.isDragging = false;
   }
 
-  render(nodes, links) {
-    // Make a shallow copy to protect against mutation, while
-    // recycling old nodes to preserve position and velocity.
-    const old = new Map(this.node.data().map(d => [d.id, d]));
-    const newNodes = nodes.map(d => Object.assign(old.get(d.id) || {}, d));
-    const newLinks = links.map(d => Object.assign({}, d));
+  /* Node grouping and voronoi diagram functions */
+  setVoronoiExtent(transform) {
+    // Compute new voronoi extent based on the zoom transform
+    // k is the scale, x and y are axes translations
+    const { k, x, y } = transform;
 
-    /* Links */
+    // Get initial extent from the <svg> viewBox attribute
+    const [minX, minY, width, height] = this.getSVGViewBox();
+    const maxX = minX + width;
+    const maxY = minY + height;
+
+    // Compute new extent
+    const extentTransformed = [
+      minX / k - x / k,
+      minY / k - y / k,
+      maxX / k - x / k,
+      maxY / k - y / k
+    ];
+
+    this.voronoiExtent = extentTransformed;
+  }
+
+  createVoronoi() {
+    return Delaunay.from(
+      this.simulation.nodes(),
+      d => d.x,
+      d => d.y
+    ).voronoi(this.voronoiExtent);
+  }
+
+  renderVoronoi() {
+    const voronoi = this.createVoronoi();
+    this.voronoiCell = this.voronoiCell.attr("d", (d, i) =>
+      voronoi.renderCell(i)
+    );
+  }
+
+  updateVoronoi(nodes, param) {
+    const { nodeGroupColorMap: cmap } = this.vue;
+
+    this.voronoiCell = this.voronoiCell
+      .data(nodes, d => `cell-${param}-${d.id}`)
+      .join("path")
+      .attr("fill", d => cmap[d[param]].color)
+      .attr("stroke", d => cmap[d[param]].color)
+      .attr("opacity", this.nodeGroupOpacity)
+      .attr("stroke-width", 0);
+  }
+
+  updateGroupLinkStrength(param) {
+    // Customize link strengths if grouping is applied
+    this.simulation
+      .force("link")
+      .distance(({ source, target }) => {
+        if (source[param] === target[param]) {
+          return 70;
+        }
+        return 120;
+      })
+      .strength(({ source, target }) => {
+        if (source[param] === target[param]) {
+          // stronger link for links within a group
+          return 1;
+        }
+
+        // weaker links for links across groups
+        return 0.1;
+      });
+  }
+
+  groupNodes(param) {
+    // Moves nodes closer to group on each simulation tick
+    const { nodeGroupColorMapCounts: counts } = this.vue;
+    const alpha = this.simulation.alpha();
+    const coords = {};
+
+    // Sort the nodes' coordinates into groups:
+    this.node.each(({ x, y, [param]: p }) => {
+      if (!(p in coords)) {
+        coords[p] = [];
+      }
+
+      coords[p].push({ x, y });
+    });
+
+    // Compute the centroid of each group:
+    const centroids = {};
+
+    Object.entries(coords).forEach(([group, groupNodes]) => {
+      const n = groupNodes.length;
+
+      const [tx, ty] = groupNodes.reduce(
+        ([accX, accY], { x, y }) => [accX + x, accY + y],
+        [0, 0]
+      );
+
+      const cx = tx / n;
+      const cy = ty / n;
+
+      centroids[group] = { cx, cy };
+    });
+
+    // Don't modify points close to the group centroid:
+    // Heuristic method to control group density
+    const dists = Object.fromEntries(
+      Object.keys(coords).map(key => {
+        let dist = Math.min(10 + counts[key], 50);
+        if (alpha < 0.1) {
+          dist += ((dist * 100) * (0.1 - alpha));
+        }
+
+        return [key, dist];
+      })
+    );
+
+    // adjust each point if needed towards group centroid:
+    this.node.each(d => {
+      const { [param]: p, x, y } = d;
+      const { cx, cy } = centroids[p];
+      const dx = cx - x;
+      const dy = cy - y;
+
+      // distance from centroid
+      const r = Math.sqrt(dx * dx + dy * dy);
+
+      if (r > dists[p]) {
+        d.x = x * 0.9 + cx * 0.1;
+        d.y = y * 0.9 + cy * 0.1;
+      }
+    });
+  }
+
+  resetVoronoiGrouping(param) {
+    if (param) {
+      this.updateGroupLinkStrength(param);
+      this.updateVoronoi(this.simulation.nodes(), param);
+
+      // Initial cell rendering, after that rendered on each simulation tick
+      this.renderVoronoi();
+    } else {
+      // No grouping applied, skip rendering voronoi
+      this.updateVoronoi([]);
+    }
+  }
+
+  /* Event handler for simulation tick event */
+  ticked() {
+    const { nodeGroupParam } = this.vue;
+    if (nodeGroupParam) {
+      // Only group if grouping is applied
+      this.groupNodes(nodeGroupParam);
+      this.renderVoronoi();
+    }
+
+    this.link
+      .attr("x1", this.linkX1.bind(this))
+      .attr("y1", this.linkY1.bind(this))
+      .attr("x2", this.linkX2.bind(this))
+      .attr("y2", this.linkY2.bind(this))
+      .attr("stroke", d => {
+        const collision = this.nodeCollision.bind(this)(d);
+        if (collision) {
+          return null;
+        }
+
+        return this.linkStroke;
+      })
+      .style("marker-end", d => {
+        const collision = this.nodeCollision.bind(this)(d);
+        if (collision) {
+          return null;
+        }
+
+        return `url(#${this.arrowMarkerId})`;
+      });
+
+    this.node.attr("cx", d => d.x).attr("cy", d => d.y);
+  }
+
+  /* Render */
+  renderLinks(links) {
     this.link = this.link
-      .data(newLinks, d => `${d.source} -> ${d.target}`)
+      .data(links, d => `${d.source} -> ${d.target}`)
       .join(
         enter => enter.append("line"),
         update => update,
@@ -497,25 +690,29 @@ export default class Graph {
       .attr("class", "link")
       .attr("id", this.linkId.bind(this))
       .attr("stroke", this.linkStroke)
-      .attr("stroke-opacity", this.graphOpacity)
-      .attr("opacity", this.graphOpacity)
+      .attr("stroke-opacity", 1)
+      .attr("opacity", 1)
       .style("stroke-width", 1)
       .style("marker-end", `url(#${this.arrowMarkerId})`);
+  }
 
-    /* Nodes */
+  renderNodes(nodes) {
     this.node = this.node
-      .data(newNodes, d => d.id)
+      .data(nodes, d => d.id)
       .join(
         enter =>
-          enter
-            .append("circle")
-            .attr("fill", this.computeNodeFill.bind(this, true))
-            .attr("r", this.computeNodeRadius.bind(this)),
+          enter.append("circle").call(enter =>
+            enter
+              .transition(t)
+              .attr("fill", this.computeNodeFill.bind(this))
+              .attr("r", this.computeNodeRadius.bind(this))
+          ),
         update =>
           update.call(update =>
             update
+              // compute node fill and radius in case new parameter is given
               .transition(t)
-              .attr("fill", this.computeNodeFill.bind(this, false))
+              .attr("fill", this.computeNodeFill.bind(this))
               .attr("r", this.computeNodeRadius.bind(this))
           ),
         exit =>
@@ -544,14 +741,31 @@ export default class Graph {
       .on("mousemove", this.mousemove.bind(this))
       .on("mouseleave", this.mouseleave.bind(this))
       .on("click", this.click.bind(this));
-
-    this.restartSimulation(newNodes, newLinks);
   }
 
   restartSimulation(nodes, links) {
-    this.simulation.nodes(nodes);
-    // Associate links to the link force
-    this.simulation.force("link").links(links);
+    // Set simulation's nodes, associate links
+    // to the link force and reset simulation
+    this.simulation
+      .nodes(nodes)
+      .force("link")
+      .links(links);
+
     this.simulation.alpha(1).restart();
+  }
+
+  render(n, l) {
+    // Make a shallow copy to protect against mutation, while
+    // recycling old nodes to preserve position and velocity.
+    const old = new Map(this.node.data().map(d => [d.id, d]));
+    const nodes = n.map(d => Object.assign(old.get(d.id) || {}, d));
+    const links = l.map(d => Object.assign({}, d));
+
+    this.renderLinks(links);
+    this.renderNodes(nodes);
+
+    this.restartSimulation(nodes, links);
+
+    this.resetVoronoiGrouping(this.vue.nodeGroupParam);
   }
 }

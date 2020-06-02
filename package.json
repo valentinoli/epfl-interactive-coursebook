@@ -43,6 +43,7 @@
     "chartjs-plugin-datalabels": "^0.7.0",
     "core-js": "^3.6.4",
     "d3": "^5.16.0",
+    "d3-delaunay": "^5.3.0",
     "lodash.debounce": "^4.0.8",
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.0",
