@@ -70,9 +70,7 @@
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <div class="legend mx-4">
-            <template
-              v-if="nodeGroupParam"
-            >
+            <template v-if="nodeGroupParam">
               <div class="title mb-1">
                 <strong>Groups</strong>
               </div>
@@ -107,9 +105,7 @@
                 <strong>Nodes</strong>
               </div>
               <div class="mb-2">
-                <strong>{{
-                  capitalize(nodeColorMapParam)
-                }}</strong>
+                <strong>{{ capitalize(nodeColorMapParam) }}</strong>
               </div>
               <v-row>
                 <v-col
@@ -151,7 +147,9 @@
                   :key="key"
                 >
                   <div
-                    @mouseenter.self="colorLegendMouseenter($event, key, false, true)"
+                    @mouseenter.self="
+                      colorLegendMouseenter($event, key, false, true)
+                    "
                     @mouseleave.self="colorLegendMouseleave($event)"
                     class="legend__item d-flex align-center"
                   >
@@ -661,7 +659,12 @@ export default {
 
       return "#ffffff";
     },
-    colorLegendMouseenter({ target }, key, isGroupLegend = false, isNeighbor = false) {
+    colorLegendMouseenter(
+      { target },
+      key,
+      isGroupLegend = false,
+      isNeighbor = false
+    ) {
       const el = target.firstChild;
       if (!isGroupLegend) {
         const { graphOpacity, graphOpacityOffset } = this.graph;
@@ -670,7 +673,7 @@ export default {
 
       if (isNeighbor) {
         el.innerHTML = this.nodeColorMapNeighborhoodCounts[key];
-      } else if(isGroupLegend) {
+      } else if (isGroupLegend) {
         el.innerHTML = this.nodeGroupColorMapCounts[key];
       } else {
         el.style.border = "1px solid #000000";
@@ -762,14 +765,13 @@ export default {
         this.$emit("selectCourse", id);
       }
     },
-    capitalize,
+    capitalize
   }
 };
 </script>
 
 <style scoped>
 .svg-container {
-  width: 100%;
   position: relative;
 }
 

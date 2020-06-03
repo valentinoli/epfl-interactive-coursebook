@@ -37,11 +37,12 @@ export default class Graph {
   linkStroke = "#999";
   arrowMarkerWidth = 10;
   arrowMarkerId = "arrowmarker";
-  container = select(".svg-container");
+  container;
 
   constructor(vue) {
     // We want access to the vue component
     this.vue = vue;
+    this.container = select(".svg-container");
 
     // https://stackoverflow.com/questions/16178366/d3-js-set-initial-zoom-level
     this.zoomBehavior = zoom().on("zoom", this.zoomed.bind(this));
@@ -58,9 +59,7 @@ export default class Graph {
     // see zoomed() function
     this.svg_g = this.svg.append("g");
 
-    this.voronoiCell = this.svg_g
-      .append("g")
-      .selectAll("path");
+    this.voronoiCell = this.svg_g.append("g").selectAll("path");
 
     // Arrow markers for directed edges
     const { arrowMarkerWidth: mWidth } = this;
@@ -600,7 +599,7 @@ export default class Graph {
       Object.keys(coords).map(key => {
         let dist = Math.min(10 + counts[key], 50);
         if (alpha < 0.1) {
-          dist += ((dist * 100) * (0.1 - alpha));
+          dist += dist * 100 * (0.1 - alpha);
         }
 
         return [key, dist];
