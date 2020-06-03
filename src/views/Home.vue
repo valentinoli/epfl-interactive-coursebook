@@ -535,6 +535,11 @@ export default {
 </style>
 
 <style>
+.filters-pane .v-navigation-drawer__content {
+  /* Enable absolute positioning of drawer close button */
+  position: relative;
+}
+
 .filters-pane .v-select__selections input[readonly="readonly"] {
   /* Override style to fit selected items that don't fit on one line */
   height: 0;
