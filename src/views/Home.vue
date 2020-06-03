@@ -92,8 +92,8 @@
         <v-autocomplete
           v-model="courseCherries"
           :items="nodesFiltered"
-          :item-value="item => item"
           :item-text="({ id, name }) => `${id} ${name}`"
+          return-object
           append-icon="mdi-magnify"
           label=""
           placeholder="Search filtered courses..."
@@ -383,6 +383,11 @@ export default {
       // Clone array to keep track of which courses match the filters
       this.nodesFiltered = JSON.parse(JSON.stringify(subgraphNodes));
 
+      // Filter selected course cherries and keep only those matching filters
+      this.courseCherries = this.courseCherries.filter(cherry =>
+        subgraphNodes.findIndex(n => n.id === cherry.id) !== -1
+      );
+
       if (!this.courseCherries.length) {
         // If there are no cherry picked courses,
         // update the graph/list, otherwise
@@ -498,10 +503,6 @@ export default {
 .home-content {
   height: 100%;
 }
-
-/* .view-pane {
-  min-height: 100vh;
-} */
 
 .view-pane__tabs {
   width: 100%;
