@@ -97,7 +97,6 @@
           append-icon="mdi-magnify"
           label=""
           placeholder="Search filtered courses..."
-          menu-props="closeOnContentClick"
           multiple
           hide-no-data
           hide-details
@@ -384,8 +383,8 @@ export default {
       this.nodesFiltered = JSON.parse(JSON.stringify(subgraphNodes));
 
       // Filter selected course cherries and keep only those matching filters
-      this.courseCherries = this.courseCherries.filter(cherry =>
-        subgraphNodes.findIndex(n => n.id === cherry.id) !== -1
+      this.courseCherries = this.courseCherries.filter(
+        cherry => subgraphNodes.findIndex(n => n.id === cherry.id) !== -1
       );
 
       if (!this.courseCherries.length) {
