@@ -79,22 +79,28 @@ export default class Graph {
       .attr("fill", this.linkStroke)
       .style("stroke", "none");
 
+    this.defaultForceXYStrength = 0.07;
+    this.defaultForceChargeStrength = -200;
+    this.defaultForceLinkDistance = 70;
+
     this.simulation = forceSimulation()
       .force(
         "charge",
         forceManyBody()
-          .strength(-200)
+          .strength(this.defaultForceChargeStrength)
           .distanceMax(1000)
       )
-      .force("x", forceX().strength(0.07))
-      .force("y", forceY().strength(0.07))
       .force(
         "link",
         forceLink()
           .id(node => node.id) // set node id accessor
-          .distance(70) // increase default distance
+          .distance(this.defaultForceLinkDistance) // increase default distance
       )
+      .force("x", forceX().strength(this.defaultForceXYStrength))
+      .force("y", forceY().strength(this.defaultForceXYStrength))
       .on("tick", this.ticked.bind(this));
+
+    this.defaultForceLinkStrength = this.simulation.force("link").strength();
 
     this.link = this.svg_g.append("g").selectAll("line");
     this.node = this.svg_g.append("g").selectAll("circle");
@@ -188,7 +194,8 @@ export default class Graph {
   computeNodeRadius({ credits, registrations, ingoing, outgoing }) {
     switch (this.vue.nodeSizeParam) {
       case "credits": {
-        return Math.log(Math.pow(Number(credits), 10) + 30);
+        const c = Number(credits);
+        return 15 + c;
       }
       case "registrations": {
         // fallback to 0 when no data available
@@ -196,13 +203,13 @@ export default class Graph {
         if (registrations) {
           students = registrations["2019-2020"];
         }
-        return Math.log(Math.pow(students, 4) + 100);
+        return 5 + Math.log(Math.pow(students, 4) + 1);
       }
       case "indegree": {
-        return Math.log(Math.pow(ingoing.length + 2, 10) + 30);
+        return 10 + Math.min(ingoing.length * 3);
       }
       case "outdegree": {
-        return Math.log(Math.pow(outgoing.length + 2, 10) + 30);
+        return 10 + Math.min(30, outgoing.length * 3);
       }
       default: {
         // Default size
@@ -540,25 +547,16 @@ export default class Graph {
       .attr("stroke-width", 0);
   }
 
-  updateGroupLinkStrength(param) {
-    // Customize link strengths if grouping is applied
-    this.simulation
-      .force("link")
-      .distance(({ source, target }) => {
-        if (source[param] === target[param]) {
-          return 70;
-        }
-        return 120;
-      })
-      .strength(({ source, target }) => {
-        if (source[param] === target[param]) {
-          // stronger link for links within a group
-          return 1;
-        }
+  resetVoronoiGrouping(param) {
+    if (param) {
+      this.updateVoronoi(this.simulation.nodes(), param);
 
-        // weaker links for links across groups
-        return 0.1;
-      });
+      // Initial cell rendering, after that rendered on each simulation tick
+      this.renderVoronoi();
+    } else {
+      // No grouping applied, skip rendering voronoi
+      this.updateVoronoi([]);
+    }
   }
 
   groupNodes(param) {
@@ -621,19 +619,6 @@ export default class Graph {
         d.y = y * 0.9 + cy * 0.1;
       }
     });
-  }
-
-  resetVoronoiGrouping(param) {
-    if (param) {
-      this.updateGroupLinkStrength(param);
-      this.updateVoronoi(this.simulation.nodes(), param);
-
-      // Initial cell rendering, after that rendered on each simulation tick
-      this.renderVoronoi();
-    } else {
-      // No grouping applied, skip rendering voronoi
-      this.updateVoronoi([]);
-    }
   }
 
   /* Event handler for simulation tick event */
@@ -742,14 +727,47 @@ export default class Graph {
       .on("click", this.click.bind(this));
   }
 
-  restartSimulation(nodes, links) {
-    // Set simulation's nodes, associate links
-    // to the link force and reset simulation
-    this.simulation
-      .nodes(nodes)
-      .force("link")
-      .links(links);
+  restartSimulation(nodes, links, param) {
+    // Set simulation's nodes
+    this.simulation.nodes(nodes);
+    // Associate links to the link force
+    this.simulation.force("link").links(links);
 
+    if (param) {
+      // Set different strengths and distances if grouping is applied
+      this.simulation
+        .force("link")
+        .distance(({ source, target }) => {
+          if (source[param] === target[param]) {
+            return 70;
+          }
+          return 120;
+        })
+        .strength(({ source, target }) => {
+          if (source[param] === target[param]) {
+            // stronger link for links within a group
+            return 1;
+          }
+
+          // weaker links for links across groups
+          return 0.1;
+        });
+
+      this.simulation.force("charge").strength(-400);
+      this.simulation.force("x").strength(0.01);
+      this.simulation.force("y").strength(0.01);
+    } else {
+      // Defaults
+      this.simulation
+        .force("link")
+        .strength(this.defaultForceLinkStrength)
+        .distance(this.defaultForceLinkDistance);
+      this.simulation.force("charge").strength(this.defaultForceChargeStrength);
+      this.simulation.force("x").strength(this.defaultForceXYStrength);
+      this.simulation.force("y").strength(this.defaultForceXYStrength);
+    }
+
+    // Restart simulation
     this.simulation.alpha(1).restart();
   }
 
@@ -763,8 +781,10 @@ export default class Graph {
     this.renderLinks(links);
     this.renderNodes(nodes);
 
-    this.restartSimulation(nodes, links);
+    const groupParam = this.vue.nodeGroupParam;
 
-    this.resetVoronoiGrouping(this.vue.nodeGroupParam);
+    this.restartSimulation(nodes, links, groupParam);
+
+    this.resetVoronoiGrouping(groupParam);
   }
 }
