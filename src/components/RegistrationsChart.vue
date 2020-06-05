@@ -156,10 +156,10 @@ export default {
               return datasets[datasetIndex].label;
             },
             label: function({ yLabel }) {
-              return `${yLabel} students`;
+              return ` ${yLabel} student${yLabel === 1 ? "" : "s"}`;
             }
           },
-          displayColors: false
+          displayColors: true
         },
         responsive: true,
         maintainAspectRatio: false,
