@@ -30,11 +30,11 @@
       </v-col>
       <v-col cols="12" md="3" xl="4" class="d-flex flex-column">
         <!-- Notes -->
-        <v-alert v-if="note" type="info">
+        <v-alert v-if="note" type="info" :elevation="2">
           {{ noteCleaned }}
         </v-alert>
 
-        <v-alert v-if="number_of_places" type="info">
+        <v-alert v-if="number_of_places" type="info" :elevation="2">
           {{ `Limited number of places: ${number_of_places}` }}
         </v-alert>
 
@@ -58,7 +58,7 @@
         </template>
 
         <!-- Lecturers -->
-        <v-card v-if="lecturers.length > 0" class="lecturers">
+        <v-card v-if="lecturers.length > 0">
           <v-card-title>Lecturers</v-card-title>
           <v-card-text>
             <div v-for="[name, url, src] in lecturers" :key="url" class="mb-3">
@@ -80,7 +80,7 @@
         <!-- Workload -->
         <v-card>
           <v-card-title>Workload</v-card-title>
-          <v-list two-line>
+          <v-list two-line class="pt-0">
             <v-list-item v-for="(val, key) in miscInfo" :key="key">
               <v-list-item-content>
                 <v-list-item-title>{{ key }}</v-list-item-title>
@@ -223,8 +223,7 @@ a:not(:hover) {
   flex-grow: 1;
 }
 
-.course-detail > .flex-column > .v-card:not(:first-child),
-.course-detail > .flex-column > .v-alert:not(:first-child) {
-  margin-top: 16px;
+.course-detail > .flex-column > .v-card:not(:last-child) {
+  margin-bottom: 16px;
 }
 </style>
