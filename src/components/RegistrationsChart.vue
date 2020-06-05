@@ -23,6 +23,30 @@ export default {
     }
   },
   mounted() {
+    this.addPlugin({
+      id: "no-data",
+      afterDraw: function(chart) {
+        if (chart.data.datasets.length === 0) {
+          // No data is present
+          var ctx = chart.chart.ctx;
+          var width = chart.chart.width;
+          var height = chart.chart.height;
+          chart.clear();
+
+          ctx.save();
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          // ctx.font = "16px normal 'Helvetica Nueue'";
+          ctx.fillText(
+            "No registrations data available",
+            width / 2,
+            height / 2
+          );
+          ctx.restore();
+        }
+      }
+    });
+
     if (this.$data._chart) {
       this.$data._chart.destroy();
     }
@@ -30,7 +54,7 @@ export default {
   },
   methods: {
     getDataCollection() {
-      const registrations = api.getCourseRegistrations(this.id);
+      const registrations = api.getCourseRegistrations(this.id) || [];
       const entries = Object.entries(registrations).slice(-6, -1);
       const years = Object.keys(registrations).slice(-6, -1);
 
@@ -168,7 +192,6 @@ export default {
             formatter: function(value, context) {
               //this tells the column
               const column = context.dataIndex;
-              //console.log(value);
               return aggData[column];
             }
           }
