@@ -1,8 +1,11 @@
 <script>
+import Chart from "chart.js";
 import { Bar } from "vue-chartjs";
 import api from "@/services/api";
 import { categoricalColors } from "@/d3/colors";
 import ChartJsPluginDataLabels from "chartjs-plugin-datalabels";
+
+const fontFamily = "'Roboto', sans-serif";
 
 export default {
   extends: Bar,
@@ -47,13 +50,15 @@ export default {
       }
     });
 
+    Chart.defaults.global.defaultFontFamily = fontFamily;
+
     if (this.$data._chart) {
       this.$data._chart.destroy();
     }
     this.render();
   },
   methods: {
-    getDataCollection() {
+    getChartData() {
       const registrations = api.getCourseRegistrations(this.id) || [];
       const entries = Object.entries(registrations).slice(-6, -1);
       const years = Object.keys(registrations).slice(-6, -1);
@@ -73,6 +78,14 @@ export default {
           }));
       });
 
+      const totalPerYear = entries.flatMap(item => {
+        if (!item[1]) {
+          return [0];
+        }
+
+        return item[1].total;
+      });
+
       const programs = [
         ...new Set(dataTransformed.map(item => item.program))
       ].sort();
@@ -82,8 +95,8 @@ export default {
         hoverBackgroundColor: categoricalColors[index],
         backgroundColor: "#FF5252",
         borderColor: "#ffffff",
-        data: [],
-        borderWidth: 0.5
+        borderWidth: 0.5,
+        data: []
       }));
 
       years.forEach(year => {
@@ -99,20 +112,13 @@ export default {
         });
       });
 
-      const datacollection = {
+      const chartData = {
         labels: years,
         datasets
       };
-      return datacollection;
+      return { chartData, totalPerYear };
     },
-    getOptions(datasets) {
-      let aggData = [0, 0, 0, 0, 0];
-      datasets.forEach(item => {
-        item.data.forEach((dataPoint, i) => {
-          aggData[i] += dataPoint;
-        });
-      });
-
+    getOptions({ datasets }, totalPerYear) {
       const options = {
         scales: {
           yAxes: [
@@ -152,12 +158,13 @@ export default {
           enabled: true,
           mode: "single",
           callbacks: {
-            beforeTitle: function([{ datasetIndex }]) {
-              return datasets[datasetIndex].label;
-            },
-            label: function({ yLabel }) {
-              return ` ${yLabel} student${yLabel === 1 ? "" : "s"}`;
-            }
+            beforeTitle: ([{ datasetIndex }]) => datasets[datasetIndex].label,
+            label: ({ yLabel }) =>
+              ` ${yLabel} student${yLabel === 1 ? "" : "s"}`,
+            labelColor: ({ datasetIndex }) => ({
+              borderColor: "#fff",
+              backgroundColor: datasets[datasetIndex].hoverBackgroundColor
+            })
           },
           displayColors: true
         },
@@ -166,7 +173,6 @@ export default {
         title: {
           display: true,
           text: "Registrations per year",
-          fontFamily: "'Roboto', sans-serif",
           fontSize: "20",
           fontColor: "black",
           fontStyle: "500",
@@ -177,22 +183,14 @@ export default {
             anchor: "end",
             align: "end",
             offset: 0,
-            display: function(context) {
-              if (context.datasetIndex == datasets.length - 1) {
-                return true;
-              } else {
-                return false;
-              }
-            },
+            display: context => context.datasetIndex === datasets.length - 1,
             font: {
-              family: "'Roboto', sans-serif",
-              color: "black",
               weight: "500"
             },
-            formatter: function(value, context) {
-              //this tells the column
-              const column = context.dataIndex;
-              return aggData[column];
+            formatter: (value, context) => {
+              // Return the column count (total per year)
+              const { dataIndex: yearIndex } = context;
+              return totalPerYear[yearIndex];
             }
           }
         }
@@ -200,9 +198,9 @@ export default {
       return options;
     },
     render() {
-      const datacollection = this.getDataCollection();
-      const options = this.getOptions(datacollection.datasets);
-      this.renderChart(datacollection, options);
+      const { chartData, totalPerYear } = this.getChartData();
+      const options = this.getOptions(chartData, totalPerYear);
+      this.renderChart(chartData, options);
     }
   }
 };
