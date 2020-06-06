@@ -166,7 +166,10 @@ export default {
               backgroundColor: datasets[datasetIndex].hoverBackgroundColor
             })
           },
-          displayColors: true
+          displayColors: true,
+          titleFontFamily: fontFamily,
+          bodyFontFamily: fontFamily,
+          footerFontFamily: fontFamily
         },
         responsive: true,
         maintainAspectRatio: false,
