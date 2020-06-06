@@ -46,35 +46,54 @@
           ]"
         >
           <v-card v-if="courses.length" :key="title">
-            <v-card-title>{{ title }}</v-card-title>
-            <v-card-text>
-              <div v-for="{ id, name } in courses" :key="id">
-                <a @click="$emit('selectCourse', id)">
-                  {{ id }} - {{ name }}
-                </a>
-              </div>
-            </v-card-text>
+            <v-card-title class="pb-0">{{ title }}</v-card-title>
+            <v-list>
+              <v-list-item
+                v-for="{ id, name } in courses"
+                :key="id"
+                @click="$emit('selectCourse', id)"
+                :title="name"
+                dense
+              >
+                <v-list-item-content>
+                  <v-list-item-title>{{ id }} {{ name }}</v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-icon>
+                  <v-icon small>mdi-eye</v-icon>
+                </v-list-item-icon>
+              </v-list-item>
+            </v-list>
           </v-card>
         </template>
 
         <!-- Lecturers -->
         <v-card v-if="lecturers.length > 0">
-          <v-card-title>Lecturers</v-card-title>
-          <v-card-text>
-            <div v-for="[name, url, src] in lecturers" :key="url" class="mb-3">
-              <v-avatar color="grey" size="40" class="mr-2">
+          <v-card-title class="pb-0">Lecturers</v-card-title>
+          <v-list>
+            <v-list-item
+              v-for="[name, url, src] in lecturers"
+              :key="url"
+              :href="url"
+              target="_blank"
+              :title="name"
+              dense
+            >
+              <v-list-item-avatar color="grey">
                 <v-img
                   v-if="src"
                   :src="`https://people.epfl.ch${src}`"
                   :alt="name"
                 ></v-img>
                 <v-icon v-else dark>mdi-account-circle</v-icon>
-              </v-avatar>
-              <a :href="url" target="_blank">{{ name }}</a
-              >&nbsp;
-              <v-icon x-small>mdi-open-in-new</v-icon>
-            </div>
-          </v-card-text>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title v-text="name"></v-list-item-title>
+              </v-list-item-content>
+              <v-list-item-icon>
+                <v-icon small>mdi-open-in-new</v-icon>
+              </v-list-item-icon>
+            </v-list-item>
+          </v-list>
         </v-card>
 
         <!-- Workload -->
@@ -209,12 +228,12 @@ a {
   color: red;
 }
 
-a:not(.v-btn):hover {
-  /* Don't underline v-btn */
+.v-card__text a:hover {
+  /* Don't underline v-btn or v-list-item */
   text-decoration: underline;
 }
 
-a:not(:hover) {
+.v-card__text a:not(:hover) {
   text-decoration: none;
 }
 
