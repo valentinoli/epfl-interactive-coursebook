@@ -171,6 +171,14 @@ export default {
       default: () => ({})
     }
   },
+  watch: {
+    id() {
+      // Scroll to top when new id is passed,
+      // to enhance UX when user selects a course from
+      // "Requirements" or "Preparation for" lists
+      window.scrollTo(0, 0);
+    }
+  },
   components: {
     RegistrationsChart
   },
@@ -224,19 +232,6 @@ export default {
 </script>
 
 <style scoped>
-a {
-  color: red;
-}
-
-.v-card__text a:hover {
-  /* Don't underline v-btn or v-list-item */
-  text-decoration: underline;
-}
-
-.v-card__text a:not(:hover) {
-  text-decoration: none;
-}
-
 .course-detail > .flex-column > .v-card,
 .course-detail > .flex-column > .v-alert {
   flex-grow: 1;
