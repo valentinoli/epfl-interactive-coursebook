@@ -184,7 +184,7 @@
       <template v-if="touchInterface">
         <v-btn
           small
-          @touchstart="$emit('selectCourse', courseTooltipCourseId)"
+          @touchstart="emitSelectCourse(courseTooltipCourseId)"
           class="mt-2 mb-1"
         >
           <v-icon left>mdi-eye</v-icon>
@@ -761,9 +761,21 @@ export default {
       // Do nothing if user has a touch interface
       // (instead he can select the link in the tooltip)
       if (!this.touchInterface) {
-        // Emit the selectCourse event to the parent component
-        this.$emit("selectCourse", id);
+        // Hide course tooltip forcefully after a short timeout to avoid a bug
+        // that occurs sometimes on desktop when a course is selected and the
+        // mouse hovers over a node just milliseconds before the course
+        // detail page opens, making the tooltip to display in that view
+        window.setTimeout(() => {
+          this.hideCourseTooltip();
+          this.graph.mouseleave();
+        }, 300);
+
+        this.emitSelectCourse(id);
       }
+    },
+    emitSelectCourse(id) {
+      // Emit the selectCourse event to the parent component
+      this.$emit("selectCourse", id);
     },
     capitalize
   }
