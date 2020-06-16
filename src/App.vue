@@ -74,7 +74,7 @@
           ></span
         >
         <v-btn
-          href="https://github.com/com-480-data-visualization/com-480-project-vizcachas"
+          href="https://github.com/valentinoli/epfl-interactive-coursebook"
           target="_blank"
           text
           icon
