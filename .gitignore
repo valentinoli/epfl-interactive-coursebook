@@ -4,14 +4,6 @@ node_modules/
 data/
 public/master.json
 
-# ipython notebook checkpoints
-.ipynb_checkpoints/
-
-# various notebooks
-python/is-academia.ipynb
-python/studyplans.ipynb
-python/lecturers.ipynb
-
 .DS_Store
 node_modules
 /dist

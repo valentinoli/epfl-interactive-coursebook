@@ -23,12 +23,6 @@ We also aim to provide a complementary data analysis summary on a separate page 
 
 ### Exploratory Data Analysis
 
-* Pre-processing and data wrangling work can be viewed in [`python/wrangling.ipynb`](python/wrangling.ipynb)
-* Exploratory analysis and production of basic statistics can be viewed in [`python/analysis.ipynb`](python/analysis.ipynb)
-
-**Statistical summary:**
-
-
 _Number of programs per academic level_
 
 | level        |   propedeutics |   bachelor |   master |   minor |   doctoral_school |
@@ -46,7 +40,7 @@ _Credit number distribution of courses_
 
 
 _Distribution of the number of courses per academic program: Histogram for each education level_
-![Course count distribution](python/plots/course_count_distribution.png)
+![Course count distribution](plots/course_count_distribution.png)
 
 
 
@@ -76,7 +70,7 @@ _Language distribution of courses_
 
 _Number of courses per EPFL section_
 
-![Course section distribution](python/plots/course_section_distribution.png)
+![Course section distribution](plots/course_section_distribution.png)
 
 
 ### Related work
