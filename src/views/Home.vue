@@ -159,18 +159,24 @@
             :right="$vuetify.breakpoint.mdAndUp"
             class="course-tabs"
           >
-            <v-tab
+            <v-tooltip
               v-for="({ id, name }, idx) in courseTabs"
               :key="idx"
-              :title="name"
+              bottom
+              color="red"
             >
-              {{ id }}
-              <v-btn icon x-small class="ml-1 mr-n2">
-                <v-icon x-small @click.stop="removeCourseTab(idx)"
-                  >mdi-close</v-icon
-                >
-              </v-btn>
-            </v-tab>
+              <template v-slot:activator="{ on }">
+                <v-tab v-on="on">
+                  {{ id }}
+                  <v-btn icon x-small class="ml-1 mr-n2">
+                    <v-icon x-small @click.stop="removeCourseTab(idx)"
+                      >mdi-close</v-icon
+                    >
+                  </v-btn>
+                </v-tab>
+              </template>
+              <span>{{ name }}</span>
+            </v-tooltip>
           </v-tabs>
         </div>
         <v-slide-x-transition mode="out-in">
