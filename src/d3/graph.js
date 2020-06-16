@@ -38,6 +38,7 @@ export default class Graph {
   arrowMarkerWidth = 10;
   arrowMarkerId = "arrowmarker";
   container;
+  mouseleft = true;
 
   constructor(vue) {
     // We want access to the vue component
@@ -392,6 +393,8 @@ export default class Graph {
 
   /* Mouse events for nodes */
   mouseenter(d) {
+    this.mouseleft = false;
+
     if (!this.isDragging) {
       this.vue.showCourseTooltip(d);
       const { id, ingoing, outgoing, ingoingNeighbor, outgoingNeighbor } = d;
@@ -449,8 +452,20 @@ export default class Graph {
   }
 
   mouseleave() {
+    this.mouseleft = true;
+
     if (!this.isDragging) {
-      this.vue.hideCourseTooltip();
+      // Bug fix:
+      // Course tooltip was disappearing when hovering quickly between nodes.
+      // Reason is that Vue set the courseTooltip data prop to false without
+      // explicit instruction. Did not find out why it was happening.
+      // Temporary solution: Hide tooltip after a short timeout only if
+      // the mouse hasn't entered any other node yet.
+      window.setTimeout(() => {
+        if (this.mouseleft) {
+          this.vue.hideCourseTooltip();
+        }
+      }, 100);
 
       const { nodeStroke, graphOpacity } = this;
       this.node.attr("opacity", graphOpacity).style("stroke", nodeStroke);

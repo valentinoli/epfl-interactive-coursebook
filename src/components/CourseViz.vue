@@ -232,8 +232,10 @@ export default {
   },
   data() {
     return {
-      // set true to render the tooltip in order to find it in the DOM early
+      // set true to force immediate rendering of the tooltip
+      // to find it in the DOM early in mounted() hook
       courseTooltip: true,
+
       courseTooltipHtml: "",
       courseTooltipCourseId: null,
       touchInterface: false,
@@ -338,7 +340,7 @@ export default {
     );
 
     // Hide the tooltip by default
-    this.courseTooltip = false;
+    this.hideCourseTooltip();
 
     // Attempt to check for touch interface
     // See http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
