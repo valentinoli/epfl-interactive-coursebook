@@ -2,19 +2,13 @@
   "name": "epfl-interactive-coursebook",
   "version": "0.1.0",
   "private": true,
-  "description": "Project in Data Visualization, 2020",
+  "description": "An interactive visualization and tool browsing EPFL courses",
   "license": "ISC",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
-  "keywords": [
-    "data",
-    "visualization",
-    "javascript",
-    "d3js"
-  ],
   "contributors": [
     {
       "name": "Valentin Oliver Loftsson",
@@ -31,12 +25,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/com-480-data-visualization/com-480-project-vizcachas.git"
+    "url": "git+https://github.com/valentinoli/epfl-interactive-coursebook.git"
   },
   "bugs": {
-    "url": "https://github.com/com-480-data-visualization/com-480-project-vizcachas/issues"
+    "url": "https://github.com/valentinoli/epfl-interactive-coursebook/issues"
   },
-  "homepage": "https://github.com/com-480-data-visualization/com-480-project-vizcachas#readme",
+  "homepage": "http://epfl.space",
   "dependencies": {
     "aws-sdk": "^2.680.0",
     "chart.js": "^2.9.3",
