@@ -2,7 +2,7 @@
   "name": "epfl-interactive-coursebook",
   "version": "0.1.0",
   "private": true,
-  "description": "An interactive visualization and tool browsing EPFL courses",
+  "description": "Interactive visualization of EPFL courses",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
