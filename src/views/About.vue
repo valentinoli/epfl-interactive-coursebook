@@ -62,7 +62,7 @@ export default {
       email: "michal.pleskowicz@epfl.ch"
     },
     {
-      src: require("@/assets/Michael.jpg"),
+      src: require("@/assets/michael.jpg"),
       name: "Michaël Spierer",
       email: "michael.spierer@epfl.ch"
     }
