@@ -1,8 +1,8 @@
 module.exports = {
   transpileDependencies: ["vuetify"],
   pwa: {
-    name: "EPFL Interactive Coursebook",
-    themeColor: "#ff0000",
+    name: "Interactive Coursebook",
+    themeColor: "#ffffff",
     msTileColor: "#ffffff",
     assetsVersion: "1.0",
     manifestOptions: {
@@ -13,7 +13,7 @@ module.exports = {
       description: "Interactive visualization of EPFL courses",
       screenshots: [
         {
-          src: "og-image.png",
+          src: "img/og-image.png",
           sizes: "1200x630",
           type: "image/png"
         }

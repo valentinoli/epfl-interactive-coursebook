@@ -1,4 +1,4 @@
-<p align="center"><a href="http://epfl.space"><img src="public/og-image.png" alt="Logo"></a></p>
+<p align="center"><a href="http://epfl.space"><img src="public/img/og-image.png" alt="Logo"></a></p>
 
 :iphone: [App](http://epfl.space)
 
