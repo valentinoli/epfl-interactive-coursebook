@@ -49,7 +49,6 @@ export default async function loadAllData() {
     window.localStorage.clear();
 
     const data = await fetchData();
-    console.log(data);
 
     // Cache data in localStorage
     Object.entries(data).forEach(([key, val]) => {
