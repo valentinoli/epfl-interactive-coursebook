@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import Avatar from "@/components/Avatar";
+const Avatar = () => import("@/components/Avatar");
 
 export default {
   name: "About",

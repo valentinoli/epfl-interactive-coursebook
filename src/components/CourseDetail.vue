@@ -111,7 +111,7 @@
 </template>
 
 <script>
-import RegistrationsChart from "@/components/RegistrationsChart.vue";
+const RegistrationsChart = () => import("@/components/RegistrationsChart.vue");
 
 export default {
   props: {

@@ -196,10 +196,10 @@
 <script>
 // @ is an alias to /src
 import api from "@/services/api";
-import CourseViz from "@/components/CourseViz";
-import CourseList from "@/components/CourseList";
-import CourseDetail from "@/components/CourseDetail";
-import Select from "@/components/Select";
+const CourseViz = () => import("@/components/CourseViz");
+const CourseList = () => import("@/components/CourseList");
+const CourseDetail = () => import("@/components/CourseDetail");
+const Select = () => import("@/components/Select");
 
 export default {
   name: "Home",

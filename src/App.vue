@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import SkeletonLoader from "@/components/SkeletonLoader";
+const SkeletonLoader = () => import("@/components/SkeletonLoader");
 import loadData from "@/services/load-data";
 
 export default {

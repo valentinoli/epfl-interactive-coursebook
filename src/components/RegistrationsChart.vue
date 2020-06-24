@@ -1,8 +1,9 @@
 <script>
 import Chart from "chart.js";
-import { Bar } from "vue-chartjs";
 import api from "@/services/api";
 import { categoricalColors } from "@/d3/colors";
+
+import { Bar } from "vue-chartjs";
 import ChartJsPluginDataLabels from "chartjs-plugin-datalabels";
 
 const fontFamily = "'Roboto', sans-serif";
