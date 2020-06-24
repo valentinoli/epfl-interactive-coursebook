@@ -4,17 +4,10 @@
       <v-col cols="12" md="3" xl="4" class="d-flex flex-column">
         <!-- General -->
         <v-card>
-          <v-card-title class="d-flex justify-space-between">
+          <v-card-title class="d-flex justify-space-between mb-2">
             <span>{{ id }}</span>
-            <v-btn
-              :href="coursebookUrl"
-              target="_blank"
-              text
-              icon
-              color="red"
-              title="View source"
-            >
-              <v-icon>mdi-web</v-icon>
+            <v-btn :href="coursebookUrl" target="_blank" outlined small>
+              source<v-icon right small>mdi-open-in-new</v-icon>
             </v-btn>
           </v-card-title>
           <v-card-subtitle>{{ name }}</v-card-subtitle>
