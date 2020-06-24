@@ -22,10 +22,6 @@
           <span v-if="!isXS">Home</span>
         </v-btn>
 
-        <!-- <v-btn to="/story" text>
-          <v-icon left>mdi-book-open-page-variant</v-icon> Story
-        </v-btn> -->
-
         <v-btn to="/about" text :icon="isXS" :small="isXS">
           <v-icon :left="!isXS" :small="isXS">mdi-information-outline</v-icon>
           <span v-if="!isXS">About</span>

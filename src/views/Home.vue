@@ -478,7 +478,6 @@ export default {
 
       switch (currentComponent) {
         case "CourseList":
-        case "DemoViz":
           return { courses: subgraphNodes };
         case "CourseViz":
           return {
