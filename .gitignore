@@ -1,8 +1,5 @@
 # npm modules
 node_modules/
-# don't track the data
-data/
-public/master.json
 
 .DS_Store
 node_modules

@@ -26,10 +26,10 @@ function isDataLoaded() {
 }
 
 async function fetchData() {
-  if (process.env.NODE_ENV === "production") {
+  // if (process.env.NODE_ENV === "production") {
     // Fetch data from AWS in production
-    return await getObject("master.json");
-  }
+    // return await getObject("master.json");
+  // }
 
   // In development we fetch the data from the public/ directory
   const response = await fetch("master.json");
